@@ -12,7 +12,7 @@
       <div class="battle-topbar">
         <div>
           <div class="eyebrow">WHISPERING WOODS</div>
-          <div class="subtle">Training Battle</div>
+          <div class="subtle" id="battleSubtitle">Battle 1 of 3</div>
         </div>
         <div class="battle-stats">
           <span>⭐ <strong id="score">0</strong></span>
@@ -35,8 +35,8 @@
         <div id="battleMessage" class="battle-message">YOUR TURN</div>
 
         <div class="fighter enemy">
-          <div class="sprite" aria-hidden="true">🟢</div>
-          <div class="fighter-name">Training Slime</div>
+          <div class="sprite" id="enemySprite" aria-hidden="true">🟢</div>
+          <div class="fighter-name" id="enemyName">Tiny Slime</div>
           <div class="hp-track">
             <div id="enemyHpBar" class="hp-fill enemy-fill"></div>
           </div>
@@ -110,6 +110,10 @@
         <div id="hintBox" class="hint-box hidden"></div>
       </section>
 
+      <div id="battleTip" class="battle-tip">
+        Battle 1 is a quick win: defeat the Tiny Slime with one correct attack.
+      </div>
+
       <form id="answerForm" class="answer-row">
         <label>
           Answer
@@ -121,9 +125,36 @@
       <div id="feedback" class="feedback" aria-live="polite"></div>
 
       <div id="victoryPanel" class="victory-panel hidden">
-        <h2>Victory!</h2>
-        <p>You defeated the Training Slime.</p>
-        <button id="fightAgainBtn" type="button" class="primary-btn">Fight Again</button>
+        <h2 id="victoryTitle">Victory!</h2>
+        <p id="victoryText">You defeated the Tiny Slime.</p>
+        <div id="battleRewards" class="reward-summary"></div>
+        <button id="fightAgainBtn" type="button" class="primary-btn">Next Battle</button>
+      </div>
+
+      <div id="upgradePanel" class="upgrade-panel hidden">
+        <div class="eyebrow">CHOOSE 1 UPGRADE</div>
+        <h2>Your first roguelike reward</h2>
+        <p>Pick one upgrade for the rest of this run.</p>
+
+        <div class="upgrade-grid">
+          <button type="button" class="upgrade-card" data-upgrade="blade">
+            <strong>⚔️ Sharp Blade</strong>
+            <span>Sword Slash deals +1 damage.</span>
+          </button>
+
+          <button type="button" class="upgrade-card" data-upgrade="shield">
+            <strong>🛡️ Reinforced Shield</strong>
+            <span>Guard blocks the next 2 enemy attacks.</span>
+          </button>
+
+          <button type="button" class="upgrade-card" data-upgrade="meal">
+            <strong>❤️ Hearty Meal</strong>
+            <span>Gain +2 maximum HP and heal to full.</span>
+          </button>
+        </div>
+
+        <div id="upgradeResult" class="upgrade-result hidden"></div>
+        <button id="continueRunBtn" type="button" class="primary-btn hidden">Continue Run</button>
       </div>
     </section>
   </main>
