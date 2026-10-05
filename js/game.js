@@ -251,22 +251,43 @@ window.MathQuest = window.MathQuest || {};
     }
   }
 
-  function nextStepAfterVictory() {
-    $("victoryPanel").classList.add("hidden");
+function nextStepAfterVictory() {
+  $("victoryPanel").classList.add("hidden");
 
-    if (MathQuest.Combat.hasMoreBattles()) {
-      MathQuest.Combat.advanceBattle();
-      battleComplete = false;
-      $("battleMessage").textContent = "YOUR TURN";
-      updateBattleIdentity();
-      updateHud();
-      newProblem();
+  if (MathQuest.Combat.hasMoreBattles()) {
+    const advanced = MathQuest.Combat.advanceBattle();
+
+    if (!advanced) {
       return;
     }
 
-    $("upgradePanel").classList.remove("hidden");
-    $("battleMessage").textContent = "REWARD";
+    battleComplete = false;
+    locked = false;
+    hinted = false;
+
+    $("battleMessage").textContent = "YOUR TURN";
+    $("feedback").textContent = "";
+    $("hintBox").classList.add("hidden");
+
+    updateBattleIdentity();
+    updateHud();
+    updateSkillLabels();
+
+    MathQuest.BlockWorkspace.clear();
+
+    newProblem();
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+    return;
   }
+
+  $("upgradePanel").classList.remove("hidden");
+  $("battleMessage").textContent = "REWARD";
+}
 
   function chooseUpgrade(key) {
     const result = MathQuest.Combat.chooseUpgrade(key);
