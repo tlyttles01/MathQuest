@@ -1,0 +1,515 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #eef2f7;
+  --panel: #ffffff;
+  --panel-alt: #f6f8fb;
+  --border: #cbd5e1;
+  --text: #172033;
+  --muted: #64748b;
+  --accent: #335da8;
+  --accent-2: #e7eefb;
+  --danger: #a93d3d;
+  --ten: #4f78c4;
+  --one: #e0a43a;
+  --hero: #4f8c64;
+  --enemy: #b45656;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button, input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.game-shell {
+  width: min(1100px, calc(100% - 24px));
+  margin: 12px auto 32px;
+  display: grid;
+  gap: 12px;
+}
+
+.battle-panel,
+.problem-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+.battle-panel {
+  padding: 16px 18px;
+}
+
+.battle-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 16px;
+}
+
+.battle-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.battle-stats span {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 7px 10px;
+}
+
+.eyebrow {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.subtle {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: 2px;
+}
+
+.battlefield {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.fighter.enemy {
+  text-align: right;
+}
+
+.sprite {
+  font-size: clamp(3rem, 7vw, 5.25rem);
+  line-height: 1;
+}
+
+.fighter-name {
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+.passive,
+.hp-text {
+  color: var(--muted);
+  font-size: 0.82rem;
+  margin-top: 4px;
+}
+
+.hp-track {
+  height: 12px;
+  max-width: 220px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.enemy .hp-track {
+  margin-left: auto;
+}
+
+.hp-fill {
+  height: 100%;
+  width: 100%;
+  transition: width 220ms ease;
+}
+
+.hero-fill {
+  background: var(--hero);
+}
+
+.enemy-fill {
+  background: var(--enemy);
+}
+
+.battle-message {
+  align-self: center;
+  text-align: center;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.skill-panel {
+  padding: 4px 0;
+}
+
+.skill-grid {
+  margin-top: 7px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.skill-card {
+  min-height: 68px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--text);
+  text-align: left;
+}
+
+.skill-card strong,
+.skill-card span {
+  display: block;
+}
+
+.skill-card span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin-top: 4px;
+}
+
+.skill-card.active,
+.tool-btn.active {
+  border-color: var(--accent);
+  background: var(--accent-2);
+}
+
+.problem-panel {
+  padding: 20px;
+}
+
+.problem-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.problem-text {
+  font-size: clamp(2.1rem, 6vw, 3.8rem);
+  font-weight: 900;
+  margin-top: 5px;
+  line-height: 1.08;
+}
+
+.effect-box {
+  text-align: right;
+  flex: 0 0 auto;
+}
+
+.effect-box span,
+.effect-box strong {
+  display: block;
+}
+
+.effect-box span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.effect-box strong {
+  margin-top: 2px;
+}
+
+.workspace {
+  margin-top: 20px;
+  background: var(--panel-alt);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.workspace-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.workspace-header h2 {
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.workspace-header p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.block-add,
+.tool-btn,
+.secondary-btn,
+.primary-btn {
+  min-height: 46px;
+  border-radius: 11px;
+  border: 1px solid var(--border);
+  padding: 9px 15px;
+  font-weight: 800;
+}
+
+.block-add,
+.secondary-btn,
+.tool-btn {
+  background: var(--panel);
+  color: var(--text);
+}
+
+.block-add {
+  min-width: 88px;
+  font-size: 1.08rem;
+}
+
+.ten-add {
+  border-left: 8px solid var(--ten);
+}
+
+.one-add {
+  border-left: 8px solid var(--one);
+}
+
+.tool-btn.danger {
+  color: var(--danger);
+}
+
+.primary-btn {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  padding-left: 22px;
+  padding-right: 22px;
+}
+
+.workspace-board {
+  min-height: 250px;
+  margin-top: 14px;
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.empty-message {
+  min-height: 210px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--muted);
+}
+
+.placed-blocks {
+  min-height: 210px;
+  display: flex;
+  align-items: flex-end;
+  align-content: flex-start;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.block-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.math-block {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  border: 2px solid rgba(23, 32, 51, 0.25);
+  font-weight: 900;
+  color: var(--text);
+  user-select: none;
+}
+
+.math-block.ten {
+  width: 38px;
+  height: 150px;
+  border-radius: 7px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.18) 0,
+      rgba(255,255,255,0.18) 13px,
+      rgba(0,0,0,0.08) 14px,
+      rgba(0,0,0,0.08) 15px
+    ),
+    var(--ten);
+}
+
+.math-block.one {
+  width: 38px;
+  height: 38px;
+  border-radius: 7px;
+  background: var(--one);
+}
+
+.math-block.crossed {
+  opacity: 0.55;
+}
+
+.math-block.crossed::before,
+.math-block.crossed::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 50%;
+  height: 4px;
+  background: #1f2937;
+  border-radius: 4px;
+}
+
+.math-block.crossed::before {
+  transform: rotate(45deg);
+}
+
+.math-block.crossed::after {
+  transform: rotate(-45deg);
+}
+
+.math-block.break-flash {
+  animation: breakFlash 260ms ease;
+}
+
+@keyframes breakFlash {
+  50% { transform: scale(1.12); }
+}
+
+.hint-box {
+  margin-top: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.answer-row {
+  margin-top: 18px;
+  display: flex;
+  align-items: end;
+  gap: 10px;
+}
+
+.answer-row label {
+  flex: 1;
+  font-weight: 800;
+}
+
+.answer-row input {
+  display: block;
+  width: 100%;
+  min-height: 54px;
+  margin-top: 5px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  color: var(--text);
+  padding: 8px 14px;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.feedback {
+  min-height: 28px;
+  margin-top: 12px;
+  font-weight: 800;
+}
+
+.victory-panel {
+  margin-top: 16px;
+  background: var(--accent-2);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.victory-panel h2,
+.victory-panel p {
+  margin-top: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .skill-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .battlefield {
+    grid-template-columns: 1fr 54px 1fr;
+  }
+
+  .problem-header {
+    flex-direction: column;
+  }
+
+  .effect-box {
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-shell {
+    width: min(100% - 12px, 1100px);
+  }
+
+  .battle-panel,
+  .problem-panel {
+    border-radius: 14px;
+  }
+
+  .battle-panel,
+  .problem-panel,
+  .workspace {
+    padding: 12px;
+  }
+
+  .battle-topbar {
+    flex-direction: column;
+  }
+
+  .battlefield {
+    grid-template-columns: 1fr 36px 1fr;
+    gap: 6px;
+  }
+
+  .skill-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .answer-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .answer-row .primary-btn {
+    width: 100%;
+  }
+
+  .workspace-board {
+    min-height: 230px;
+  }
+}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Quest</title>
+  <link rel="stylesheet" href="css/game.css" />
+</head>
+<body>
+  <main class="game-shell">
+    <section class="battle-panel" aria-label="Battle">
+      <div class="battle-topbar">
+        <div>
+          <div class="eyebrow">WHISPERING WOODS</div>
+          <div class="subtle">Training Battle</div>
+        </div>
+        <div class="battle-stats">
+          <span>⭐ <strong id="score">0</strong></span>
+          <span>🔥 <strong id="streak">0</strong></span>
+          <span>🛡️ <strong id="armor">0</strong></span>
+        </div>
+      </div>
+
+      <div class="battlefield">
+        <div class="fighter">
+          <div class="sprite" aria-hidden="true">🛡️</div>
+          <div class="fighter-name">Knight</div>
+          <div class="hp-track">
+            <div id="heroHpBar" class="hp-fill hero-fill"></div>
+          </div>
+          <div class="hp-text">❤️ <span id="heroHp">10</span>/10</div>
+          <div class="passive">Fortitude: armor every 3 correct</div>
+        </div>
+
+        <div id="battleMessage" class="battle-message">YOUR TURN</div>
+
+        <div class="fighter enemy">
+          <div class="sprite" aria-hidden="true">🟢</div>
+          <div class="fighter-name">Training Slime</div>
+          <div class="hp-track">
+            <div id="enemyHpBar" class="hp-fill enemy-fill"></div>
+          </div>
+          <div class="hp-text">❤️ <span id="enemyHp">1</span>/<span id="enemyMaxHp">1</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="skill-panel">
+      <div class="eyebrow">CHOOSE A SKILL</div>
+      <div class="skill-grid">
+        <button class="skill-card active" data-skill="slash">
+          <strong>⚔️ Sword Slash</strong>
+          <span>Subtraction · 2 damage</span>
+        </button>
+        <button class="skill-card" data-skill="power">
+          <strong>💥 Power Strike</strong>
+          <span>Break a ten · 3 damage</span>
+        </button>
+        <button class="skill-card" data-skill="guard">
+          <strong>🛡️ Guard</strong>
+          <span>Missing number · block</span>
+        </button>
+        <button class="skill-card" data-skill="secondWind">
+          <strong>❤️ Second Wind</strong>
+          <span>Story problem · heal 2</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="problem-panel">
+      <div class="problem-header">
+        <div>
+          <div id="skillName" class="eyebrow">⚔️ SWORD SLASH</div>
+          <div id="problem" class="problem-text">42 − 7 = ?</div>
+        </div>
+        <div class="effect-box">
+          <span>Skill effect</span>
+          <strong id="effectLabel">2 damage</strong>
+        </div>
+      </div>
+
+      <section class="workspace">
+        <div class="workspace-header">
+          <div>
+            <h2>Math Workspace</h2>
+            <p id="toolHelp">Build the starting number with tens and ones.</p>
+          </div>
+          <button id="hintBtn" class="secondary-btn" type="button">💡 Hint</button>
+        </div>
+
+        <div class="toolbar">
+          <button id="addTen" type="button" class="block-add ten-add">+10</button>
+          <button id="addOne" type="button" class="block-add one-add">+1</button>
+        </div>
+
+        <div class="toolbar tools">
+          <button id="crossMode" type="button" class="tool-btn active">✕ Cross Out</button>
+          <button id="breakMode" type="button" class="tool-btn">🔨 Break a 10</button>
+          <button id="removeMode" type="button" class="tool-btn">🗑 Remove</button>
+          <button id="clearAll" type="button" class="tool-btn danger">Clear All</button>
+        </div>
+
+        <div id="workspaceBoard" class="workspace-board">
+          <div id="emptyMessage" class="empty-message">
+            Use <strong>+10</strong> and <strong>+1</strong> to build the number.
+          </div>
+          <div id="placedBlocks" class="placed-blocks hidden"></div>
+        </div>
+
+        <div id="hintBox" class="hint-box hidden"></div>
+      </section>
+
+      <form id="answerForm" class="answer-row">
+        <label>
+          Answer
+          <input id="answerInput" inputmode="numeric" autocomplete="off" placeholder="?" />
+        </label>
+        <button type="submit" class="primary-btn">Use Skill!</button>
+      </form>
+
+      <div id="feedback" class="feedback" aria-live="polite"></div>
+
+      <div id="victoryPanel" class="victory-panel hidden">
+        <h2>Victory!</h2>
+        <p>You defeated the Training Slime.</p>
+        <button id="fightAgainBtn" type="button" class="primary-btn">Fight Again</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/math.js"></script>
+  <script src="js/blocks.js"></script>
+  <script src="js/combat.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
