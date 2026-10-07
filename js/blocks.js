@@ -1,11 +1,69 @@
-window.MathQuest=window.MathQuest||{};
-MathQuest.BlockWorkspace=(()=>{
- let blocks=[],mode="cross",id=0,placed,empty,help;
- function init(){placed=document.getElementById("placedBlocks");empty=document.getElementById("emptyMessage");help=document.getElementById("toolHelp");render()}
- function setMode(m){mode=m;document.querySelectorAll(".tool").forEach(b=>{if(b.id!=="clearAll")b.classList.remove("active")});document.getElementById(m==="cross"?"crossMode":m==="break"?"breakMode":"removeMode").classList.add("active");help.textContent=m==="cross"?"Tap blocks to cross them out. Tap again to undo.":m==="break"?"Tap a ten rod to trade it for 10 ones.":"Tap a block to remove it."}
- function add(type){blocks.push({id:++id,type,crossed:false});render()}
- function clear(){blocks=[];render()}
- function act(b){if(mode==="cross"){b.crossed=!b.crossed;render();return}if(mode==="remove"){blocks=blocks.filter(x=>x.id!==b.id);render();return}if(mode==="break"){if(b.type!=="ten"){help.textContent="Only a ten rod can be broken.";return}if(b.crossed){help.textContent="Uncross the ten first.";return}blocks=blocks.filter(x=>x.id!==b.id);for(let i=0;i<10;i++)blocks.push({id:++id,type:"one",crossed:false});help.textContent="Nice! One ten became ten ones.";render()}}
- function render(){if(!placed)return;placed.innerHTML="";if(!blocks.length){empty.classList.remove("hidden");placed.classList.add("hidden");return}empty.classList.add("hidden");placed.classList.remove("hidden");const tg=document.createElement("div"),og=document.createElement("div");tg.className=og.className="block-group";blocks.forEach(b=>{const e=document.createElement("button");e.type="button";e.className=`math-block ${b.type}${b.crossed?" crossed":""}`;e.textContent=b.type==="ten"?"10":"1";e.addEventListener("click",()=>act(b));(b.type==="ten"?tg:og).appendChild(e)});if(tg.childElementCount)placed.appendChild(tg);if(og.childElementCount)placed.appendChild(og)}
- return{init,addTen:()=>add("ten"),addOne:()=>add("one"),clear,setMode};
+window.MathQuest = window.MathQuest || {};
+
+MathQuest.BlockWorkspace = (() => {
+  let blocks = [];
+  let mode = "cross";
+  let nextId = 0;
+  let placedBlocks, emptyMessage, toolHelp;
+
+  function init() {
+    placedBlocks = document.getElementById("placedBlocks");
+    emptyMessage = document.getElementById("emptyMessage");
+    toolHelp = document.getElementById("toolHelp");
+    render();
+  }
+
+  function setMode(nextMode) {
+    mode = nextMode;
+    document.querySelectorAll(".tool").forEach(button => { if (button.id !== "clearAll") button.classList.remove("active"); });
+    const activeId = mode === "cross" ? "crossMode" : mode === "break" ? "breakMode" : "removeMode";
+    document.getElementById(activeId).classList.add("active");
+    toolHelp.textContent = mode === "cross" ? "Tap blocks to cross them out. Tap again to undo." : mode === "break" ? "Tap a ten rod to trade it for 10 ones." : "Tap a block to remove it from the workspace.";
+  }
+
+  function addBlock(type) {
+    blocks.push({ id: ++nextId, type, crossed: false });
+    render();
+  }
+
+  function clear() { blocks = []; render(); }
+
+  function actOnBlock(block) {
+    if (mode === "cross") { block.crossed = !block.crossed; render(); return; }
+    if (mode === "remove") { blocks = blocks.filter(item => item.id !== block.id); render(); return; }
+    if (mode === "break") {
+      if (block.type !== "ten") { toolHelp.textContent = "Only a ten rod can be broken into ones."; return; }
+      if (block.crossed) { toolHelp.textContent = "Uncross the ten first."; return; }
+      blocks = blocks.filter(item => item.id !== block.id);
+      for (let i = 0; i < 10; i++) blocks.push({ id: ++nextId, type: "one", crossed: false });
+      toolHelp.textContent = "Nice! One ten became ten ones.";
+      render();
+    }
+  }
+
+  function render() {
+    if (!placedBlocks) return;
+    placedBlocks.innerHTML = "";
+    if (blocks.length === 0) { emptyMessage.classList.remove("hidden"); placedBlocks.classList.add("hidden"); return; }
+    emptyMessage.classList.add("hidden");
+    placedBlocks.classList.remove("hidden");
+
+    const tensGroup = document.createElement("div");
+    const onesGroup = document.createElement("div");
+    tensGroup.className = onesGroup.className = "block-group";
+
+    blocks.forEach(block => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `math-block ${block.type}${block.crossed ? " crossed" : ""}`;
+      button.textContent = block.type === "ten" ? "10" : "1";
+      button.addEventListener("click", () => actOnBlock(block));
+      (block.type === "ten" ? tensGroup : onesGroup).appendChild(button);
+    });
+
+    if (tensGroup.childElementCount) placedBlocks.appendChild(tensGroup);
+    if (onesGroup.childElementCount) placedBlocks.appendChild(onesGroup);
+  }
+
+  return { init, addTen: () => addBlock("ten"), addOne: () => addBlock("one"), clear, setMode };
 })();

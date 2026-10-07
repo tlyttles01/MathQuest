@@ -1,11 +1,38 @@
-window.MathQuest=window.MathQuest||{};
-MathQuest.MathEngine=(()=>{
-  const r=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
-  function add1(){const a=r(1,8),b=r(1,9-a);return{prompt:`${a} + ${b} = ?`,answer:a+b,hint:`Start with ${a} and count up ${b} more.`}}
-  function sub1(){const a=r(3,9),b=r(1,a-1);return{prompt:`${a} − ${b} = ?`,answer:a-b,hint:`Start with ${a} and take away ${b}.`}}
-  function add2(){let a,b;do{a=r(5,14);b=r(2,9)}while(a+b>20);return{prompt:`${a} + ${b} = ?`,answer:a+b,hint:`Build ${a} if you want, then add ${b} more.`}}
-  function sub2(){const a=r(10,20),b=r(2,Math.min(9,a-1));return{prompt:`${a} − ${b} = ?`,answer:a-b,hint:`Build ${a} if you want, then cross out ${b}.`}}
-  function mixed(d){const add=Math.random()<.5;return d<=1?(add?add1():sub1()):(add?add2():sub2())}
-  function createProblem(o={}){const d=o.difficulty||1;return mixed(o.skill==="power"?Math.min(2,d+1):d)}
-  return{createProblem};
+window.MathQuest = window.MathQuest || {};
+
+MathQuest.MathEngine = (() => {
+  const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+  function singleDigitAddition() {
+    const a = randomInt(1, 8);
+    const b = randomInt(1, 9 - a);
+    return { prompt: `${a} + ${b} = ?`, answer: a + b, hint: `Start with ${a} and count up ${b} more.` };
+  }
+
+  function singleDigitSubtraction() {
+    const a = randomInt(3, 9);
+    const b = randomInt(1, a - 1);
+    return { prompt: `${a} − ${b} = ?`, answer: a - b, hint: `Start with ${a} and take away ${b}.` };
+  }
+
+  function withinTwentyAddition() {
+    let a, b;
+    do { a = randomInt(5, 14); b = randomInt(2, 9); } while (a + b > 20);
+    return { prompt: `${a} + ${b} = ?`, answer: a + b, hint: `Start with ${a} and add ${b} more.` };
+  }
+
+  function withinTwentySubtraction() {
+    const a = randomInt(10, 20);
+    const b = randomInt(2, Math.min(9, a - 1));
+    return { prompt: `${a} − ${b} = ?`, answer: a - b, hint: `Start with ${a} and take away ${b}.` };
+  }
+
+  function createProblem(options = {}) {
+    const difficulty = options.difficulty || 1;
+    const addition = Math.random() < 0.5;
+    if (difficulty <= 1) return addition ? singleDigitAddition() : singleDigitSubtraction();
+    return addition ? withinTwentyAddition() : withinTwentySubtraction();
+  }
+
+  return { createProblem };
 })();

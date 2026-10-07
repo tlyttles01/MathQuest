@@ -1,18 +1,56 @@
-# Math Quest v5
+# Math Quest
 
-This pass is focused on readability and child-friendly screen hierarchy.
+Current GitHub Pages-ready prototype.
 
-## Changes
+## Current progression
 
-- The math question is now the largest element in the lower half of the screen.
-- The answer box and Attack button sit directly under the question.
-- The base-10 workspace is hidden by default and opens only when **Use Blocks** is pressed.
-- Health is larger and easier to read.
-- Enemy intent is centered between the Knight and enemy instead of appearing under the Knight.
-- Skill buttons have clearer separation between the skill name, question difficulty, and effect.
-- GitHub Pages asset URLs now include `?v=5` cache-busting parameters so old CSS/JS should not mix with the new build.
-- The five-battle Whispering Woods progression remains intact.
+### Whispering Woods
+1. Tiny Slime — 1 HP
+2. Blue Slime — 2 HP
+3. Forest Goblin — 4 HP
+4. Goblin Brute — 7 HP
+   - Club Swing
+   - Club Swing
+   - Heavy Smash
+   - Guard tutorial appears on the first Heavy Smash
+5. Goblin King — 10 HP
+   - Royal Jab
+   - Crown Crash
+   - King's Smash
 
-## Suggested commit
+## Skills
 
-`feat: redesign battle UI for clarity and collapsible math workspace`
+### Sword Slash
+Available from the beginning. Normal question, 2 damage.
+
+### Guard
+Unlocks during the Goblin Brute battle. No damage. Blocks the incoming attack.
+
+### Power Strike
+Locked for all of Whispering Woods. It is awarded only after defeating the Goblin King and is intended to become usable in the next area.
+
+### Second Wind
+Still locked for a future tutorial.
+
+## Math progression
+Early battles use single-digit addition and subtraction. Later Whispering Woods battles move into addition and subtraction within 20.
+
+## Base-10 workspace
+The workspace is collapsed by default. Use **Use Blocks** to expand it.
+
+Tools:
+- +10
+- +1
+- Cross Out
+- Break a 10
+- Remove
+- Clear All
+
+No total is displayed.
+
+## GitHub Pages
+Keep `index.html`, `css/`, `js/`, and `README.md` at the root of the repository.
+
+Suggested commit:
+
+`feat: lock power strike until Goblin King victory`
