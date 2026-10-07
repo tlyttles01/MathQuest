@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=6">
+  <link rel="stylesheet" href="css/game.css?v=7">
 </head>
 <body>
 <main class="game-shell">
@@ -77,16 +77,40 @@
 
     <div id="feedback" class="feedback" aria-live="polite"></div>
 
-    <div id="victoryPanel" class="result hidden"><h2>Victory!</h2><p id="victoryText"></p><div id="battleRewards" class="reward-row"></div><button id="nextBattleBtn" class="primary" type="button">Next Battle</button></div>
-
-    <div id="chapterCompletePanel" class="result hidden">
-      <h2>Whispering Woods Cleared!</h2><p>You defeated the Goblin King.</p>
-      <div class="unlock-card"><div class="unlock-icon">💥</div><div><div class="eyebrow">NEW SKILL UNLOCKED</div><h3>Power Strike</h3><p>Solve a harder question to deal heavy damage.</p></div></div>
-      <div id="chapterSummary" class="reward-row"></div>
-      <button id="restartChapterBtn" class="primary" type="button">Play Again</button>
-    </div>
   </section>
 </main>
+
+<div id="victoryPanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="victoryTitle">
+  <div class="modal-card battle-result-modal">
+    <div class="result-icon">🏆</div>
+    <div class="eyebrow">BATTLE COMPLETE</div>
+    <h2 id="victoryTitle">Victory!</h2>
+    <p id="victoryText"></p>
+    <div id="battleRewards" class="reward-row centered-rewards"></div>
+    <button id="nextBattleBtn" class="primary modal-primary" type="button">Next Battle</button>
+  </div>
+</div>
+
+<div id="chapterCompletePanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="chapterCompleteTitle">
+  <div class="modal-card chapter-modal">
+    <div class="result-icon">👑</div>
+    <div class="eyebrow">CHAPTER COMPLETE</div>
+    <h2 id="chapterCompleteTitle">Whispering Woods Cleared!</h2>
+    <p>You defeated the Goblin King.</p>
+
+    <div class="unlock-card">
+      <div class="unlock-icon">💥</div>
+      <div>
+        <div class="eyebrow">NEW SKILL UNLOCKED</div>
+        <h3>Power Strike</h3>
+        <p>Solve a harder question to deal heavy damage.</p>
+      </div>
+    </div>
+
+    <div id="chapterSummary" class="reward-row centered-rewards"></div>
+    <button id="restartChapterBtn" class="primary modal-primary" type="button">Play Again</button>
+  </div>
+</div>
 
 <div id="tutorialOverlay" class="tutorial-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="guardTutorialTitle">
   <div class="tutorial-card">
@@ -98,10 +122,10 @@
   </div>
 </div>
 
-<script src="js/math.js?v=6"></script>
-<script src="js/blocks.js?v=6"></script>
-<script src="js/combat.js?v=6"></script>
-<script src="js/animations.js?v=6"></script>
-<script src="js/game.js?v=6"></script>
+<script src="js/math.js?v=7"></script>
+<script src="js/blocks.js?v=7"></script>
+<script src="js/combat.js?v=7"></script>
+<script src="js/animations.js?v=7"></script>
+<script src="js/game.js?v=7"></script>
 </body>
 </html>

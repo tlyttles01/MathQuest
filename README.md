@@ -54,3 +54,6 @@ Keep `index.html`, `css/`, `js/`, and `README.md` at the root of the repository.
 Suggested commit:
 
 `feat: lock power strike until Goblin King victory`
+
+## v7 UI change
+- Battle Victory and Chapter Complete are now modal popups over the battle screen instead of cards below it.
