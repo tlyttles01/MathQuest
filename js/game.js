@@ -1,346 +1,193 @@
-window.MathQuest = window.MathQuest || {};
+window.MathQuest=window.MathQuest||{};
+(()=>{
+ const $=id=>document.getElementById(id);
+ let selectedSkill="slash",currentProblem=null,hinted=false,locked=false,battleComplete=false,guardTutorialSeen=false;
+ const skillInfo={slash:{label:"⚔️ SWORD SLASH",effect:"2 damage"},power:{label:"💥 POWER STRIKE",effect:"4 damage"},guard:{label:"🛡️ GUARD",effect:"Block incoming attack"}};
+ const fmt=v=>Number.isInteger(v)?String(v):v.toFixed(1);
 
-(() => {
-  const skills = {
-    slash: {
-      label: "⚔️ SWORD SLASH",
-      effect: "2 damage"
-    },
-    power: {
-      label: "💥 POWER STRIKE",
-      effect: "3 damage"
-    },
-    guard: {
-      label: "🛡️ GUARD",
-      effect: "Block next attack"
-    },
-    secondWind: {
-      label: "❤️ SECOND WIND",
-      effect: "Heal 2 HP"
-    }
-  };
+ function updateHud(){
+  const s=MathQuest.Combat.state;
+  $("heroHp").textContent=fmt(s.heroHp);$("heroMaxHp").textContent=s.heroMaxHp;
+  $("enemyHp").textContent=fmt(s.enemyHp);$("enemyMaxHp").textContent=s.enemyMaxHp;
+  $("score").textContent=s.score;$("streak").textContent=s.streak;
+  $("heroHpBar").style.width=`${(s.heroHp/s.heroMaxHp)*100}%`;
+  $("enemyHpBar").style.width=`${(s.enemyHp/s.enemyMaxHp)*100}%`;
+ }
 
-  let selectedSkill = "slash";
-  let currentProblem = null;
-  let hinted = false;
-  let locked = false;
-  let battleComplete = false;
+ function updateIntent(){
+  const i=MathQuest.Combat.currentIntent();
+  $("intentName").textContent=i.name;
+  $("intentDamage").textContent=`💥 ${i.damage} DAMAGE`;
+  $("intentCard").classList.toggle("danger",i.dangerous);
+  $("intentCard").querySelector(".intent-title").textContent=i.dangerous?"🚨 BIG ATTACK INCOMING":"Enemy intent";
+  if(selectedSkill==="guard")$("effectLabel").textContent=`Block ${i.damage} damage`;
+ }
 
-  const $ = id => document.getElementById(id);
+ function updateBattleIdentity(){
+  const b=MathQuest.Combat.currentBattle();
+  $("battleSubtitle").textContent=`Battle ${b.id} of ${MathQuest.Combat.battles.length}`;
+  $("enemyName").textContent=b.enemyName;$("enemySprite").textContent=b.enemySprite;$("battleTip").textContent=b.tip;
+  updateIntent();
 
-  function formatNumber(value) {
-    return Number.isInteger(value) ? String(value) : value.toFixed(1);
+  const powerUnlocked=b.id>=3;
+  $("powerSkill").disabled=!powerUnlocked;$("powerSkill").classList.toggle("locked",!powerUnlocked);
+  $("powerSkill").querySelector("b").textContent=powerUnlocked?"💥 Power Strike":"💥 Power Strike 🔒";
+  $("powerSkill").querySelector("small").textContent=powerUnlocked?"Challenge question · 4 damage":"Unlocks in Battle 3";
+
+  const guardUnlocked=b.id>=4;
+  $("guardSkill").disabled=!guardUnlocked;$("guardSkill").classList.toggle("locked",!guardUnlocked);
+  $("guardSkill").querySelector("b").textContent=guardUnlocked?"🛡️ Guard":"🛡️ Guard 🔒";
+  $("guardSkill").querySelector("small").textContent=guardUnlocked?"Normal question · block incoming attack":"Unlocks later";
+
+  if(!powerUnlocked&&selectedSkill==="power")selectedSkill="slash";
+  if(!guardUnlocked&&selectedSkill==="guard")selectedSkill="slash";
+  if(b.guardTutorial&&!guardTutorialSeen)$("tutorialOverlay").classList.remove("hidden");
+ }
+
+ function selectSkill(skill){
+  if(locked||battleComplete)return;
+  const btn=document.querySelector(`[data-skill="${skill}"]`);
+  if(!btn||btn.disabled)return;
+  selectedSkill=skill;
+  document.querySelectorAll(".skill").forEach(b=>b.classList.toggle("active",b.dataset.skill===skill));
+  newProblem();
+ }
+
+ function newProblem(){
+  if(battleComplete)return;
+  hinted=false;locked=false;
+  const b=MathQuest.Combat.currentBattle();
+  currentProblem=MathQuest.MathEngine.createProblem({difficulty:b.difficulty,skill:selectedSkill});
+  $("skillName").textContent=skillInfo[selectedSkill].label;
+  $("problem").textContent=currentProblem.prompt;
+  $("answerInput").value="";$("feedback").textContent="";$("hintBox").classList.add("hidden");
+  $("effectLabel").textContent=selectedSkill==="guard"?`Block ${MathQuest.Combat.currentIntent().damage} damage`:skillInfo[selectedSkill].effect;
+  MathQuest.BlockWorkspace.clear();MathQuest.BlockWorkspace.setMode("cross");
+  updateIntent();$("answerInput").focus();
+ }
+
+ function showHint(){
+  if(locked||battleComplete)return;
+  hinted=true;$("hintBox").textContent=currentProblem.hint;$("hintBox").classList.remove("hidden");
+  if(selectedSkill==="slash")$("effectLabel").textContent="1.5 damage (hint)";
+  if(selectedSkill==="power")$("effectLabel").textContent="3 damage (hint)";
+  if(selectedSkill==="guard")$("effectLabel").textContent="Guard (hint used)";
+ }
+
+ async function enemyTurn(){
+  const a=MathQuest.Combat.enemyAttack();
+  $("battleMessage").textContent=a.blocked?"BLOCKED!":"ENEMY ATTACK";
+  await MathQuest.Animations.enemyAttack(a.damage,a.blocked);
+  updateHud();updateIntent();
+
+  if(MathQuest.Combat.state.heroHp<=0){
+    $("battleMessage").textContent="REST TIME";
+    $("feedback").textContent+=" The Knight needs a rest. Try this battle again!";
+    MathQuest.Combat.state.heroHp=MathQuest.Combat.state.heroMaxHp;
+    MathQuest.Combat.resetBattle();updateHud();
+    setTimeout(()=>{battleComplete=false;$("battleMessage").textContent="YOUR TURN";newProblem()},1400);
+    return false;
   }
+  return true;
+ }
 
-  function getSlashDamage() {
-    return MathQuest.Combat.state.upgrades.blade ? 3 : 2;
-  }
+ async function correct(){
+  const points=MathQuest.Combat.addCorrect();
+  const effect=MathQuest.Combat.useSkill(selectedSkill,hinted);
+  $("feedback").textContent=`✅ Correct! +${points} score.`;
+  updateHud();
 
-  function updateSkillLabels() {
-    const slashButton = document.querySelector('[data-skill="slash"] span');
-    if (slashButton) {
-      slashButton.textContent = `Subtraction · ${getSlashDamage()} damage`;
-    }
-
-    const guardButton = document.querySelector('[data-skill="guard"] span');
-    if (guardButton) {
-      guardButton.textContent = MathQuest.Combat.state.upgrades.shield
-        ? "Missing number · block 2"
-        : "Missing number · block";
-    }
-  }
-
-  function updateBattleIdentity() {
-    const battle = MathQuest.Combat.currentBattle();
-    $("battleSubtitle").textContent = `Battle ${battle.id} of ${MathQuest.Combat.battles.length}`;
-    $("enemyName").textContent = battle.enemyName;
-    $("enemySprite").textContent = battle.enemySprite;
-    $("battleTip").textContent = battle.tip;
-  }
-
-  function updateHud() {
-    const state = MathQuest.Combat.state;
-
-    $("heroHp").textContent = formatNumber(state.heroHp);
-    $("enemyHp").textContent = formatNumber(state.enemyHp);
-    $("enemyMaxHp").textContent = formatNumber(state.enemyMaxHp);
-    $("score").textContent = state.score;
-    $("streak").textContent = state.streak;
-    $("armor").textContent = state.armor;
-
-    $("heroHpBar").style.width = `${(state.heroHp / state.heroMaxHp) * 100}%`;
-    $("enemyHpBar").style.width = `${(state.enemyHp / state.enemyMaxHp) * 100}%`;
-  }
-
-  function refreshEffectLabel() {
-    if (selectedSkill === "slash") {
-      $("effectLabel").textContent = `${getSlashDamage()} damage`;
-    } else if (selectedSkill === "power") {
-      $("effectLabel").textContent = "3 damage";
-    } else if (selectedSkill === "guard") {
-      $("effectLabel").textContent = MathQuest.Combat.state.upgrades.shield
-        ? "Block next 2 attacks"
-        : "Block next attack";
-    } else {
-      $("effectLabel").textContent = "Heal 2 HP";
-    }
-  }
-
-  function selectSkill(skillKey) {
-    if (battleComplete) return;
-
-    selectedSkill = skillKey;
-
-    document.querySelectorAll(".skill-card").forEach(button => {
-      button.classList.toggle("active", button.dataset.skill === skillKey);
-    });
-
-    newProblem();
-  }
-
-  function newProblem() {
-    if (battleComplete) return;
-
-    currentProblem = MathQuest.MathEngine.createProblem(selectedSkill);
-    hinted = false;
-    locked = false;
-
-    $("skillName").textContent = skills[selectedSkill].label;
-    refreshEffectLabel();
-    $("problem").textContent = currentProblem.prompt;
-    $("answerInput").value = "";
-    $("feedback").textContent = "";
-    $("hintBox").classList.add("hidden");
-    $("hintBox").textContent = "";
-
-    MathQuest.BlockWorkspace.clear();
-    MathQuest.BlockWorkspace.setMode("cross");
-
-    $("answerInput").focus();
-  }
-
-  function showHint() {
-    if (battleComplete || !currentProblem) return;
-
-    hinted = true;
-    $("hintBox").textContent = currentProblem.hint;
-    $("hintBox").classList.remove("hidden");
-
-    if (selectedSkill === "slash") {
-      $("effectLabel").textContent = `${formatNumber(getSlashDamage() * 0.75)} damage (hint)`;
-    } else if (selectedSkill === "power") {
-      $("effectLabel").textContent = "2.25 damage (hint)";
-    } else if (selectedSkill === "guard") {
-      $("effectLabel").textContent = "75% shield strength";
-    } else {
-      $("effectLabel").textContent = "Heal 1.5 HP (hint)";
-    }
-  }
-
-  function resolveEnemyTurn() {
-    const attack = MathQuest.Combat.enemyAttack();
-
-    if (attack.blocked) {
-      return attack.reason === "guard"
-        ? " 🛡️ Guard blocks the enemy attack!"
-        : " 🛡️ Fortitude armor blocks the enemy attack!";
-    }
-
-    return ` The ${MathQuest.Combat.currentBattle().enemyName} attacks for ${attack.damage} damage.`;
-  }
-
-  function showVictory(message) {
-    battleComplete = true;
-    locked = true;
-
-    const reward = MathQuest.Combat.completeBattle();
-    $("battleMessage").textContent = "VICTORY!";
-    $("victoryTitle").textContent = "Victory!";
-    $("victoryText").textContent = `You defeated the ${reward.enemyName}.`;
-    $("battleRewards").innerHTML = `
-      <span class="reward-pill">⭐ Score ${MathQuest.Combat.state.score}</span>
-      <span class="reward-pill">🪙 +${reward.gold} Gold</span>
-      <span class="reward-pill">🔥 Streak ${MathQuest.Combat.state.streak}</span>
-    `;
-    $("feedback").textContent = message;
-    $("victoryPanel").classList.remove("hidden");
-
-    if (!MathQuest.Combat.hasMoreBattles()) {
-      $("fightAgainBtn").textContent = "Choose Upgrade";
-    } else {
-      $("fightAgainBtn").textContent = "Next Battle";
-    }
-
+  if(effect.kind==="guard"){
+    $("battleMessage").textContent="GUARD!";
+    await MathQuest.Animations.guardUp();
+  }else{
+    $("battleMessage").textContent=selectedSkill==="power"?"POWER STRIKE!":"SWORD SLASH!";
+    await MathQuest.Animations.playerAttack(selectedSkill,effect.value);
     updateHud();
+    if(MathQuest.Combat.state.enemyHp<=0){showVictory();return;}
   }
 
-  function handleCorrect() {
-    const correct = MathQuest.Combat.grantCorrect();
-    const effect = MathQuest.Combat.useSkill(selectedSkill, hinted);
+  if(!await enemyTurn())return;
+  $("battleMessage").textContent="YOUR TURN";
+  setTimeout(newProblem,450);
+ }
 
-    let message = `✅ Correct! +${correct.points} score. `;
+ async function wrong(){
+  MathQuest.Combat.addWrong();
+  $("feedback").textContent=`Not quite. The answer is ${currentProblem.answer}.`;
+  if(!await enemyTurn())return;
+  $("battleMessage").textContent="YOUR TURN";
+  setTimeout(newProblem,550);
+ }
 
-    if (effect.kind === "damage") {
-      message += `You deal ${formatNumber(effect.value)} damage.`;
-    } else if (effect.kind === "guard") {
-      message += MathQuest.Combat.state.upgrades.shield
-        ? "Your reinforced shield is ready to block 2 attacks."
-        : "You raise your shield.";
-    } else {
-      message += `You restore ${formatNumber(effect.value)} HP.`;
-    }
+ function showVictory(){
+  battleComplete=true;locked=true;
+  $("battleMessage").textContent="VICTORY!";
+  $("victoryText").textContent=`You defeated the ${MathQuest.Combat.currentBattle().enemyName}.`;
+  $("battleRewards").innerHTML=`<span class="reward-pill">⭐ Score ${MathQuest.Combat.state.score}</span><span class="reward-pill">🔥 Streak ${MathQuest.Combat.state.streak}</span>`;
+  $("victoryPanel").classList.remove("hidden");
+  $("nextBattleBtn").textContent=MathQuest.Combat.state.battleIndex===MathQuest.Combat.battles.length-1?"Finish Chapter":"Next Battle";
+ }
 
-    if (correct.gainedArmor) {
-      message += " 🛡️ Fortitude grants 1 Armor!";
-    }
-
-    if (MathQuest.Combat.state.enemyHp <= 0) {
-      showVictory(message);
-      return;
-    }
-
-    message += resolveEnemyTurn();
-    $("feedback").textContent = message;
-    updateHud();
-
-    if (MathQuest.Combat.state.heroHp <= 0) {
-      $("battleMessage").textContent = "RUN OVER";
-      $("feedback").textContent += " The Knight was defeated.";
-      locked = true;
-      return;
-    }
-
-    setTimeout(newProblem, 1150);
-  }
-
-  function handleWrong() {
-    MathQuest.Combat.grantWrong();
-
-    let message = `Not quite. The answer is ${currentProblem.answer}.`;
-    message += resolveEnemyTurn();
-
-    $("feedback").textContent = message;
-    updateHud();
-
-    if (MathQuest.Combat.state.heroHp <= 0) {
-      $("battleMessage").textContent = "RUN OVER";
-      $("feedback").textContent += " The Knight was defeated.";
-      locked = true;
-      return;
-    }
-
-    setTimeout(newProblem, 1500);
-  }
-
-  function submitAnswer(event) {
-    event.preventDefault();
-    if (locked || battleComplete) return;
-
-    const value = Number.parseInt($("answerInput").value, 10);
-    if (!Number.isFinite(value)) {
-      $("feedback").textContent = "Enter an answer first.";
-      return;
-    }
-
-    locked = true;
-
-    if (value === currentProblem.answer) {
-      handleCorrect();
-    } else {
-      handleWrong();
-    }
-  }
-
-function nextStepAfterVictory() {
+ function nextBattle(){
   $("victoryPanel").classList.add("hidden");
+  if(!MathQuest.Combat.advanceBattle()){showChapterComplete();return;}
+  battleComplete=false;locked=false;selectedSkill="slash";
+  document.querySelectorAll(".skill").forEach(b=>b.classList.toggle("active",b.dataset.skill==="slash"));
+  $("battleMessage").textContent="YOUR TURN";
+  updateBattleIdentity();updateHud();newProblem();
+  window.scrollTo({top:0,behavior:"smooth"});
+ }
 
-  if (MathQuest.Combat.hasMoreBattles()) {
-    const advanced = MathQuest.Combat.advanceBattle();
+ function showChapterComplete(){
+  battleComplete=true;
+  $("chapterSummary").innerHTML=`<span class="reward-pill">⭐ Final Score ${MathQuest.Combat.state.score}</span><span class="reward-pill">🔥 Final Streak ${MathQuest.Combat.state.streak}</span><span class="reward-pill">🏆 Goblin King Defeated</span>`;
+  $("chapterCompletePanel").classList.remove("hidden");
+  $("battleMessage").textContent="CHAPTER CLEAR!";
+ }
 
-    if (!advanced) {
-      return;
-    }
+ function restartChapter(){
+  $("chapterCompletePanel").classList.add("hidden");
+  MathQuest.Combat.beginChapter();
+  battleComplete=false;locked=false;selectedSkill="slash";guardTutorialSeen=false;
+  document.querySelectorAll(".skill").forEach(b=>b.classList.toggle("active",b.dataset.skill==="slash"));
+  $("battleMessage").textContent="YOUR TURN";
+  updateBattleIdentity();updateHud();newProblem();
+ }
 
-    battleComplete = false;
-    locked = false;
-    hinted = false;
+ function closeTutorial(){
+  guardTutorialSeen=true;
+  $("tutorialOverlay").classList.add("hidden");
+  selectSkill("guard");
+ }
 
-    $("battleMessage").textContent = "YOUR TURN";
-    $("feedback").textContent = "";
-    $("hintBox").classList.add("hidden");
+ function submit(e){
+  e.preventDefault();
+  if(locked||battleComplete)return;
+  const a=Number.parseInt($("answerInput").value,10);
+  if(!Number.isFinite(a)){$("feedback").textContent="Enter an answer first.";return;}
+  locked=true;
+  a===currentProblem.answer?correct():wrong();
+ }
 
-    updateBattleIdentity();
-    updateHud();
-    updateSkillLabels();
+ function init(){
+  MathQuest.BlockWorkspace.init();MathQuest.Combat.beginChapter();updateBattleIdentity();updateHud();
 
-    MathQuest.BlockWorkspace.clear();
+  document.querySelectorAll(".skill").forEach(b=>b.addEventListener("click",()=>selectSkill(b.dataset.skill)));
+  $("addTen").addEventListener("click",MathQuest.BlockWorkspace.addTen);
+  $("addOne").addEventListener("click",MathQuest.BlockWorkspace.addOne);
+  $("crossMode").addEventListener("click",()=>MathQuest.BlockWorkspace.setMode("cross"));
+  $("breakMode").addEventListener("click",()=>MathQuest.BlockWorkspace.setMode("break"));
+  $("removeMode").addEventListener("click",()=>MathQuest.BlockWorkspace.setMode("remove"));
+  $("clearAll").addEventListener("click",MathQuest.BlockWorkspace.clear);
+  $("hintBtn").addEventListener("click",showHint);
+  $("answerForm").addEventListener("submit",submit);
+  $("nextBattleBtn").addEventListener("click",nextBattle);
+  $("restartChapterBtn").addEventListener("click",restartChapter);
+  $("tutorialTryBtn").addEventListener("click",closeTutorial);
+  $("tutorialSkipBtn").addEventListener("click",closeTutorial);
 
-    newProblem();
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-
-    return;
-  }
-
-  $("upgradePanel").classList.remove("hidden");
-  $("battleMessage").textContent = "REWARD";
-}
-
-  function chooseUpgrade(key) {
-    const result = MathQuest.Combat.chooseUpgrade(key);
-
-    document.querySelectorAll(".upgrade-card").forEach(card => {
-      card.classList.toggle("selected", card.dataset.upgrade === key);
-      card.disabled = true;
-    });
-
-    $("upgradeResult").textContent = result;
-    $("upgradeResult").classList.remove("hidden");
-    $("continueRunBtn").classList.remove("hidden");
-
-    updateSkillLabels();
-    updateHud();
-  }
-
-  function continueRun() {
-    $("upgradePanel").classList.add("hidden");
-    $("battleMessage").textContent = "RUN COMPLETE";
-    $("feedback").textContent =
-      `Training complete! Run score: ${MathQuest.Combat.state.score}. Gold earned: ${MathQuest.Combat.state.runGold}. Next we'll build the rest of Whispering Woods.`;
-  }
-
-  function init() {
-    MathQuest.BlockWorkspace.init();
-    MathQuest.Combat.beginRun();
-    updateBattleIdentity();
-    updateHud();
-    updateSkillLabels();
-
-    document.querySelectorAll(".skill-card").forEach(button => {
-      button.addEventListener("click", () => selectSkill(button.dataset.skill));
-    });
-
-    document.querySelectorAll(".upgrade-card").forEach(button => {
-      button.addEventListener("click", () => chooseUpgrade(button.dataset.upgrade));
-    });
-
-    $("addTen").addEventListener("click", MathQuest.BlockWorkspace.addTen);
-    $("addOne").addEventListener("click", MathQuest.BlockWorkspace.addOne);
-    $("crossMode").addEventListener("click", () => MathQuest.BlockWorkspace.setMode("cross"));
-    $("breakMode").addEventListener("click", () => MathQuest.BlockWorkspace.setMode("break"));
-    $("removeMode").addEventListener("click", () => MathQuest.BlockWorkspace.setMode("remove"));
-    $("clearAll").addEventListener("click", MathQuest.BlockWorkspace.clear);
-
-    $("hintBtn").addEventListener("click", showHint);
-    $("answerForm").addEventListener("submit", submitAnswer);
-    $("fightAgainBtn").addEventListener("click", nextStepAfterVictory);
-    $("continueRunBtn").addEventListener("click", continueRun);
-
-    newProblem();
-  }
-
-  init();
+  newProblem();
+ }
+ init();
 })();

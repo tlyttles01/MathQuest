@@ -1,167 +1,137 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Math Quest</title>
+<link rel="stylesheet" href="css/game.css">
 </head>
 <body>
-  <main class="game-shell">
-    <section class="battle-panel" aria-label="Battle">
-      <div class="battle-topbar">
-        <div>
-          <div class="eyebrow">WHISPERING WOODS</div>
-          <div class="subtle" id="battleSubtitle">Battle 1 of 3</div>
-        </div>
-        <div class="battle-stats">
-          <span>⭐ <strong id="score">0</strong></span>
-          <span>🔥 <strong id="streak">0</strong></span>
-          <span>🛡️ <strong id="armor">0</strong></span>
+<main class="game-shell">
+  <section class="battle-panel">
+    <header class="topbar">
+      <div><div class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
+      <div class="stats"><span>⭐ <b id="score">0</b></span><span>🔥 <b id="streak">0</b></span></div>
+    </header>
+
+    <div class="battle-stage">
+      <div class="fighter">
+        <div class="fighter-title"><b>Knight</b><span>Lv. 1</span></div>
+        <div class="hp-line"><span>❤️</span><b><span id="heroHp">10</span>/<span id="heroMaxHp">10</span></b></div>
+        <div class="hp-track"><div id="heroHpBar" class="hp-fill hero-fill"></div></div>
+        <div class="sprite-wrap">
+          <div id="heroSprite" class="sprite">🛡️</div>
+          <div id="heroDamagePop" class="damage-pop hidden"></div>
+          <div id="shieldFlash" class="shield-flash hidden">🛡️</div>
         </div>
       </div>
 
-      <div class="battlefield">
-        <div class="fighter">
-          <div class="sprite" aria-hidden="true">🛡️</div>
-          <div class="fighter-name">Knight</div>
-          <div class="hp-track">
-            <div id="heroHpBar" class="hp-fill hero-fill"></div>
-          </div>
-          <div class="hp-text">❤️ <span id="heroHp">10</span>/10</div>
-          <div class="passive">Fortitude: armor every 3 correct</div>
-        </div>
-
+      <div class="intent-column">
         <div id="battleMessage" class="battle-message">YOUR TURN</div>
-
-        <div class="fighter enemy">
-          <div class="sprite" id="enemySprite" aria-hidden="true">🟢</div>
-          <div class="fighter-name" id="enemyName">Tiny Slime</div>
-          <div class="hp-track">
-            <div id="enemyHpBar" class="hp-fill enemy-fill"></div>
-          </div>
-          <div class="hp-text">❤️ <span id="enemyHp">1</span>/<span id="enemyMaxHp">1</span></div>
+        <div id="intentCard" class="intent-card">
+          <div class="intent-title">Enemy intent</div>
+          <div id="intentName" class="intent-name">Slime Bump</div>
+          <div id="intentDamage" class="intent-damage">💥 1 DAMAGE</div>
+          <div class="intent-note">Attacks after your turn if still standing</div>
         </div>
       </div>
+
+      <div class="fighter enemy">
+        <div class="fighter-title enemy-title"><b id="enemyName">Tiny Slime</b></div>
+        <div class="hp-line enemy-hp"><b><span id="enemyHp">1</span>/<span id="enemyMaxHp">1</span></b><span>❤️</span></div>
+        <div class="hp-track enemy-track"><div id="enemyHpBar" class="hp-fill enemy-fill"></div></div>
+        <div class="sprite-wrap enemy-wrap">
+          <div id="enemySprite" class="sprite">🟢</div>
+          <div id="enemyDamagePop" class="damage-pop hidden"></div>
+        </div>
+      </div>
+
+      <div id="slashEffect" class="impact hidden">⚔️</div>
+      <div id="powerEffect" class="impact power hidden">💥</div>
+    </div>
+  </section>
+
+  <section class="skills">
+    <div class="eyebrow">CHOOSE AN ACTION</div>
+    <div class="skill-grid">
+      <button class="skill active" data-skill="slash"><b>⚔️ Sword Slash</b><small>Normal question · 2 damage</small></button>
+      <button id="powerSkill" class="skill locked" data-skill="power" disabled><b>💥 Power Strike 🔒</b><small>Unlocks in Battle 3</small></button>
+      <button id="guardSkill" class="skill locked" data-skill="guard" disabled><b>🛡️ Guard 🔒</b><small>Unlocks later</small></button>
+      <button id="healSkill" class="skill locked" disabled><b>❤️ Second Wind 🔒</b><small>Unlocks later</small></button>
+    </div>
+  </section>
+
+  <section class="problem-panel">
+    <div class="problem-head">
+      <div><div id="skillName" class="eyebrow">⚔️ SWORD SLASH</div><div id="problem" class="problem">3 + 4 = ?</div></div>
+      <div class="effect"><span>Effect</span><b id="effectLabel">2 damage</b></div>
+    </div>
+
+    <div id="battleTip" class="tip">Start simple. One correct answer defeats this enemy.</div>
+
+    <section class="workspace">
+      <div class="workspace-head">
+        <div><h2>Math Workspace</h2><p id="toolHelp">Use blocks whenever they help.</p></div>
+        <button id="hintBtn" class="secondary" type="button">💡 Hint</button>
+      </div>
+
+      <div class="toolbar">
+        <button id="addTen" class="block-add ten-add" type="button">+10</button>
+        <button id="addOne" class="block-add one-add" type="button">+1</button>
+      </div>
+      <div class="toolbar">
+        <button id="crossMode" class="tool active" type="button">✕ Cross Out</button>
+        <button id="breakMode" class="tool" type="button">🔨 Break a 10</button>
+        <button id="removeMode" class="tool" type="button">🗑 Remove</button>
+        <button id="clearAll" class="tool danger" type="button">Clear All</button>
+      </div>
+
+      <div class="board">
+        <div id="emptyMessage" class="empty">Use <b>+10</b> and <b>+1</b> if you want to build the number.</div>
+        <div id="placedBlocks" class="placed hidden"></div>
+      </div>
+      <div id="hintBox" class="hint hidden"></div>
     </section>
 
-    <section class="skill-panel">
-      <div class="eyebrow">CHOOSE A SKILL</div>
-      <div class="skill-grid">
-        <button class="skill-card active" data-skill="slash">
-          <strong>⚔️ Sword Slash</strong>
-          <span>Subtraction · 2 damage</span>
-        </button>
-        <button class="skill-card" data-skill="power">
-          <strong>💥 Power Strike</strong>
-          <span>Break a ten · 3 damage</span>
-        </button>
-        <button class="skill-card" data-skill="guard">
-          <strong>🛡️ Guard</strong>
-          <span>Missing number · block</span>
-        </button>
-        <button class="skill-card" data-skill="secondWind">
-          <strong>❤️ Second Wind</strong>
-          <span>Story problem · heal 2</span>
-        </button>
-      </div>
-    </section>
+    <form id="answerForm" class="answer-row">
+      <label>Answer<input id="answerInput" inputmode="numeric" autocomplete="off" placeholder="?"></label>
+      <button class="primary" type="submit">Attack!</button>
+    </form>
+    <div id="feedback" class="feedback" aria-live="polite"></div>
 
-    <section class="problem-panel">
-      <div class="problem-header">
-        <div>
-          <div id="skillName" class="eyebrow">⚔️ SWORD SLASH</div>
-          <div id="problem" class="problem-text">42 − 7 = ?</div>
-        </div>
-        <div class="effect-box">
-          <span>Skill effect</span>
-          <strong id="effectLabel">2 damage</strong>
-        </div>
-      </div>
+    <div id="victoryPanel" class="result hidden">
+      <h2>Victory!</h2><p id="victoryText"></p>
+      <div id="battleRewards" class="reward-row"></div>
+      <button id="nextBattleBtn" class="primary" type="button">Next Battle</button>
+    </div>
 
-      <section class="workspace">
-        <div class="workspace-header">
-          <div>
-            <h2>Math Workspace</h2>
-            <p id="toolHelp">Build the starting number with tens and ones.</p>
-          </div>
-          <button id="hintBtn" class="secondary-btn" type="button">💡 Hint</button>
-        </div>
+    <div id="chapterCompletePanel" class="result hidden">
+      <h2>Whispering Woods Cleared!</h2><p>You defeated the Goblin King.</p>
+      <div id="chapterSummary" class="reward-row"></div>
+      <button id="restartChapterBtn" class="primary" type="button">Play Again</button>
+    </div>
+  </section>
+</main>
 
-        <div class="toolbar">
-          <button id="addTen" type="button" class="block-add ten-add">+10</button>
-          <button id="addOne" type="button" class="block-add one-add">+1</button>
-        </div>
+<div id="tutorialOverlay" class="tutorial-overlay hidden">
+  <div class="tutorial-card">
+    <div class="tutorial-icon">🛡️</div>
+    <div class="eyebrow">NEW SKILL</div>
+    <h2>Guard</h2>
+    <p>Some enemies charge a <b>big attack</b>.</p>
+    <div class="warning">🚨 HEAVY SMASH<br><b>4 DAMAGE</b></div>
+    <p>Use <b>Guard</b> and answer correctly to block it.</p>
+    <div class="tutorial-actions">
+      <button id="tutorialTryBtn" class="primary" type="button">Got it!</button>
+      <button id="tutorialSkipBtn" class="secondary" type="button">Skip Tutorial</button>
+    </div>
+  </div>
+</div>
 
-        <div class="toolbar tools">
-          <button id="crossMode" type="button" class="tool-btn active">✕ Cross Out</button>
-          <button id="breakMode" type="button" class="tool-btn">🔨 Break a 10</button>
-          <button id="removeMode" type="button" class="tool-btn">🗑 Remove</button>
-          <button id="clearAll" type="button" class="tool-btn danger">Clear All</button>
-        </div>
-
-        <div id="workspaceBoard" class="workspace-board">
-          <div id="emptyMessage" class="empty-message">
-            Use <strong>+10</strong> and <strong>+1</strong> to build the number.
-          </div>
-          <div id="placedBlocks" class="placed-blocks hidden"></div>
-        </div>
-
-        <div id="hintBox" class="hint-box hidden"></div>
-      </section>
-
-      <div id="battleTip" class="battle-tip">
-        Battle 1 is a quick win: defeat the Tiny Slime with one correct attack.
-      </div>
-
-      <form id="answerForm" class="answer-row">
-        <label>
-          Answer
-          <input id="answerInput" inputmode="numeric" autocomplete="off" placeholder="?" />
-        </label>
-        <button type="submit" class="primary-btn">Use Skill!</button>
-      </form>
-
-      <div id="feedback" class="feedback" aria-live="polite"></div>
-
-      <div id="victoryPanel" class="victory-panel hidden">
-        <h2 id="victoryTitle">Victory!</h2>
-        <p id="victoryText">You defeated the Tiny Slime.</p>
-        <div id="battleRewards" class="reward-summary"></div>
-        <button id="fightAgainBtn" type="button" class="primary-btn">Next Battle</button>
-      </div>
-
-      <div id="upgradePanel" class="upgrade-panel hidden">
-        <div class="eyebrow">CHOOSE 1 UPGRADE</div>
-        <h2>Your first roguelike reward</h2>
-        <p>Pick one upgrade for the rest of this run.</p>
-
-        <div class="upgrade-grid">
-          <button type="button" class="upgrade-card" data-upgrade="blade">
-            <strong>⚔️ Sharp Blade</strong>
-            <span>Sword Slash deals +1 damage.</span>
-          </button>
-
-          <button type="button" class="upgrade-card" data-upgrade="shield">
-            <strong>🛡️ Reinforced Shield</strong>
-            <span>Guard blocks the next 2 enemy attacks.</span>
-          </button>
-
-          <button type="button" class="upgrade-card" data-upgrade="meal">
-            <strong>❤️ Hearty Meal</strong>
-            <span>Gain +2 maximum HP and heal to full.</span>
-          </button>
-        </div>
-
-        <div id="upgradeResult" class="upgrade-result hidden"></div>
-        <button id="continueRunBtn" type="button" class="primary-btn hidden">Continue Run</button>
-      </div>
-    </section>
-  </main>
-
-  <script src="js/math.js"></script>
-  <script src="js/blocks.js"></script>
-  <script src="js/combat.js"></script>
-  <script src="js/game.js"></script>
+<script src="js/math.js"></script>
+<script src="js/blocks.js"></script>
+<script src="js/combat.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/game.js"></script>
 </body>
 </html>

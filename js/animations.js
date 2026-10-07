@@ -1,0 +1,10 @@
+window.MathQuest=window.MathQuest||{};
+MathQuest.Animations=(()=>{
+ const wait=ms=>new Promise(r=>setTimeout(r,ms));
+ const restart=(el,c)=>{el.classList.remove(c);void el.offsetWidth;el.classList.add(c)};
+ async function pop(target,amount,blocked=false){const el=document.getElementById(target==="enemy"?"enemyDamagePop":"heroDamagePop");el.textContent=blocked?"BLOCKED!":`-${amount}`;el.style.color=blocked?"#335da8":"#b91c1c";el.classList.remove("hidden");restart(el,"pop");await wait(620);el.classList.add("hidden");el.classList.remove("pop")}
+ async function playerAttack(kind,damage){const hero=document.getElementById("heroSprite"),enemy=document.getElementById("enemySprite"),fx=document.getElementById(kind==="power"?"powerEffect":"slashEffect");restart(hero,"hero-lunge");await wait(180);fx.classList.remove("hidden");restart(fx,kind==="power"?"power-pop":"slash-pop");restart(enemy,"hit-shake");restart(enemy,"flash");await pop("enemy",damage);fx.classList.add("hidden");hero.classList.remove("hero-lunge");enemy.classList.remove("hit-shake","flash")}
+ async function enemyAttack(damage,blocked){const enemy=document.getElementById("enemySprite"),hero=document.getElementById("heroSprite"),shield=document.getElementById("shieldFlash");restart(enemy,"enemy-lunge");await wait(180);if(blocked){shield.classList.remove("hidden");restart(shield,"shield-pop");await pop("hero",0,true);shield.classList.add("hidden")}else{restart(hero,"hit-shake");restart(hero,"flash");await pop("hero",damage);hero.classList.remove("hit-shake","flash")}enemy.classList.remove("enemy-lunge")}
+ async function guardUp(){const shield=document.getElementById("shieldFlash");shield.classList.remove("hidden");restart(shield,"shield-pop");await wait(500);shield.classList.add("hidden")}
+ return{playerAttack,enemyAttack,guardUp,wait};
+})();
