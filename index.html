@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Math Quest</title>
+  <link rel="stylesheet" href="css/game.css?v=16">
+</head>
+<body>
+<main class="game-shell">
+  <section class="battle-panel">
+    <header class="topbar">
+      <div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
+      <div class="stats"><span>⭐ <b id="score">0</b></span><span>🔥 <b id="streak">0</b></span></div>
+    </header>
+
+    <div class="battle-stage">
+      <div class="fighter">
+        <div class="fighter-title">
+          <b id="heroName">Knight</b>
+          <span>Lv. <span id="heroLevel">1</span></span>
+        </div>
+        <div class="hp-line"><span>❤️</span><b><span id="heroHp">20</span>/<span id="heroMaxHp">20</span></b></div>
+        <div class="hp-track"><div id="heroHpBar" class="hp-fill hero-fill"></div></div>
+        <div class="xp-row">
+          <span>XP</span>
+          <strong><span id="heroXp">0</span>/<span id="heroXpNext">100</span></strong>
+        </div>
+        <div class="xp-track">
+          <div id="heroXpBar" class="xp-fill"></div>
+        </div>
+        <div class="sprite-wrap"><img id="heroSprite" class="sprite character-sprite" src="characterImages/knight.png" alt="Knight"><div id="heroDamagePop" class="damage-pop hidden"></div><div id="shieldFlash" class="shield-flash hidden">🛡️</div></div>
+      </div>
+
+      <div class="intent-column">
+        <div id="battleMessage" class="battle-message">YOUR TURN</div>
+        <div id="intentCard" class="intent-card">
+          <div class="intent-title">Enemy intent</div>
+          <div id="intentName" class="intent-name">Slime Bump</div>
+          <div id="intentDamage" class="intent-damage">💥 1 DAMAGE</div>
+          <div class="intent-note">If the enemy survives your turn, this attack happens next.</div>
+        </div>
+      </div>
+
+      <div class="fighter enemy">
+        <div class="fighter-title enemy-title"><b id="enemyName">Tiny Slime</b></div>
+        <div class="hp-line enemy-hp"><b><span id="enemyHp">1</span>/<span id="enemyMaxHp">1</span></b><span>❤️</span></div>
+        <div class="hp-track enemy-track"><div id="enemyHpBar" class="hp-fill enemy-fill"></div></div>
+        <div class="sprite-wrap enemy-wrap"><img id="enemySprite" class="sprite character-sprite" src="characterImages/tiny-slime.png" alt="Tiny Slime"><div id="enemyDamagePop" class="damage-pop hidden"></div></div>
+      </div>
+
+      <div id="slashEffect" class="impact hidden">⚔️</div>
+      <div id="powerEffect" class="impact power hidden">💥</div>
+    </div>
+  </section>
+
+  <section class="skills">
+    <div class="eyebrow">CHOOSE AN ACTION</div>
+    <div class="skill-grid">
+      <button class="skill active" data-skill="slash"><b>⚔️ Sword Slash</b><small>Normal question · 2 damage</small></button>
+      <button id="powerSkill" class="skill locked" data-skill="power" disabled><b>💥 Power Strike 🔒</b><small>Defeat the Goblin King to unlock</small></button>
+      <button id="guardSkill" class="skill locked" data-skill="guard" disabled><b>🛡️ Guard 🔒</b><small>Unlocks later</small></button>
+      <button id="healSkill" class="skill locked" data-skill="secondWind" disabled><b>❤️ Second Wind 🔒</b><small>Unlocks later</small></button>
+    </div>
+  </section>
+
+  <section class="problem-panel">
+    <div class="learning-layout">
+      <section class="question-side">
+        <div class="problem-head">
+          <div>
+            <div id="skillName" class="eyebrow">⚔️ SWORD SLASH</div>
+            <div class="solve-label">Solve this to use your skill</div>
+            <div id="problem" class="problem">3 + 4 = ?</div>
+          </div>
+
+          <div class="effect">
+            <span>Effect</span>
+            <b id="effectLabel">2 damage</b>
+          </div>
+        </div>
+
+        <form id="answerForm" class="answer-row">
+          <label>
+            Your answer
+            <input id="answerInput" inputmode="numeric" autocomplete="off" placeholder="?">
+          </label>
+
+          <button class="primary attack-button" type="submit">
+            ⚔️ ATTACK
+          </button>
+        </form>
+
+        <div class="assist-row">
+          <button id="hintBtn" class="secondary" type="button">💡 Hint</button>
+        </div>
+
+        <div id="hintBox" class="hint hidden"></div>
+
+        <div id="feedback" class="feedback" aria-live="polite"></div>
+      </section>
+
+      <aside class="workspace-side">
+        <section id="workspaceSection" class="workspace">
+          <div class="workspace-head">
+            <div>
+              <div class="eyebrow">MATH TOOLS</div>
+              <h2>Block Workspace</h2>
+              <p id="toolHelp">Build, break apart, and cross out blocks whenever they help.</p>
+            </div>
+          </div>
+
+          <div class="toolbar block-builder">
+            <button id="addTen" class="block-add ten-add" type="button">+10</button>
+            <button id="addOne" class="block-add one-add" type="button">+1</button>
+          </div>
+
+          <div class="toolbar tool-picker">
+            <button id="crossMode" class="tool active" type="button">✕ Cross Out</button>
+            <button id="breakMode" class="tool" type="button">🔨 Break a 10</button>
+            <button id="removeMode" class="tool" type="button">🗑 Remove</button>
+            <button id="clearAll" class="tool danger" type="button">Clear All</button>
+          </div>
+
+          <div class="board">
+            <div id="emptyMessage" class="empty">
+              Use <b>+10</b> and <b>+1</b> to build the number.
+            </div>
+
+            <div id="placedBlocks" class="placed hidden"></div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </section>
+</main>
+
+
+<div id="storyIntroPanel" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="storyIntroTitle">
+  <div class="modal-card story-modal">
+    <div class="result-icon">🏰</div>
+    <div class="eyebrow">MATH QUEST</div>
+    <h2 id="storyIntroTitle">The Knight's Journey</h2>
+
+    <div class="story-copy">
+      <p>
+        Long ago, five learning crystals helped keep the kingdom in balance.
+        One night, the crystals were scattered across the land, and strange creatures began guarding them.
+      </p>
+
+      <p>
+        Heroes from across the kingdom have begun a quest to recover the lost crystals.
+        Each hero has different strengths, but they all grow stronger by overcoming the challenges along the way.
+      </p>
+
+      <p>
+        Your adventure begins with the <strong>Knight</strong> in <strong>Whispering Woods</strong>,
+        where the Goblin King is waiting.
+      </p>
+    </div>
+
+    <button id="beginJourneyBtn" class="primary modal-primary" type="button">
+      Begin the Journey
+    </button>
+  </div>
+</div>
+
+<div id="victoryPanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="victoryTitle">
+  <div class="modal-card battle-result-modal">
+    <div class="result-icon">🏆</div>
+    <div class="eyebrow">BATTLE COMPLETE</div>
+    <h2 id="victoryTitle">Victory!</h2>
+    <p id="victoryText"></p>
+    <div id="battleRewards" class="reward-row centered-rewards"></div>
+
+    <div class="battle-xp-panel">
+      <div class="battle-xp-heading">
+        <span>Experience</span>
+        <strong id="battleXpGain">+0 XP</strong>
+      </div>
+
+      <div class="battle-xp-level-row">
+        <span>Lv. <strong id="battleXpLevel">1</strong></span>
+        <span id="battleXpNumbers">0 / 100 XP</span>
+      </div>
+
+      <div class="battle-xp-track">
+        <div id="battleXpFill" class="battle-xp-fill"></div>
+      </div>
+
+      <div id="battleXpMessage" class="battle-xp-message">
+        Battle XP ready!
+      </div>
+    </div>
+
+    <button id="nextBattleBtn" class="primary modal-primary" type="button" disabled>
+      Adding XP...
+    </button>
+  </div>
+</div>
+
+<div id="chapterCompletePanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="chapterCompleteTitle">
+  <div class="modal-card chapter-modal">
+    <div id="chapterCompleteIcon" class="result-icon">👑</div>
+    <div class="eyebrow">WORLD COMPLETE</div>
+    <h2 id="chapterCompleteTitle">Whispering Woods Cleared!</h2>
+    <p id="chapterCompleteText">You defeated the Goblin King.</p>
+
+    <div id="skillUnlockCard" class="unlock-card">
+      <div class="unlock-icon">💥</div>
+      <div>
+        <div class="eyebrow">NEW SKILL UNLOCKED</div>
+        <h3>Power Strike</h3>
+        <p>Solve a harder question to deal heavy damage.</p>
+      </div>
+    </div>
+
+    <div id="chapterSummary" class="reward-row centered-rewards"></div>
+    <button id="nextWorldBtn" class="primary modal-primary" type="button">Enter Breakstone Mines</button>
+    <button id="restartChapterBtn" class="secondary modal-secondary" type="button">Replay This World</button>
+  </div>
+</div>
+
+
+<div id="tutorialOverlay" class="tutorial-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="guardTutorialTitle">
+  <div class="tutorial-card">
+    <div class="tutorial-icon">🛡️</div><div class="eyebrow">NEW SKILL</div><h2 id="guardTutorialTitle">Guard</h2>
+    <p>Some enemies charge a <b>big attack</b>.</p>
+    <div class="warning">🚨 HEAVY SMASH<br><b>4 DAMAGE</b></div>
+    <p>Use <b>Guard</b> and answer correctly to block it.</p>
+    <div class="tutorial-actions"><button id="tutorialTryBtn" class="primary" type="button">Got it!</button><button id="tutorialSkipBtn" class="secondary" type="button">Skip Tutorial</button></div>
+  </div>
+</div>
+
+<script src="js/heroes.js?v=16"></script>
+<script src="js/math.js?v=16"></script>
+<script src="js/blocks.js?v=16"></script>
+<script src="js/combat.js?v=16"></script>
+<script src="js/animations.js?v=16"></script>
+<script src="js/game.js?v=16"></script>
+</body>
+</html>
