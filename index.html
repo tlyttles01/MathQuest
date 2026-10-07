@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=14">
+  <link rel="stylesheet" href="css/game.css?v=15">
 </head>
 <body>
 <main class="game-shell">
@@ -172,7 +172,30 @@
     <h2 id="victoryTitle">Victory!</h2>
     <p id="victoryText"></p>
     <div id="battleRewards" class="reward-row centered-rewards"></div>
-    <button id="nextBattleBtn" class="primary modal-primary" type="button">Next Battle</button>
+
+    <div class="battle-xp-panel">
+      <div class="battle-xp-heading">
+        <span>Experience</span>
+        <strong id="battleXpGain">+0 XP</strong>
+      </div>
+
+      <div class="battle-xp-level-row">
+        <span>Lv. <strong id="battleXpLevel">1</strong></span>
+        <span id="battleXpNumbers">0 / 100 XP</span>
+      </div>
+
+      <div class="battle-xp-track">
+        <div id="battleXpFill" class="battle-xp-fill"></div>
+      </div>
+
+      <div id="battleXpMessage" class="battle-xp-message">
+        Battle XP ready!
+      </div>
+    </div>
+
+    <button id="nextBattleBtn" class="primary modal-primary" type="button" disabled>
+      Adding XP...
+    </button>
   </div>
 </div>
 
@@ -234,11 +257,11 @@
   </div>
 </div>
 
-<script src="js/heroes.js?v=14"></script>
-<script src="js/math.js?v=14"></script>
-<script src="js/blocks.js?v=14"></script>
-<script src="js/combat.js?v=14"></script>
-<script src="js/animations.js?v=14"></script>
-<script src="js/game.js?v=14"></script>
+<script src="js/heroes.js?v=15"></script>
+<script src="js/math.js?v=15"></script>
+<script src="js/blocks.js?v=15"></script>
+<script src="js/combat.js?v=15"></script>
+<script src="js/animations.js?v=15"></script>
+<script src="js/game.js?v=15"></script>
 </body>
 </html>

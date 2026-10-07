@@ -149,3 +149,19 @@ knight
 ```
 
 Future hero-specific mechanics can be layered onto this structure later.
+
+
+## v15 post-battle XP
+
+XP is no longer awarded on each correct answer.
+
+- Correct answers still increase score and streak.
+- XP is awarded only after an enemy is defeated.
+- The Victory popup now includes an animated XP progress bar.
+- The Next Battle button stays disabled until the XP animation completes.
+- If the bar fills:
+  - it visibly reaches 100%
+  - a level-up message appears
+  - the bar resets for the next level
+  - the Knight receives +2 max HP and a full heal
+- Later/harder battles award slightly more XP, and bosses receive an XP bonus.

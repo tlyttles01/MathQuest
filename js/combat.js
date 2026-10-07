@@ -218,14 +218,8 @@ MathQuest.Combat = (() => {
 
     state.score += points;
 
-    const xpGained = 5;
-    const levelResult = addXp(xpGained);
-
     return {
-      points,
-      xpGained,
-      leveledUp: levelResult.leveledUp,
-      newLevel: levelResult.newLevel
+      points
     };
   }
 
@@ -254,6 +248,34 @@ MathQuest.Combat = (() => {
       leveledUp,
       newLevel
     };
+  }
+
+  function getBattleXpReward() {
+    const battle =
+      currentBattle();
+
+    /*
+      Reward more XP for later battles and bosses,
+      while keeping the first world tuned to reach
+      Level 2 before World 2.
+    */
+    const baseXp =
+      10;
+
+    const difficultyBonus =
+      (battle.difficulty - 1) * 3;
+
+    const bossBonus =
+      state.battleIndex ===
+      currentWorld().battles.length - 1
+        ? 10
+        : 0;
+
+    return (
+      baseXp +
+      difficultyBonus +
+      bossBonus
+    );
   }
 
   function addWrong() {
@@ -357,6 +379,7 @@ MathQuest.Combat = (() => {
 
     addCorrect,
     addXp,
+    getBattleXpReward,
     addWrong,
 
     useSkill,
