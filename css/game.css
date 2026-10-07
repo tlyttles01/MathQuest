@@ -1044,3 +1044,57 @@
   outline:3px solid var(--accent);
   outline-offset:4px;
 }
+
+
+/* v24: long prompts and word problems must stay inside the card */
+.question-side,
+.question-side > *,
+.problem{
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+
+.question-side .problem{
+  white-space:normal !important;
+  overflow-wrap:anywhere;
+  word-break:normal;
+  line-height:1.08;
+  max-width:100%;
+}
+
+.question-side .problem.equation-problem{
+  white-space:nowrap !important;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+
+.question-side .problem.story-problem{
+  font-size:clamp(1.8rem,3.4vw,3rem);
+  line-height:1.14;
+  letter-spacing:-.025em;
+}
+
+/* Keep narrative prompts from forcing the whole battle area wider. */
+.question-side{
+  overflow:hidden;
+}
+
+@media(max-width:900px){
+  .question-side .problem.story-problem{
+    font-size:clamp(1.65rem,4.5vw,2.5rem);
+  }
+}
+
+@media(max-width:700px){
+  .question-side .problem.story-problem{
+    font-size:clamp(1.45rem,7vw,2.15rem);
+    line-height:1.16;
+  }
+}
+
+/* v24: make the supplied penny visibly copper while retaining pixel shading */
+.coin-penny .coin-image,
+.tray-coin.coin-penny .coin-image{
+  filter:saturate(1.18) contrast(1.04);
+}

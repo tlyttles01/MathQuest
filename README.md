@@ -263,3 +263,12 @@ The Vault now uses the user-provided pixel-art images for:
 Half-dollar and dollar-coin artwork from the reference sheet are intentionally not used.
 
 The coins no longer display generated cent values or generic SVG portraits. Their existing relative game sizes remain different so students can use the visual appearance and physical size cues to identify them.
+
+
+## v24 layout + penny fixes
+
+- Penny artwork is now copper-tinted while preserving the supplied pixel-art details.
+- Long narrative prompts now wrap inside the question card instead of forcing horizontal overflow.
+- Living Library word problems use a smaller responsive font and normal wrapping.
+- Long Vault prompts such as "You have 65¢..." also wrap correctly.
+- Only short equation-style prompts remain forced onto one line.

@@ -345,7 +345,7 @@ const skillInfo = {
     return `
       <img
         class="coin-image"
-        src="coinImages/${safeName}.png?v=23"
+        src="coinImages/${safeName}.png?v=24"
         alt=""
         draggable="false"
       >
@@ -673,9 +673,27 @@ const skillInfo = {
     $("problem").textContent =
       currentProblem.prompt;
 
+    const isEquationProblem =
+      /___|[0-9]\s*[+\-]=?|=\s*[0-9_]/.test(
+        currentProblem.prompt
+      ) &&
+      currentProblem.prompt.length <= 24;
+
+    $("problem").classList.toggle(
+      "equation-problem",
+      isEquationProblem
+    );
+
     $("problem").classList.toggle(
       "compact-problem",
+      isEquationProblem &&
       currentProblem.prompt.length >= 12
+    );
+
+    $("problem").classList.toggle(
+      "story-problem",
+      !isEquationProblem &&
+      currentProblem.prompt.length >= 26
     );
 
     $("problem").classList.toggle(
