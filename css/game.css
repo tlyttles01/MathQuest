@@ -798,3 +798,133 @@
     gap:8px;
   }
 }
+
+
+/* v21: recognizable U.S.-style coin faces, no printed cent values */
+.coin{
+  position:relative;
+  display:grid;
+  place-items:center;
+  width:72px;
+  height:72px;
+  padding:0;
+  overflow:hidden;
+  border-radius:50%;
+  border:0;
+  background:transparent;
+  box-shadow:0 4px 7px rgba(15,23,42,.22);
+  color:inherit;
+}
+
+.coin svg{
+  display:block;
+  width:100%;
+  height:100%;
+  filter:drop-shadow(0 1px 1px rgba(255,255,255,.4));
+}
+
+.coin-penny{ width:68px; height:68px; background:transparent; }
+.coin-nickel{ width:76px; height:76px; background:transparent; }
+.coin-dime{ width:61px; height:61px; background:transparent; }
+.coin-quarter{ width:86px; height:86px; background:transparent; }
+
+.coin-penny .coin-rim,
+.coin-penny .coin-field{
+  fill:#b76532;
+  stroke:#7d3f21;
+}
+
+.coin-penny .coin-field{ fill:#c97a4b; }
+
+.coin-nickel .coin-rim,
+.coin-nickel .coin-field,
+.coin-dime .coin-rim,
+.coin-dime .coin-field,
+.coin-quarter .coin-rim,
+.coin-quarter .coin-field{
+  fill:#bfc4ca;
+  stroke:#777f87;
+}
+
+.coin-nickel .coin-field{ fill:#d2d5d9; }
+.coin-dime .coin-field{ fill:#d9dde1; }
+.coin-quarter .coin-field{ fill:#c9ced3; }
+
+.coin-rim{ stroke-width:2.4; }
+.coin-field{ stroke-width:1.3; }
+.ridged{ stroke-dasharray:2.2 1.3; stroke-width:3; }
+
+.coin-portrait,
+.coin-building,
+.coin-torch,
+.coin-eagle{
+  fill:#737a80;
+  stroke:#5e6469;
+  stroke-width:1.1;
+  stroke-linejoin:round;
+}
+
+.coin-penny .coin-portrait,
+.coin-penny .coin-building{
+  fill:#8c4a29;
+  stroke:#743b22;
+}
+
+.coin-detail,
+.coin-branch{
+  fill:none;
+  stroke:#666d73;
+  stroke-width:1.4;
+  stroke-linecap:round;
+}
+
+.coin-penny .coin-detail{ stroke:#754126; }
+
+.coin-microtext,
+.coin-sideword,
+.coin-year,
+.coin-reverseword{
+  fill:#52585e;
+  font-family:Georgia,serif;
+  font-weight:700;
+  text-anchor:middle;
+  letter-spacing:.4px;
+}
+
+.coin-penny .coin-microtext,
+.coin-penny .coin-sideword,
+.coin-penny .coin-year,
+.coin-penny .coin-reverseword{ fill:#6f371f; }
+
+.coin-microtext{ font-size:5.5px; }
+.coin-sideword{ font-size:6.5px; }
+.coin-year{ font-size:6px; }
+.coin-reverseword{ font-size:6px; }
+
+.tray-coin{
+  background:transparent;
+  border:0;
+  min-width:44px;
+  min-height:44px;
+}
+
+.tray-coin:hover{
+  transform:translateY(-3px) scale(1.03);
+}
+
+.tray-coin:focus-visible{
+  outline:3px solid var(--accent);
+  outline-offset:4px;
+}
+
+.removed-zone .tray-coin{
+  opacity:.58;
+  filter:saturate(.65);
+}
+
+@media(max-width:700px){
+  .coin-penny{ width:58px; height:58px; }
+  .coin-nickel{ width:64px; height:64px; }
+  .coin-dime{ width:52px; height:52px; }
+  .coin-quarter{ width:72px; height:72px; }
+}

@@ -335,31 +335,112 @@ const skillInfo = {
     newProblem();
   }
 
+  function coinFaceMarkup(coin, side = "heads") {
+    const isHeads = side === "heads";
+
+    if (coin.name === "penny") {
+      return isHeads
+        ? `
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="47" class="coin-rim"/>
+            <circle cx="50" cy="50" r="41" class="coin-field"/>
+            <text x="50" y="17" class="coin-microtext">IN GOD WE TRUST</text>
+            <path class="coin-portrait" d="M57 27c-8 0-14 5-15 13-1 5 1 9 4 12-4 5-7 11-8 21h29c-1-8-4-15-9-20 4-3 6-7 6-12 0-8-3-14-7-14z"/>
+            <path class="coin-detail" d="M42 47c4 2 9 2 14 0M45 57c6 3 11 3 16 1"/>
+            <text x="22" y="82" class="coin-sideword">LIBERTY</text>
+            <text x="70" y="82" class="coin-year">2024</text>
+          </svg>`
+        : `
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="47" class="coin-rim"/>
+            <circle cx="50" cy="50" r="41" class="coin-field"/>
+            <text x="50" y="17" class="coin-microtext">UNITED STATES OF AMERICA</text>
+            <path class="coin-building" d="M30 64h40v8H30zM34 42h32v21H34zM30 40l20-13 20 13zM40 47v16M50 47v16M60 47v16"/>
+            <text x="50" y="82" class="coin-reverseword">ONE CENT</text>
+          </svg>`;
+    }
+
+    if (coin.name === "nickel") {
+      return isHeads
+        ? `
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="47" class="coin-rim"/>
+            <circle cx="50" cy="50" r="41" class="coin-field"/>
+            <text x="50" y="17" class="coin-microtext">IN GOD WE TRUST</text>
+            <path class="coin-portrait" d="M54 24c-8 1-14 7-14 15 0 5 2 9 6 12-4 5-7 12-8 23h31c-1-9-4-16-10-22 4-4 6-8 6-13 0-9-4-15-11-15z"/>
+            <path class="coin-detail" d="M42 45c5 2 10 2 15-1M46 55c6 3 12 3 17 0"/>
+            <text x="26" y="82" class="coin-sideword">LIBERTY</text>
+            <text x="70" y="82" class="coin-year">2024</text>
+          </svg>`
+        : `
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="47" class="coin-rim"/>
+            <circle cx="50" cy="50" r="41" class="coin-field"/>
+            <text x="50" y="17" class="coin-microtext">E PLURIBUS UNUM</text>
+            <path class="coin-building" d="M26 66h48v7H26zM32 46h36v20H32zM29 44l21-14 21 14zM39 51v15M50 51v15M61 51v15"/>
+            <text x="50" y="82" class="coin-reverseword">MONTICELLO</text>
+          </svg>`;
+    }
+
+    if (coin.name === "dime") {
+      return isHeads
+        ? `
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="47" class="coin-rim ridged"/>
+            <circle cx="50" cy="50" r="40" class="coin-field"/>
+            <text x="50" y="17" class="coin-microtext">LIBERTY</text>
+            <path class="coin-portrait" d="M57 25c-9 0-15 6-15 15 0 5 2 10 6 13-5 5-8 12-9 22h31c-1-9-4-16-10-21 4-4 6-9 6-14 0-9-3-15-9-15z"/>
+            <path class="coin-detail" d="M44 45c5 2 10 2 15-1M47 56c6 3 11 3 16 0"/>
+            <text x="67" y="82" class="coin-year">2024</text>
+          </svg>`
+        : `
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="47" class="coin-rim ridged"/>
+            <circle cx="50" cy="50" r="40" class="coin-field"/>
+            <path class="coin-torch" d="M47 30h6l-2 14 7 10-6 4v19h-4V58l-6-4 7-10z"/>
+            <path class="coin-branch" d="M29 69c11-7 17-16 19-26M71 69c-11-7-17-16-19-26"/>
+            <text x="50" y="18" class="coin-microtext">UNITED STATES OF AMERICA</text>
+            <text x="50" y="84" class="coin-reverseword">ONE DIME</text>
+          </svg>`;
+    }
+
+    return isHeads
+      ? `
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="47" class="coin-rim ridged"/>
+          <circle cx="50" cy="50" r="40" class="coin-field"/>
+          <text x="50" y="17" class="coin-microtext">LIBERTY</text>
+          <path class="coin-portrait" d="M55 23c-8 0-14 6-14 15 0 6 2 10 6 14-5 5-8 12-9 23h32c-1-10-5-17-11-22 4-4 6-9 6-15 0-9-4-15-10-15z"/>
+          <path class="coin-detail" d="M43 45c5 2 10 2 15-1M46 56c6 3 12 3 17 0"/>
+          <text x="68" y="82" class="coin-year">2024</text>
+        </svg>`
+      : `
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="47" class="coin-rim ridged"/>
+          <circle cx="50" cy="50" r="40" class="coin-field"/>
+          <text x="50" y="17" class="coin-microtext">UNITED STATES OF AMERICA</text>
+          <path class="coin-eagle" d="M50 37c8-7 18-8 27-4-5 3-9 7-11 12 5 2 9 5 12 9-8 1-14 0-20-4-2 8-3 16-2 24H44c1-8 0-16-2-24-6 4-12 5-20 4 3-4 7-7 12-9-2-5-6-9-11-12 9-4 19-3 27 4z"/>
+          <text x="50" y="84" class="coin-reverseword">QUARTER DOLLAR</text>
+        </svg>`;
+  }
+
+  function createCoinElement(coin, side = "heads", interactive = false) {
+    const el = document.createElement(interactive ? "button" : "div");
+    if (interactive) el.type = "button";
+
+    el.className = `coin coin-${coin.name}${interactive ? " tray-coin" : ""}`;
+    el.setAttribute("aria-label", `${coin.name}, ${side}`);
+    el.innerHTML = coinFaceMarkup(coin, side);
+    return el;
+  }
+
   function renderCoinVisual(visual) {
-    const wrap =
-      document.createElement("div");
+    const wrap = document.createElement("div");
+    wrap.className = "coin-row";
 
-    wrap.className =
-      "coin-row";
-
-    visual.coins.forEach(coin => {
-      const coinEl =
-        document.createElement("div");
-
-      coinEl.className =
-        `coin coin-${coin.name}`;
-
-      coinEl.setAttribute(
-        "aria-label",
-        `${coin.name}, ${coin.value} cents`
-      );
-
-      coinEl.innerHTML =
-        `<span>${coin.label}</span>`;
-
-      wrap.appendChild(
-        coinEl
-      );
+    visual.coins.forEach((coin, index) => {
+      const side = index % 2 === 0 ? "heads" : "tails";
+      wrap.appendChild(createCoinElement(coin, side, false));
     });
 
     return wrap;
@@ -570,6 +651,71 @@ const skillInfo = {
     else if (!isCoinTray) {
       $("answerInput").focus();
     }
+  }
+
+  function renderCoinTray() {
+    const active = $("coinTrayActive");
+    const removed = $("coinTrayRemoved");
+    active.innerHTML = "";
+    removed.innerHTML = "";
+
+    coinTrayState.forEach((item, index) => {
+      const button = createCoinElement(item.coin, item.side, true);
+      button.dataset.coinIndex = String(index);
+      button.title = item.removed ? "Put this coin back" : "Give this coin away";
+      button.addEventListener("click", () => {
+        item.removed = !item.removed;
+        renderCoinTray();
+      });
+
+      (item.removed ? removed : active).appendChild(button);
+    });
+
+    if (!active.children.length) {
+      active.innerHTML = '<div class="coin-tray-empty">No coins left here.</div>';
+    }
+    if (!removed.children.length) {
+      removed.innerHTML = '<div class="coin-tray-empty">Coins you give away will appear here.</div>';
+    }
+  }
+
+  function updateWorkspace(problem) {
+    const world = MathQuest.Combat.currentWorld();
+    const layout = $("learningLayout");
+    const workspace = $("workspaceSide");
+    const blocks = $("blockWorkspaceTools");
+    const coins = $("coinWorkspaceTools");
+
+    layout.classList.remove("single-column-learning");
+    workspace.classList.remove("hidden");
+    blocks.classList.add("hidden");
+    coins.classList.add("hidden");
+
+    if (world.id === "woods" || world.id === "mines") {
+      $("workspaceTitle").textContent = "Block Workspace";
+      $("toolHelp").textContent = "Build, break apart, and cross out blocks whenever they help.";
+      blocks.classList.remove("hidden");
+      coinTrayState = [];
+      return;
+    }
+
+    if (world.id === "vault" && problem.answerType === "coinTray") {
+      $("workspaceTitle").textContent = "Coin Tray";
+      $("toolHelp").textContent = "Look at the coins themselves. Tap coins to move them to your friend, then submit when you think the amount is right.";
+      coins.classList.remove("hidden");
+      coinTrayState = problem.coinTray.coins.map((coin, index) => ({
+        coin,
+        removed:false,
+        side:index % 2 === 0 ? "heads" : "tails"
+      }));
+      renderCoinTray();
+      return;
+    }
+
+    // Story problems, visual money questions, and clock questions do not need blocks.
+    workspace.classList.add("hidden");
+    layout.classList.add("single-column-learning");
+    coinTrayState = [];
   }
 
   function newProblem() {

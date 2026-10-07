@@ -234,3 +234,10 @@ Normal difficulty begins with hour/half-hour clocks, then adds quarter-hour and 
 - The Vault uses an interactive coin tray for subtraction/give-away problems. The player taps coins to move them into a Give to your friend area, then submits the tray. No running total is displayed.
 - Clocktower hides the block workspace and enlarges the analog clock. Power Strike now asks elapsed-time subtraction questions such as showing 7:45 and asking the player to subtract 15 minutes, with 7:30 as the answer.
 - Later normal Vault battles can also use coin-removal problems; Power Strike always uses them.
+
+
+## v21 realistic coin recognition
+
+The Vault no longer prints 1¢ / 5¢ / 10¢ / 25¢ on the coins themselves. Coins now use custom U.S.-style illustrated faces with recognizable relative sizes, copper/silver coloring, portrait/reverse details, and mixed heads/tails. The internal values are unchanged, so the player must recognize the coin type instead of reading the answer from the coin.
+
+This release also completes the interactive coin-tray workspace code used by the v20 money-removal questions.
