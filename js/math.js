@@ -4,9 +4,18 @@ MathQuest.MathEngine = (() => {
   const randomInt = (min, max) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
 
+  function choose(list) {
+    return list[randomInt(0, list.length - 1)];
+  }
+
+  // -----------------------------
+  // Whispering Woods: basic math
+  // -----------------------------
+
   function singleDigitAddition() {
     const a = randomInt(1, 8);
     const b = randomInt(1, 9 - a);
+
     return {
       prompt: `${a} + ${b} = ?`,
       answer: a + b,
@@ -17,6 +26,7 @@ MathQuest.MathEngine = (() => {
   function singleDigitSubtraction() {
     const a = randomInt(3, 9);
     const b = randomInt(1, a - 1);
+
     return {
       prompt: `${a} − ${b} = ?`,
       answer: a - b,
@@ -25,7 +35,9 @@ MathQuest.MathEngine = (() => {
   }
 
   function withinTwentyAddition() {
-    let a, b;
+    let a;
+    let b;
+
     do {
       a = randomInt(5, 14);
       b = randomInt(2, 9);
@@ -49,39 +61,109 @@ MathQuest.MathEngine = (() => {
     };
   }
 
-  function tensAndOnes() {
-    const tens = randomInt(2, 8);
-    const ones = randomInt(1, 9);
-    const total = tens * 10 + ones;
+  function createBasicProblem(difficulty, challenge) {
+    // Power Strike always stays in the same world topic;
+    // it simply asks a harder version.
+    const effectiveDifficulty =
+      challenge
+        ? Math.min(2, difficulty + 1)
+        : difficulty;
 
-    if (Math.random() < 0.5) {
-      return {
-        prompt: `${tens} tens + ${ones} ones = ?`,
-        answer: total,
-        hint: `${tens} tens means ${tens * 10}. Add ${ones} ones.`
-      };
+    const addition =
+      Math.random() < 0.5;
+
+    if (effectiveDifficulty <= 1) {
+      return addition
+        ? singleDigitAddition()
+        : singleDigitSubtraction();
     }
 
-    return {
-      prompt: `${total} = ? tens and ${ones} ones`,
-      answer: tens,
-      hint: `Look at the tens digit in ${total}.`
-    };
+    return addition
+      ? withinTwentyAddition()
+      : withinTwentySubtraction();
   }
 
-  function addTensAndOnes() {
-    const a = randomInt(21, 59);
-    const b = randomInt(1, 9);
+  // --------------------------------
+  // Breakstone Mines: place value
+  // --------------------------------
+
+  function normalDecomposition() {
+    const tens = randomInt(2, 8) * 10;
+    const ones = randomInt(1, 9);
+    const total = tens + ones;
+
+    const templates = [
+      {
+        prompt: `${total} = □ + ${tens}`,
+        answer: ones,
+        hint: `What number do you add to ${tens} to make ${total}?`
+      },
+      {
+        prompt: `${total} = ${tens} + □`,
+        answer: ones,
+        hint: `${total} is ${tens} and how many more?`
+      },
+      {
+        prompt: `${tens} + □ = ${total}`,
+        answer: ones,
+        hint: `Count from ${tens} up to ${total}.`
+      },
+      {
+        prompt: `□ + ${tens} = ${total}`,
+        answer: ones,
+        hint: `What number joins ${tens} to make ${total}?`
+      }
+    ];
+
+    return choose(templates);
+  }
+
+  function challengeDecomposition() {
+    const tens = randomInt(2, 8) * 10;
+    const ones = randomInt(1, 9);
+    const total = tens + ones;
+
+    const templates = [
+      {
+        prompt: `${total} = ${ones} + □`,
+        answer: tens,
+        hint: `${total} has ${ones} ones. What is the value of the tens?`
+      },
+      {
+        prompt: `□ + ${ones} = ${total}`,
+        answer: tens,
+        hint: `What multiple of 10 joins ${ones} to make ${total}?`
+      },
+      {
+        prompt: `${ones} + □ = ${total}`,
+        answer: tens,
+        hint: `Think about the tens part of ${total}.`
+      }
+    ];
+
+    return choose(templates);
+  }
+
+  function addWithoutRegrouping() {
+    let a;
+    let b;
+
+    do {
+      a = randomInt(21, 79);
+      b = randomInt(1, 8);
+    } while ((a % 10) + b >= 10);
 
     return {
       prompt: `${a} + ${b} = ?`,
       answer: a + b,
-      hint: `Build ${a} with tens and ones, then add ${b} ones.`
+      hint: `Keep the tens the same and add ${b} to the ones.`
     };
   }
 
   function subtractWithoutRegrouping() {
-    let a, b;
+    let a;
+    let b;
+
     do {
       a = randomInt(21, 79);
       b = randomInt(1, 9);
@@ -90,12 +172,30 @@ MathQuest.MathEngine = (() => {
     return {
       prompt: `${a} − ${b} = ?`,
       answer: a - b,
-      hint: `Build ${a}. You can subtract ${b} ones without breaking a ten.`
+      hint: `The ones digit is large enough to subtract ${b} without breaking a ten.`
+    };
+  }
+
+  function addAcrossTen() {
+    let a;
+    let b;
+
+    do {
+      a = randomInt(21, 69);
+      b = randomInt(3, 9);
+    } while ((a % 10) + b < 10);
+
+    return {
+      prompt: `${a} + ${b} = ?`,
+      answer: a + b,
+      hint: `Make the next ten first, then add what is left.`
     };
   }
 
   function subtractWithRegrouping() {
-    let a, b;
+    let a;
+    let b;
+
     do {
       a = randomInt(21, 79);
       b = randomInt(3, 9);
@@ -108,51 +208,94 @@ MathQuest.MathEngine = (() => {
     };
   }
 
-  function createBasicProblem(difficulty) {
-    const addition = Math.random() < 0.5;
+  function twoDigitSubtractWithRegrouping() {
+    let a;
+    let b;
 
-    if (difficulty <= 1) {
-      return addition
-        ? singleDigitAddition()
-        : singleDigitSubtraction();
-    }
+    do {
+      a = randomInt(42, 89);
+      b = randomInt(12, Math.min(39, a - 10));
+    } while (
+      (a % 10) >= (b % 10) ||
+      Math.floor(a / 10) <= Math.floor(b / 10)
+    );
 
-    return addition
-      ? withinTwentyAddition()
-      : withinTwentySubtraction();
+    return {
+      prompt: `${a} − ${b} = ?`,
+      answer: a - b,
+      hint: `Break one ten so you can subtract the ones first, then subtract the tens.`
+    };
   }
 
-  function createPlaceValueProblem(difficulty, skill) {
-    if (skill === "power") {
-      return subtractWithRegrouping();
-    }
+  function createPlaceValueProblem(difficulty, challenge) {
+    /*
+      Difficulty 1:
+        Normal: 27 = □ + 20
+        Challenge: 27 = 7 + □
+
+      Difficulty 2:
+        Normal: 42 + 5 / 48 - 5 without regrouping
+        Challenge: cross-a-ten addition/subtraction
+
+      Difficulty 3:
+        Normal: 42 - 7 / 53 - 8
+        Challenge: 53 - 18 / 72 - 26
+    */
 
     if (difficulty <= 1) {
-      return tensAndOnes();
+      return challenge
+        ? challengeDecomposition()
+        : normalDecomposition();
     }
 
     if (difficulty === 2) {
+      if (challenge) {
+        return Math.random() < 0.5
+          ? addAcrossTen()
+          : subtractWithRegrouping();
+      }
+
       return Math.random() < 0.5
-        ? addTensAndOnes()
+        ? addWithoutRegrouping()
         : subtractWithoutRegrouping();
     }
 
-    return subtractWithRegrouping();
+    return challenge
+      ? twoDigitSubtractWithRegrouping()
+      : subtractWithRegrouping();
   }
 
   function createProblem(options = {}) {
-    const topic = options.topic || "basic";
-    const difficulty = options.difficulty || 1;
-    const skill = options.skill || "slash";
+    const topic =
+      options.topic || "basic";
+
+    const difficulty =
+      options.difficulty || 1;
+
+    const skill =
+      options.skill || "slash";
+
+    /*
+      Guard deliberately uses NORMAL questions.
+      The combat decision is defensive, not a change
+      in curriculum.
+
+      Power Strike uses the same WORLD TOPIC but a
+      harder challenge version.
+    */
+    const challenge =
+      skill === "power";
 
     if (topic === "placeValue") {
-      return createPlaceValueProblem(difficulty, skill);
+      return createPlaceValueProblem(
+        difficulty,
+        challenge
+      );
     }
 
     return createBasicProblem(
-      skill === "power"
-        ? Math.min(2, difficulty + 1)
-        : difficulty
+      difficulty,
+      challenge
     );
   }
 

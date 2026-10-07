@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=9">
+  <link rel="stylesheet" href="css/game.css?v=11">
 </head>
 <body>
 <main class="game-shell">
@@ -55,28 +55,73 @@
   </section>
 
   <section class="problem-panel">
-    <div class="problem-head">
-      <div><div id="skillName" class="eyebrow">⚔️ SWORD SLASH</div><div class="solve-label">Solve this to use your skill</div><div id="problem" class="problem">3 + 4 = ?</div></div>
-      <div class="effect"><span>Effect</span><b id="effectLabel">2 damage</b></div>
+    <div class="learning-layout">
+      <section class="question-side">
+        <div class="problem-head">
+          <div>
+            <div id="skillName" class="eyebrow">⚔️ SWORD SLASH</div>
+            <div class="solve-label">Solve this to use your skill</div>
+            <div id="problem" class="problem">3 + 4 = ?</div>
+          </div>
+
+          <div class="effect">
+            <span>Effect</span>
+            <b id="effectLabel">2 damage</b>
+          </div>
+        </div>
+
+        <form id="answerForm" class="answer-row">
+          <label>
+            Your answer
+            <input id="answerInput" inputmode="numeric" autocomplete="off" placeholder="?">
+          </label>
+
+          <button class="primary attack-button" type="submit">
+            ⚔️ ATTACK
+          </button>
+        </form>
+
+        <div class="assist-row">
+          <button id="hintBtn" class="secondary" type="button">💡 Hint</button>
+        </div>
+
+        <div id="hintBox" class="hint hidden"></div>
+
+        <div id="feedback" class="feedback" aria-live="polite"></div>
+      </section>
+
+      <aside class="workspace-side">
+        <section id="workspaceSection" class="workspace">
+          <div class="workspace-head">
+            <div>
+              <div class="eyebrow">MATH TOOLS</div>
+              <h2>Block Workspace</h2>
+              <p id="toolHelp">Build, break apart, and cross out blocks whenever they help.</p>
+            </div>
+          </div>
+
+          <div class="toolbar block-builder">
+            <button id="addTen" class="block-add ten-add" type="button">+10</button>
+            <button id="addOne" class="block-add one-add" type="button">+1</button>
+          </div>
+
+          <div class="toolbar tool-picker">
+            <button id="crossMode" class="tool active" type="button">✕ Cross Out</button>
+            <button id="breakMode" class="tool" type="button">🔨 Break a 10</button>
+            <button id="removeMode" class="tool" type="button">🗑 Remove</button>
+            <button id="clearAll" class="tool danger" type="button">Clear All</button>
+          </div>
+
+          <div class="board">
+            <div id="emptyMessage" class="empty">
+              Use <b>+10</b> and <b>+1</b> to build the number.
+            </div>
+
+            <div id="placedBlocks" class="placed hidden"></div>
+          </div>
+        </section>
+      </aside>
     </div>
-
-    <form id="answerForm" class="answer-row">
-      <label>Your answer<input id="answerInput" inputmode="numeric" autocomplete="off" placeholder="?"></label>
-      <button class="primary attack-button" type="submit">⚔️ ATTACK</button>
-    </form>
-
-    <div class="assist-row"><button id="hintBtn" class="secondary" type="button">💡 Hint</button><button id="toggleBlocksBtn" class="secondary" type="button">🧱 Use Blocks</button></div>
-    <div id="hintBox" class="hint hidden"></div>
-
-    <section id="workspaceSection" class="workspace hidden">
-      <div class="workspace-head"><div><h2>Math Workspace</h2><p id="toolHelp">Use blocks whenever they help.</p></div></div>
-      <div class="toolbar"><button id="addTen" class="block-add ten-add" type="button">+10</button><button id="addOne" class="block-add one-add" type="button">+1</button></div>
-      <div class="toolbar"><button id="crossMode" class="tool active" type="button">✕ Cross Out</button><button id="breakMode" class="tool" type="button">🔨 Break a 10</button><button id="removeMode" class="tool" type="button">🗑 Remove</button><button id="clearAll" class="tool danger" type="button">Clear All</button></div>
-      <div class="board"><div id="emptyMessage" class="empty">Use <b>+10</b> and <b>+1</b> to build the number.</div><div id="placedBlocks" class="placed hidden"></div></div>
-    </section>
-
-    <div id="feedback" class="feedback" aria-live="polite"></div>
-
   </section>
 </main>
 
@@ -123,10 +168,10 @@
   </div>
 </div>
 
-<script src="js/math.js?v=9"></script>
-<script src="js/blocks.js?v=9"></script>
-<script src="js/combat.js?v=9"></script>
-<script src="js/animations.js?v=9"></script>
-<script src="js/game.js?v=9"></script>
+<script src="js/math.js?v=11"></script>
+<script src="js/blocks.js?v=11"></script>
+<script src="js/combat.js?v=11"></script>
+<script src="js/animations.js?v=11"></script>
+<script src="js/game.js?v=11"></script>
 </body>
 </html>

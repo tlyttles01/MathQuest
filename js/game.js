@@ -9,9 +9,7 @@ window.MathQuest = window.MathQuest || {};
   let locked = false;
   let battleComplete = false;
   let guardTutorialSeen = false;
-  let blocksVisible = false;
-
-  const skillInfo = {
+const skillInfo = {
     slash: {
       label: "⚔️ SWORD SLASH",
       effect: "2 damage"
@@ -313,22 +311,6 @@ window.MathQuest = window.MathQuest || {};
       $("effectLabel").textContent =
         "Guard (hint used)";
     }
-  }
-
-  function toggleBlocks() {
-    blocksVisible =
-      !blocksVisible;
-
-    $("workspaceSection")
-      .classList.toggle(
-        "hidden",
-        !blocksVisible
-      );
-
-    $("toggleBlocksBtn").textContent =
-      blocksVisible
-        ? "▲ Hide Blocks"
-        : "🧱 Use Blocks";
   }
 
   async function enemyTurn() {
@@ -754,14 +736,7 @@ window.MathQuest = window.MathQuest || {};
         "click",
         showHint
       );
-
-    $("toggleBlocksBtn")
-      .addEventListener(
-        "click",
-        toggleBlocks
-      );
-
-    $("answerForm")
+$("answerForm")
       .addEventListener(
         "submit",
         submitAnswer

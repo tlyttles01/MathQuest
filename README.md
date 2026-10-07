@@ -54,3 +54,39 @@ characterImages/
 ```
 
 The Knight and all current Whispering Woods / Breakstone Mines enemies use these image assets instead of emoji battle sprites.
+
+
+## v10 math skill behavior
+
+Skills no longer choose a different math subject.
+
+The current world determines the math topic:
+
+- Sword Slash = normal version of the current world's math
+- Guard = normal version of the current world's math
+- Power Strike = harder version of the same math topic
+
+### Breakstone Mines progression
+
+Early:
+- `27 = □ + 20`
+- `40 + □ = 46`
+- Challenge examples: `27 = 7 + □`
+
+Middle:
+- normal addition/subtraction without regrouping
+- challenge questions cross a ten
+
+Late:
+- normal break-a-ten subtraction such as `42 - 7`
+- Power Strike can ask two-digit regrouping such as `53 - 18`
+
+
+## v11 layout
+
+The lower learning area is now permanently split into two columns:
+
+- Left: question, answer field, attack button, and hint.
+- Right: always-visible block workspace.
+
+The block workspace no longer collapses, so the player can see the full problem and manipulatives at the same time.
