@@ -90,3 +90,62 @@ The lower learning area is now permanently split into two columns:
 - Right: always-visible block workspace.
 
 The block workspace no longer collapses, so the player can see the full problem and manipulatives at the same time.
+
+
+## v12 experience / leveling
+
+Experience now has a gameplay purpose.
+
+- Every correct answer gives **5 XP**.
+- Level 2 requires **100 XP**.
+- A perfect Sword Slash-only run through the 7 Whispering Woods battles is designed to land around the first level-up before entering World 2.
+- Every level grants:
+  - **+2 maximum HP**
+  - **full heal**
+- Damage does **not** increase on level-up so leveling does not reduce the amount of math practice.
+- XP and level are shown beside the Knight with a visible XP bar.
+- Level-up uses a dedicated popup celebration.
+
+
+## v13 story / missing-number display
+
+- Missing-number equations now use `___` instead of the square symbol.
+- A short opening story now appears before the first battle.
+- The story establishes the five learning crystals and the Knight's journey through:
+  - Whispering Woods
+  - Breakstone Mines
+  - Living Library
+  - The Vault
+  - Clocktower
+
+
+## v14 hero/class-ready structure
+
+The story no longer treats the Knight as the only possible chosen hero.
+
+The opening now explains that heroes from across the kingdom are searching for the five learning crystals, and that the adventure currently begins with the Knight.
+
+A new file was added:
+
+```text
+js/heroes.js
+```
+
+Hero definitions now live there. The current Knight definition includes:
+
+- hero id
+- display name
+- sprite image
+- starting max HP
+- unlock status
+- description
+
+The battle UI reads the active hero's name and image from this registry. This makes it much easier to add classes such as Mage or Ranger later without rebuilding the page layout.
+
+The current active hero remains:
+
+```text
+knight
+```
+
+Future hero-specific mechanics can be layered onto this structure later.

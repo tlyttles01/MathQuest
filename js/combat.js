@@ -129,8 +129,18 @@ MathQuest.Combat = (() => {
     battleIndex: 0,
     turnNumber: 0,
     guardActive: false,
-    powerStrikeUnlocked: false
+    powerStrikeUnlocked: false,
+    heroId: "knight",
+    level: 1,
+    xp: 0,
+    xpToNext: 100
   };
+
+  function currentHero() {
+    return MathQuest.Heroes.get(
+      state.heroId
+    );
+  }
 
   const currentWorld = () => worlds[state.worldIndex];
   const currentBattle = () => currentWorld().battles[state.battleIndex];
@@ -157,12 +167,22 @@ MathQuest.Combat = (() => {
   }
 
   function beginGame() {
-    state.heroHp = state.heroMaxHp;
+    const hero =
+      MathQuest.Heroes.get(state.heroId);
+
+    state.heroMaxHp =
+      hero.startingMaxHp;
+
+    state.heroHp =
+      state.heroMaxHp;
     state.score = 0;
     state.streak = 0;
     state.worldIndex = 0;
     state.battleIndex = 0;
     state.powerStrikeUnlocked = false;
+    state.level = 1;
+    state.xp = 0;
+    state.xpToNext = 100;
     resetBattle();
   }
 
@@ -198,7 +218,42 @@ MathQuest.Combat = (() => {
 
     state.score += points;
 
-    return points;
+    const xpGained = 5;
+    const levelResult = addXp(xpGained);
+
+    return {
+      points,
+      xpGained,
+      leveledUp: levelResult.leveledUp,
+      newLevel: levelResult.newLevel
+    };
+  }
+
+  function addXp(amount) {
+    state.xp += amount;
+
+    let leveledUp = false;
+    let newLevel = state.level;
+
+    while (state.xp >= state.xpToNext) {
+      state.xp -= state.xpToNext;
+      state.level++;
+      newLevel = state.level;
+      leveledUp = true;
+
+      // Each level makes the Knight sturdier without
+      // shortening the math practice by increasing damage.
+      state.heroMaxHp += 2;
+      state.heroHp = state.heroMaxHp;
+
+      // Slightly larger requirement for the next level.
+      state.xpToNext = 100 + (state.level - 1) * 25;
+    }
+
+    return {
+      leveledUp,
+      newLevel
+    };
   }
 
   function addWrong() {
@@ -289,6 +344,7 @@ MathQuest.Combat = (() => {
     worlds,
     state,
 
+    currentHero,
     currentWorld,
     currentBattle,
     currentIntent,
@@ -300,6 +356,7 @@ MathQuest.Combat = (() => {
     resetBattle,
 
     addCorrect,
+    addXp,
     addWrong,
 
     useSkill,

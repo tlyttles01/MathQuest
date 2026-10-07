@@ -31,6 +31,16 @@ const skillInfo = {
 
   function updateHud() {
     const state = MathQuest.Combat.state;
+    const hero = MathQuest.Combat.currentHero();
+
+    $("heroName").textContent =
+      hero.name;
+
+    $("heroSprite").src =
+      hero.image;
+
+    $("heroSprite").alt =
+      hero.name;
 
     $("heroHp").textContent =
       formatNumber(state.heroHp);
@@ -50,8 +60,20 @@ const skillInfo = {
     $("streak").textContent =
       state.streak;
 
+    $("heroLevel").textContent =
+      state.level;
+
+    $("heroXp").textContent =
+      state.xp;
+
+    $("heroXpNext").textContent =
+      state.xpToNext;
+
     $("heroHpBar").style.width =
       `${(state.heroHp / state.heroMaxHp) * 100}%`;
+
+    $("heroXpBar").style.width =
+      `${(state.xp / state.xpToNext) * 100}%`;
 
     $("enemyHpBar").style.width =
       `${(state.enemyHp / state.enemyMaxHp) * 100}%`;
@@ -313,6 +335,34 @@ const skillInfo = {
     }
   }
 
+  function showLevelUp(level, continueAction) {
+    pendingLevelUp = level;
+    resumeAfterLevelUp = continueAction || null;
+
+    $("levelUpTitle").textContent =
+      `Knight reached Level ${level}!`;
+
+    $("levelUpPanel")
+      .classList.remove("hidden");
+  }
+
+  function closeLevelUp() {
+    $("levelUpPanel")
+      .classList.add("hidden");
+
+    pendingLevelUp = null;
+
+    const action =
+      resumeAfterLevelUp;
+
+    resumeAfterLevelUp =
+      null;
+
+    if (action) {
+      action();
+    }
+  }
+
   async function enemyTurn() {
     const attack =
       MathQuest.Combat.enemyAttack();
@@ -361,7 +411,7 @@ const skillInfo = {
   }
 
   async function handleCorrect() {
-    const points =
+    const reward =
       MathQuest.Combat.addCorrect();
 
     const effect =
@@ -371,7 +421,7 @@ const skillInfo = {
       );
 
     $("feedback").textContent =
-      `✅ Correct! +${points} score.`;
+      `✅ Correct! +${reward.points} score · +${reward.xpGained} XP`;
 
     updateHud();
 
@@ -397,22 +447,43 @@ const skillInfo = {
       if (
         MathQuest.Combat.state.enemyHp <= 0
       ) {
-        showVictory();
+        if (reward.leveledUp) {
+          showLevelUp(
+            reward.newLevel,
+            showVictory
+          );
+        }
+        else {
+          showVictory();
+        }
+
         return;
       }
     }
 
-    if (!await enemyTurn()) {
+    const continueTurn = async () => {
+      if (!await enemyTurn()) {
+        return;
+      }
+
+      $("battleMessage").textContent =
+        "YOUR TURN";
+
+      setTimeout(
+        newProblem,
+        450
+      );
+    };
+
+    if (reward.leveledUp) {
+      showLevelUp(
+        reward.newLevel,
+        continueTurn
+      );
       return;
     }
 
-    $("battleMessage").textContent =
-      "YOUR TURN";
-
-    setTimeout(
-      newProblem,
-      450
-    );
+    await continueTurn();
   }
 
   async function handleWrong() {
@@ -770,6 +841,23 @@ $("answerForm")
       .addEventListener(
         "click",
         closeGuardTutorial
+      );
+
+    $("levelUpContinueBtn")
+      .addEventListener(
+        "click",
+        closeLevelUp
+      );
+
+    $("beginJourneyBtn")
+      .addEventListener(
+        "click",
+        () => {
+          $("storyIntroPanel")
+            .classList.add("hidden");
+
+          $("answerInput").focus();
+        }
       );
 
     newProblem();

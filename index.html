@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=11">
+  <link rel="stylesheet" href="css/game.css?v=14">
 </head>
 <body>
 <main class="game-shell">
@@ -16,9 +16,19 @@
 
     <div class="battle-stage">
       <div class="fighter">
-        <div class="fighter-title"><b>Knight</b><span>Lv. 1</span></div>
+        <div class="fighter-title">
+          <b id="heroName">Knight</b>
+          <span>Lv. <span id="heroLevel">1</span></span>
+        </div>
         <div class="hp-line"><span>❤️</span><b><span id="heroHp">20</span>/<span id="heroMaxHp">20</span></b></div>
         <div class="hp-track"><div id="heroHpBar" class="hp-fill hero-fill"></div></div>
+        <div class="xp-row">
+          <span>XP</span>
+          <strong><span id="heroXp">0</span>/<span id="heroXpNext">100</span></strong>
+        </div>
+        <div class="xp-track">
+          <div id="heroXpBar" class="xp-fill"></div>
+        </div>
         <div class="sprite-wrap"><img id="heroSprite" class="sprite character-sprite" src="characterImages/knight.png" alt="Knight"><div id="heroDamagePop" class="damage-pop hidden"></div><div id="shieldFlash" class="shield-flash hidden">🛡️</div></div>
       </div>
 
@@ -125,6 +135,36 @@
   </section>
 </main>
 
+
+<div id="storyIntroPanel" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="storyIntroTitle">
+  <div class="modal-card story-modal">
+    <div class="result-icon">🏰</div>
+    <div class="eyebrow">MATH QUEST</div>
+    <h2 id="storyIntroTitle">The Knight's Journey</h2>
+
+    <div class="story-copy">
+      <p>
+        Long ago, five learning crystals helped keep the kingdom in balance.
+        One night, the crystals were scattered across the land, and strange creatures began guarding them.
+      </p>
+
+      <p>
+        Heroes from across the kingdom have begun a quest to recover the lost crystals.
+        Each hero has different strengths, but they all grow stronger by overcoming the challenges along the way.
+      </p>
+
+      <p>
+        Your adventure begins with the <strong>Knight</strong> in <strong>Whispering Woods</strong>,
+        where the Goblin King is waiting.
+      </p>
+    </div>
+
+    <button id="beginJourneyBtn" class="primary modal-primary" type="button">
+      Begin the Journey
+    </button>
+  </div>
+</div>
+
 <div id="victoryPanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="victoryTitle">
   <div class="modal-card battle-result-modal">
     <div class="result-icon">🏆</div>
@@ -158,6 +198,32 @@
   </div>
 </div>
 
+
+<div id="levelUpPanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="levelUpTitle">
+  <div class="modal-card level-up-modal">
+    <div class="result-icon">✨</div>
+    <div class="eyebrow">LEVEL UP!</div>
+    <h2 id="levelUpTitle">Knight reached Level 2!</h2>
+    <p>Your Knight is getting stronger.</p>
+
+    <div class="level-reward-grid">
+      <div class="level-reward">
+        <span class="level-reward-icon">❤️</span>
+        <strong>+2 Max HP</strong>
+        <small>More health for future battles.</small>
+      </div>
+
+      <div class="level-reward">
+        <span class="level-reward-icon">💚</span>
+        <strong>Full Heal</strong>
+        <small>Leveling up restores your health.</small>
+      </div>
+    </div>
+
+    <button id="levelUpContinueBtn" class="primary modal-primary" type="button">Awesome!</button>
+  </div>
+</div>
+
 <div id="tutorialOverlay" class="tutorial-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="guardTutorialTitle">
   <div class="tutorial-card">
     <div class="tutorial-icon">🛡️</div><div class="eyebrow">NEW SKILL</div><h2 id="guardTutorialTitle">Guard</h2>
@@ -168,10 +234,11 @@
   </div>
 </div>
 
-<script src="js/math.js?v=11"></script>
-<script src="js/blocks.js?v=11"></script>
-<script src="js/combat.js?v=11"></script>
-<script src="js/animations.js?v=11"></script>
-<script src="js/game.js?v=11"></script>
+<script src="js/heroes.js?v=14"></script>
+<script src="js/math.js?v=14"></script>
+<script src="js/blocks.js?v=14"></script>
+<script src="js/combat.js?v=14"></script>
+<script src="js/animations.js?v=14"></script>
+<script src="js/game.js?v=14"></script>
 </body>
 </html>

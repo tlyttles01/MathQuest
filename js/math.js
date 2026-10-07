@@ -94,22 +94,22 @@ MathQuest.MathEngine = (() => {
 
     const templates = [
       {
-        prompt: `${total} = □ + ${tens}`,
+        prompt: `${total} = ___ + ${tens}`,
         answer: ones,
         hint: `What number do you add to ${tens} to make ${total}?`
       },
       {
-        prompt: `${total} = ${tens} + □`,
+        prompt: `${total} = ${tens} + ___`,
         answer: ones,
         hint: `${total} is ${tens} and how many more?`
       },
       {
-        prompt: `${tens} + □ = ${total}`,
+        prompt: `${tens} + ___ = ${total}`,
         answer: ones,
         hint: `Count from ${tens} up to ${total}.`
       },
       {
-        prompt: `□ + ${tens} = ${total}`,
+        prompt: `___ + ${tens} = ${total}`,
         answer: ones,
         hint: `What number joins ${tens} to make ${total}?`
       }
@@ -125,17 +125,17 @@ MathQuest.MathEngine = (() => {
 
     const templates = [
       {
-        prompt: `${total} = ${ones} + □`,
+        prompt: `${total} = ${ones} + ___`,
         answer: tens,
         hint: `${total} has ${ones} ones. What is the value of the tens?`
       },
       {
-        prompt: `□ + ${ones} = ${total}`,
+        prompt: `___ + ${ones} = ${total}`,
         answer: tens,
         hint: `What multiple of 10 joins ${ones} to make ${total}?`
       },
       {
-        prompt: `${ones} + □ = ${total}`,
+        prompt: `${ones} + ___ = ${total}`,
         answer: tens,
         hint: `Think about the tens part of ${total}.`
       }
@@ -230,8 +230,8 @@ MathQuest.MathEngine = (() => {
   function createPlaceValueProblem(difficulty, challenge) {
     /*
       Difficulty 1:
-        Normal: 27 = □ + 20
-        Challenge: 27 = 7 + □
+        Normal: 27 = ___ + 20
+        Challenge: 27 = 7 + ___
 
       Difficulty 2:
         Normal: 42 + 5 / 48 - 5 without regrouping

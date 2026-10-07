@@ -246,3 +246,112 @@
     font-size:clamp(2.4rem,10vw,4rem);
   }
 }
+
+
+/* v12: experience and leveling */
+.xp-row{
+  max-width:245px;
+  margin-top:6px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  font-size:.68rem;
+  font-weight:900;
+  letter-spacing:.04em;
+  color:var(--muted);
+}
+
+.xp-track{
+  height:8px;
+  max-width:245px;
+  margin-top:3px;
+  overflow:hidden;
+  border-radius:999px;
+  background:rgba(255,255,255,.82);
+  border:1px solid rgba(23,32,51,.15);
+}
+
+.xp-fill{
+  height:100%;
+  width:0;
+  border-radius:inherit;
+  background:#8b5cf6;
+  transition:width .35s ease;
+}
+
+.level-up-modal{
+  border:2px solid #8b5cf6;
+}
+
+.level-reward-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:16px 0 20px;
+}
+
+.level-reward{
+  padding:14px 10px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:var(--alt);
+}
+
+.level-reward span,
+.level-reward strong,
+.level-reward small{
+  display:block;
+}
+
+.level-reward-icon{
+  font-size:2rem;
+  margin-bottom:6px;
+}
+
+.level-reward small{
+  margin-top:4px;
+  color:var(--muted);
+  line-height:1.3;
+}
+
+@media(max-width:520px){
+  .level-reward-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+
+/* v13: opening story */
+.story-modal{
+  width:min(620px,100%);
+  text-align:left;
+}
+
+.story-modal .result-icon,
+.story-modal > .eyebrow,
+.story-modal > h2{
+  text-align:center;
+}
+
+.story-copy{
+  margin:16px 0 20px;
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:var(--alt);
+}
+
+.story-copy p{
+  margin:0 0 12px;
+  line-height:1.55;
+}
+
+.story-copy p:last-child{
+  margin-bottom:0;
+}
+
+.story-modal .modal-primary{
+  display:block;
+  margin:0 auto;
+}
