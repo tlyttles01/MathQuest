@@ -1,59 +1,56 @@
-# Math Quest
+# Math Quest v8
 
-Current GitHub Pages-ready prototype.
+## Major changes
 
-## Current progression
+- Knight now starts with 20 HP.
+- Every world starts with full HP.
+- Whispering Woods expanded from 5 battles to 7.
+- Breakstone Mines added as World 2 with 7 battles.
+- Power Strike unlocks after defeating the Goblin King and is usable in Breakstone Mines.
+- Breakstone Mines focuses on:
+  - tens and ones
+  - place value
+  - adding ones
+  - subtracting without regrouping
+  - breaking a ten / regrouping
+- Power Strike in Breakstone Mines specifically favors harder break-a-ten subtraction questions.
+- Guard remains available after it is introduced.
+- World completion remains a popup over the battle screen.
 
-### Whispering Woods
-1. Tiny Slime — 1 HP
-2. Blue Slime — 2 HP
-3. Forest Goblin — 4 HP
-4. Goblin Brute — 7 HP
-   - Club Swing
-   - Club Swing
-   - Heavy Smash
-   - Guard tutorial appears on the first Heavy Smash
-5. Goblin King — 10 HP
-   - Royal Jab
-   - Crown Crash
-   - King's Smash
+## World 1 — Whispering Woods
 
-## Skills
+1. Tiny Slime
+2. Blue Slime
+3. Forest Goblin
+4. Moss Beetle
+5. Goblin Brute
+6. Royal Goblin Guard
+7. Goblin King
 
-### Sword Slash
-Available from the beginning. Normal question, 2 damage.
+Boss reward: Power Strike.
 
-### Guard
-Unlocks during the Goblin Brute battle. No damage. Blocks the incoming attack.
+## World 2 — Breakstone Mines
 
-### Power Strike
-Locked for all of Whispering Woods. It is awarded only after defeating the Goblin King and is intended to become usable in the next area.
+1. Pebble Imp
+2. Cave Bat
+3. Mine Goblin
+4. Crystal Crawler
+5. Rock Brute
+6. Stone Sentinel
+7. Stone Golem
 
-### Second Wind
-Still locked for a future tutorial.
+## Suggested commit
 
-## Math progression
-Early battles use single-digit addition and subtraction. Later Whispering Woods battles move into addition and subtraction within 20.
+```text
+feat: add Breakstone Mines and expand worlds to seven battles
+```
 
-## Base-10 workspace
-The workspace is collapsed by default. Use **Use Blocks** to expand it.
+## v9 character art
 
-Tools:
-- +10
-- +1
-- Cross Out
-- Break a 10
-- Remove
-- Clear All
+The generated pixel-art characters are now stored in:
 
-No total is displayed.
+```text
+characterImages/
+```
 
-## GitHub Pages
-Keep `index.html`, `css/`, `js/`, and `README.md` at the root of the repository.
-
-Suggested commit:
-
-`feat: lock power strike until Goblin King victory`
-
-## v7 UI change
-- Battle Victory and Chapter Complete are now modal popups over the battle screen instead of cards below it.
+The Knight and all current Whispering Woods / Breakstone Mines enemies use these image assets instead of emoji battle sprites.
