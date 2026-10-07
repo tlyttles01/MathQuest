@@ -1,26 +1,18 @@
-# Math Quest v4
+# Math Quest v5
 
-This is the first animated JRPG-style build.
+This pass is focused on readability and child-friendly screen hierarchy.
 
-## What changed
-- Simple Pokémon-style attack animations
-- Player and enemy shake when hit
-- Floating damage numbers
-- Much larger, clearer HP display
-- Enemy intent shown every turn
-- Dangerous attacks get a red warning
-- Guard is locked until Battle 4
-- Optional Guard tutorial with Skip Tutorial button
-- Early math starts with single-digit addition/subtraction
-- Power Strike unlocks in Battle 3 and asks a harder question
-- Battle 4–5 move into addition/subtraction within 20
+## Changes
 
-## Whispering Woods
-1. Tiny Slime — 1 HP
-2. Blue Slime — 2 HP
-3. Forest Goblin — 4 HP — Power Strike unlock
-4. Goblin Brute — 7 HP — Guard tutorial
-5. Goblin King — 10 HP — rotating attack intents
+- The math question is now the largest element in the lower half of the screen.
+- The answer box and Attack button sit directly under the question.
+- The base-10 workspace is hidden by default and opens only when **Use Blocks** is pressed.
+- Health is larger and easier to read.
+- Enemy intent is centered between the Knight and enemy instead of appearing under the Knight.
+- Skill buttons have clearer separation between the skill name, question difficulty, and effect.
+- GitHub Pages asset URLs now include `?v=5` cache-busting parameters so old CSS/JS should not mix with the new build.
+- The five-battle Whispering Woods progression remains intact.
 
 ## Suggested commit
-feat: add animated JRPG combat and guard tutorial
+
+`feat: redesign battle UI for clarity and collapsible math workspace`

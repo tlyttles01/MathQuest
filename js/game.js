@@ -53,6 +53,12 @@ window.MathQuest=window.MathQuest||{};
   newProblem();
  }
 
+ function setBlocksVisible(show){
+  $("blocksPanel").classList.toggle("hidden",!show);
+  $("toggleBlocksBtn").setAttribute("aria-expanded",show?"true":"false");
+  $("toggleBlocksBtn").textContent=show?"▲ Hide Blocks":"🧱 Use Blocks";
+ }
+
  function newProblem(){
   if(battleComplete)return;
   hinted=false;locked=false;
@@ -63,6 +69,7 @@ window.MathQuest=window.MathQuest||{};
   $("answerInput").value="";$("feedback").textContent="";$("hintBox").classList.add("hidden");
   $("effectLabel").textContent=selectedSkill==="guard"?`Block ${MathQuest.Combat.currentIntent().damage} damage`:skillInfo[selectedSkill].effect;
   MathQuest.BlockWorkspace.clear();MathQuest.BlockWorkspace.setMode("cross");
+  setBlocksVisible(false);
   updateIntent();$("answerInput").focus();
  }
 
@@ -181,6 +188,8 @@ window.MathQuest=window.MathQuest||{};
   $("removeMode").addEventListener("click",()=>MathQuest.BlockWorkspace.setMode("remove"));
   $("clearAll").addEventListener("click",MathQuest.BlockWorkspace.clear);
   $("hintBtn").addEventListener("click",showHint);
+  $("toggleBlocksBtn").addEventListener("click",()=>setBlocksVisible($("blocksPanel").classList.contains("hidden")));
+  $("hideBlocksBtn").addEventListener("click",()=>setBlocksVisible(false));
   $("answerForm").addEventListener("submit",submit);
   $("nextBattleBtn").addEventListener("click",nextBattle);
   $("restartChapterBtn").addEventListener("click",restartChapter);
