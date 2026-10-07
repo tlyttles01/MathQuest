@@ -182,3 +182,21 @@ XP is now strictly a post-battle reward.
   - Goblin King: 31 XP
   - Total: 100 XP
 - Level 2 still grants +2 maximum HP and a full heal.
+
+
+## v17 equation layout
+
+Longer fill-in-the-blank equations now stay on one line. Examples such as `27 = ___ + 20` automatically use a slightly smaller font instead of wrapping.
+
+
+## v18 world selection and all five worlds
+
+Choose World now allows direct practice in any area:
+
+1. Whispering Woods — basic addition/subtraction
+2. Breakstone Mines — place value/decomposition/regrouping
+3. Living Library — story problems
+4. The Vault — money
+5. Clocktower — time
+
+Each world has 7 battles. Later-world enemies use emoji placeholders until dedicated art is added. Choosing a later world restores full HP and enables Power Strike for focused practice.

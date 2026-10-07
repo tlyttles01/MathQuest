@@ -212,14 +212,91 @@ const skillInfo = {
     $("enemyName").textContent =
       battle.enemyName;
 
-    $("enemySprite").src =
-      battle.enemyImage;
+    const enemyWrap =
+      $("enemySprite").parentElement;
 
-    $("enemySprite").alt =
-      battle.enemyName;
+    if (battle.enemyImage) {
+      $("enemySprite").src =
+        battle.enemyImage;
+      $("enemySprite").alt =
+        battle.enemyName;
+      $("enemySprite").classList.remove(
+        "emoji-enemy"
+      );
+      enemyWrap.removeAttribute(
+        "data-emoji"
+      );
+    }
+    else {
+      $("enemySprite").removeAttribute(
+        "src"
+      );
+      $("enemySprite").alt = "";
+      $("enemySprite").classList.add(
+        "emoji-enemy"
+      );
+      enemyWrap.dataset.emoji =
+        battle.enemySprite || "❓";
+    }
 
     updateSkillAvailability();
     updateIntent();
+  }
+
+  function renderWorldSelect() {
+    const grid = $("worldSelectGrid");
+    grid.innerHTML = "";
+
+    MathQuest.Combat.worlds.forEach((world, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "world-card";
+      button.innerHTML = `
+        <span class="world-card-number">World ${index + 1}</span>
+        <strong>${world.name}</strong>
+        <small>${world.description}</small>
+      `;
+      button.addEventListener("click", () => chooseWorld(index));
+      grid.appendChild(button);
+    });
+  }
+
+  function openWorldSelect() {
+    renderWorldSelect();
+    $("worldSelectPanel").classList.remove("hidden");
+  }
+
+  function closeWorldSelect() {
+    $("worldSelectPanel").classList.add("hidden");
+  }
+
+  function chooseWorld(worldIndex) {
+    closeWorldSelect();
+
+    if (!MathQuest.Combat.selectWorld(worldIndex)) {
+      return;
+    }
+
+    battleComplete = false;
+    locked = false;
+    selectedSkill = "slash";
+
+    document.querySelectorAll(".skill").forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.skill === "slash"
+      );
+    });
+
+    $("victoryPanel").classList.add("hidden");
+    $("chapterCompletePanel").classList.add("hidden");
+    $("battleMessage").textContent = "YOUR TURN";
+
+    updateBattleIdentity();
+    updateHud();
+    newProblem();
+
+    window.scrollTo({top:0,behavior:"smooth"});
   }
 
   function selectSkill(skill) {
@@ -283,6 +360,11 @@ const skillInfo = {
 
     $("problem").textContent =
       currentProblem.prompt;
+
+    $("problem").classList.toggle(
+      "compact-problem",
+      currentProblem.prompt.length >= 12
+    );
 
     $("answerInput").value = "";
 
@@ -1004,6 +1086,10 @@ $("beginJourneyBtn")
           $("answerInput").focus();
         }
       );
+
+    $("worldSelectBtn").addEventListener("click", openWorldSelect);
+    $("closeWorldSelectBtn").addEventListener("click", closeWorldSelect);
+    renderWorldSelect();
 
     newProblem();
   }

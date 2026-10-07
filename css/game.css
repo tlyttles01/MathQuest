@@ -459,3 +459,102 @@
 .battle-xp-fill.level-flash + .battle-xp-message{
   color:#7c3aed;
 }
+
+
+/* v17: keep equations on one line */
+.question-side .problem{
+  white-space:nowrap;
+  overflow-wrap:normal;
+  word-break:normal;
+  letter-spacing:-.02em;
+}
+
+.question-side .problem.compact-problem{
+  font-size:clamp(2rem,4vw,3.4rem);
+}
+
+@media(max-width:900px){
+  .question-side .problem.compact-problem{
+    font-size:clamp(1.9rem,3.7vw,3rem);
+  }
+}
+
+@media(max-width:700px){
+  .question-side .problem,
+  .question-side .problem.compact-problem{
+    font-size:clamp(2.2rem,9vw,3.8rem);
+  }
+}
+
+
+/* v18 world select */
+.compact-control{
+  min-height:auto;
+  padding:6px 10px;
+  font-size:.8rem;
+}
+
+.world-select-modal{
+  width:min(760px,100%);
+}
+
+.world-select-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin:16px 0 18px;
+}
+
+.world-card{
+  min-height:120px;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:var(--alt);
+  color:var(--text);
+  text-align:left;
+}
+
+.world-card span,
+.world-card strong,
+.world-card small{
+  display:block;
+}
+
+.world-card-number{
+  margin-bottom:5px;
+  color:var(--muted);
+  font-size:.72rem;
+  font-weight:900;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+
+.world-card strong{
+  font-size:1.05rem;
+}
+
+.world-card small{
+  margin-top:5px;
+  color:var(--muted);
+  line-height:1.35;
+}
+
+.enemy-wrap[data-emoji]::before{
+  content:attr(data-emoji);
+  display:block;
+  margin-left:auto;
+  font-size:5.5rem;
+  line-height:1;
+  filter:drop-shadow(0 8px 5px rgba(0,0,0,.12));
+}
+
+.character-sprite.emoji-enemy{
+  display:none;
+}
+
+@media(max-width:620px){
+  .world-select-grid{
+    grid-template-columns:1fr;
+  }
+}

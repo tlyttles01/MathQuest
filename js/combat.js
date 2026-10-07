@@ -3,117 +3,104 @@ window.MathQuest = window.MathQuest || {};
 MathQuest.Combat = (() => {
   const worlds = [
     {
-      id: "woods",
-      name: "Whispering Woods",
-      label: "WHISPERING WOODS",
-      topic: "basic",
-      bossName: "Goblin King",
-      bossIcon: "👑",
-      completionTitle: "Whispering Woods Cleared!",
-      completionText: "You defeated the Goblin King.",
-      nextWorldLabel: "Enter Breakstone Mines",
-      unlockPowerStrike: true,
-      battles: [
-        { enemyName: "Tiny Slime", enemySprite: "🟢", enemyImage: "characterImages/tiny-slime.png", enemyMaxHp: 1, difficulty: 1, intent: { name: "Slime Bump", damage: 1, dangerous: false } },
-        { enemyName: "Blue Slime", enemySprite: "🔵", enemyImage: "characterImages/blue-slime.png", enemyMaxHp: 2, difficulty: 1, intent: { name: "Bubble Bonk", damage: 1, dangerous: false } },
-        { enemyName: "Forest Goblin", enemySprite: "👺", enemyImage: "characterImages/forest-goblin.png", enemyMaxHp: 4, difficulty: 1, intent: { name: "Wooden Club", damage: 1, dangerous: false } },
-        { enemyName: "Moss Beetle", enemySprite: "🪲", enemyImage: "characterImages/moss-beetle.png", enemyMaxHp: 5, difficulty: 2, intent: { name: "Horn Tap", damage: 1, dangerous: false } },
-        {
-          enemyName: "Goblin Brute",
-          enemySprite: "👹", enemyImage: "characterImages/goblin-brute.png",
-          enemyMaxHp: 7,
-          difficulty: 2,
-          guardTutorial: true,
-          intentCycle: [
-            { name: "Club Swing", damage: 1, dangerous: false },
-            { name: "Club Swing", damage: 1, dangerous: false },
-            { name: "HEAVY SMASH", damage: 4, dangerous: true }
-          ]
-        },
-        {
-          enemyName: "Royal Goblin Guard",
-          enemySprite: "🛡️", enemyImage: "characterImages/royal-goblin-guard.png",
-          enemyMaxHp: 8,
-          difficulty: 2,
-          intentCycle: [
-            { name: "Spear Jab", damage: 1, dangerous: false },
-            { name: "Shield Bash", damage: 2, dangerous: false },
-            { name: "Spear Jab", damage: 1, dangerous: false }
-          ]
-        },
-        {
-          enemyName: "Goblin King",
-          enemySprite: "👑", enemyImage: "characterImages/goblin-king.png",
-          enemyMaxHp: 10,
-          difficulty: 2,
-          intentCycle: [
-            { name: "Royal Jab", damage: 1, dangerous: false },
-            { name: "Crown Crash", damage: 2, dangerous: false },
-            { name: "KING'S SMASH", damage: 4, dangerous: true }
-          ]
-        }
+      id:"woods", name:"Whispering Woods", label:"WHISPERING WOODS", topic:"basic",
+      description:"Addition and subtraction basics",
+      bossName:"Goblin King", bossIcon:"👑",
+      completionTitle:"Whispering Woods Cleared!",
+      completionText:"You defeated the Goblin King and recovered the Forest Crystal.",
+      nextWorldLabel:"Enter Breakstone Mines", unlockPowerStrike:true, crystalName:"Forest Crystal",
+      battles:[
+        {enemyName:"Tiny Slime",enemyImage:"characterImages/tiny-slime.png",enemyMaxHp:1,difficulty:1,intent:{name:"Slime Bump",damage:1,dangerous:false}},
+        {enemyName:"Blue Slime",enemyImage:"characterImages/blue-slime.png",enemyMaxHp:2,difficulty:1,intent:{name:"Bubble Bonk",damage:1,dangerous:false}},
+        {enemyName:"Forest Goblin",enemyImage:"characterImages/forest-goblin.png",enemyMaxHp:4,difficulty:1,intent:{name:"Wooden Club",damage:1,dangerous:false}},
+        {enemyName:"Moss Beetle",enemyImage:"characterImages/moss-beetle.png",enemyMaxHp:5,difficulty:2,intent:{name:"Horn Tap",damage:1,dangerous:false}},
+        {enemyName:"Goblin Brute",enemyImage:"characterImages/goblin-brute.png",enemyMaxHp:7,difficulty:2,guardTutorial:true,intentCycle:[
+          {name:"Club Swing",damage:1,dangerous:false},{name:"Club Swing",damage:1,dangerous:false},{name:"HEAVY SMASH",damage:4,dangerous:true}]},
+        {enemyName:"Royal Goblin Guard",enemyImage:"characterImages/royal-goblin-guard.png",enemyMaxHp:8,difficulty:2,intentCycle:[
+          {name:"Spear Jab",damage:1,dangerous:false},{name:"Shield Bash",damage:2,dangerous:false},{name:"Spear Jab",damage:1,dangerous:false}]},
+        {enemyName:"Goblin King",enemyImage:"characterImages/goblin-king.png",enemyMaxHp:10,difficulty:2,intentCycle:[
+          {name:"Royal Jab",damage:1,dangerous:false},{name:"Crown Crash",damage:2,dangerous:false},{name:"KING'S SMASH",damage:4,dangerous:true}]}
       ]
     },
-
     {
-      id: "mines",
-      name: "Breakstone Mines",
-      label: "BREAKSTONE MINES",
-      topic: "placeValue",
-      bossName: "Stone Golem",
-      bossIcon: "🪨",
-      completionTitle: "Breakstone Mines Cleared!",
-      completionText: "You shattered the Stone Golem.",
-      nextWorldLabel: "World 3 Coming Soon",
-      unlockPowerStrike: false,
-      battles: [
-        { enemyName: "Pebble Imp", enemySprite: "🪨", enemyImage: "characterImages/pebble-imp.png", enemyMaxHp: 4, difficulty: 1, intent: { name: "Pebble Toss", damage: 1, dangerous: false } },
-        { enemyName: "Cave Bat", enemySprite: "🦇", enemyImage: "characterImages/cave-bat.png", enemyMaxHp: 5, difficulty: 1, intent: { name: "Wing Swipe", damage: 1, dangerous: false } },
-        { enemyName: "Mine Goblin", enemySprite: "⛏️", enemyImage: "characterImages/mine-goblin.png", enemyMaxHp: 6, difficulty: 2, intent: { name: "Pick Tap", damage: 1, dangerous: false } },
-        {
-          enemyName: "Crystal Crawler",
-          enemySprite: "💎", enemyImage: "characterImages/crystal-crawler.png",
-          enemyMaxHp: 8,
-          difficulty: 2,
-          intentCycle: [
-            { name: "Crystal Scratch", damage: 1, dangerous: false },
-            { name: "Crystal Scratch", damage: 1, dangerous: false },
-            { name: "SHARD BURST", damage: 3, dangerous: true }
-          ]
-        },
-        {
-          enemyName: "Rock Brute",
-          enemySprite: "🗿", enemyImage: "characterImages/rock-brute.png",
-          enemyMaxHp: 10,
-          difficulty: 3,
-          intentCycle: [
-            { name: "Rock Punch", damage: 2, dangerous: false },
-            { name: "Rock Punch", damage: 2, dangerous: false },
-            { name: "BOULDER DROP", damage: 5, dangerous: true }
-          ]
-        },
-        {
-          enemyName: "Stone Sentinel",
-          enemySprite: "🛡️", enemyImage: "characterImages/stone-sentinel.png",
-          enemyMaxHp: 11,
-          difficulty: 3,
-          intentCycle: [
-            { name: "Stone Jab", damage: 1, dangerous: false },
-            { name: "Hammer Swing", damage: 2, dangerous: false },
-            { name: "STONE CRUSH", damage: 4, dangerous: true }
-          ]
-        },
-        {
-          enemyName: "Stone Golem",
-          enemySprite: "🪨", enemyImage: "characterImages/stone-golem.png",
-          enemyMaxHp: 14,
-          difficulty: 3,
-          intentCycle: [
-            { name: "Granite Fist", damage: 2, dangerous: false },
-            { name: "Granite Fist", damage: 2, dangerous: false },
-            { name: "EARTHQUAKE", damage: 5, dangerous: true }
-          ]
-        }
+      id:"mines", name:"Breakstone Mines", label:"BREAKSTONE MINES", topic:"placeValue",
+      description:"Place value, decomposing, and regrouping",
+      bossName:"Stone Golem", bossIcon:"🪨",
+      completionTitle:"Breakstone Mines Cleared!",
+      completionText:"You shattered the Stone Golem and recovered the Earth Crystal.",
+      nextWorldLabel:"Enter Living Library", unlockPowerStrike:false, crystalName:"Earth Crystal",
+      battles:[
+        {enemyName:"Pebble Imp",enemyImage:"characterImages/pebble-imp.png",enemyMaxHp:4,difficulty:1,intent:{name:"Pebble Toss",damage:1,dangerous:false}},
+        {enemyName:"Cave Bat",enemyImage:"characterImages/cave-bat.png",enemyMaxHp:5,difficulty:1,intent:{name:"Wing Swipe",damage:1,dangerous:false}},
+        {enemyName:"Mine Goblin",enemyImage:"characterImages/mine-goblin.png",enemyMaxHp:6,difficulty:2,intent:{name:"Pick Tap",damage:1,dangerous:false}},
+        {enemyName:"Crystal Crawler",enemyImage:"characterImages/crystal-crawler.png",enemyMaxHp:8,difficulty:2,intentCycle:[
+          {name:"Crystal Scratch",damage:1,dangerous:false},{name:"Crystal Scratch",damage:1,dangerous:false},{name:"SHARD BURST",damage:3,dangerous:true}]},
+        {enemyName:"Rock Brute",enemyImage:"characterImages/rock-brute.png",enemyMaxHp:10,difficulty:3,intentCycle:[
+          {name:"Rock Punch",damage:2,dangerous:false},{name:"Rock Punch",damage:2,dangerous:false},{name:"BOULDER DROP",damage:5,dangerous:true}]},
+        {enemyName:"Stone Sentinel",enemyImage:"characterImages/stone-sentinel.png",enemyMaxHp:11,difficulty:3,intentCycle:[
+          {name:"Stone Jab",damage:1,dangerous:false},{name:"Hammer Swing",damage:2,dangerous:false},{name:"STONE CRUSH",damage:4,dangerous:true}]},
+        {enemyName:"Stone Golem",enemyImage:"characterImages/stone-golem.png",enemyMaxHp:14,difficulty:3,intentCycle:[
+          {name:"Granite Fist",damage:2,dangerous:false},{name:"Granite Fist",damage:2,dangerous:false},{name:"EARTHQUAKE",damage:5,dangerous:true}]}
+      ]
+    },
+    {
+      id:"library", name:"Living Library", label:"LIVING LIBRARY", topic:"story",
+      description:"Story problems and choosing the operation",
+      bossName:"The Great Book", bossIcon:"📕",
+      completionTitle:"Living Library Cleared!",
+      completionText:"You closed the Great Book and recovered the Story Crystal.",
+      nextWorldLabel:"Enter The Vault", unlockPowerStrike:false, crystalName:"Story Crystal",
+      battles:[
+        {enemyName:"Letter Sprite",enemySprite:"🔤",enemyMaxHp:5,difficulty:1,intent:{name:"Letter Flick",damage:1,dangerous:false}},
+        {enemyName:"Bookworm",enemySprite:"🐛",enemyMaxHp:6,difficulty:1,intent:{name:"Page Nibble",damage:1,dangerous:false}},
+        {enemyName:"Possessed Book",enemySprite:"📘",enemyMaxHp:7,difficulty:2,intent:{name:"Page Slap",damage:1,dangerous:false}},
+        {enemyName:"Ink Blob",enemySprite:"🖋️",enemyMaxHp:8,difficulty:2,intentCycle:[
+          {name:"Ink Splash",damage:1,dangerous:false},{name:"Ink Splash",damage:1,dangerous:false},{name:"INK BURST",damage:3,dangerous:true}]},
+        {enemyName:"Riddle Raven",enemySprite:"🐦‍⬛",enemyMaxHp:9,difficulty:2,intent:{name:"Riddle Peck",damage:2,dangerous:false}},
+        {enemyName:"Library Guardian",enemySprite:"📚",enemyMaxHp:11,difficulty:3,intentCycle:[
+          {name:"Book Bash",damage:2,dangerous:false},{name:"Book Bash",damage:2,dangerous:false},{name:"SHELF SLAM",damage:4,dangerous:true}]},
+        {enemyName:"The Great Book",enemySprite:"📕",enemyMaxHp:14,difficulty:3,intentCycle:[
+          {name:"Page Storm",damage:2,dangerous:false},{name:"Page Storm",damage:2,dangerous:false},{name:"FINAL CHAPTER",damage:5,dangerous:true}]}
+      ]
+    },
+    {
+      id:"vault", name:"The Vault", label:"THE VAULT", topic:"money",
+      description:"Coins, counting money, and money problems",
+      bossName:"Piggy Bank", bossIcon:"🐷",
+      completionTitle:"The Vault Cleared!",
+      completionText:"You cracked the Piggy Bank and recovered the Coin Crystal.",
+      nextWorldLabel:"Enter Clocktower", unlockPowerStrike:false, crystalName:"Coin Crystal",
+      battles:[
+        {enemyName:"Copper Coin",enemySprite:"🪙",enemyMaxHp:5,difficulty:1,intent:{name:"Coin Ping",damage:1,dangerous:false}},
+        {enemyName:"Coin Mimic",enemySprite:"🪙",enemyMaxHp:6,difficulty:1,intent:{name:"Coin Bite",damage:1,dangerous:false}},
+        {enemyName:"Treasure Goblin",enemySprite:"💰",enemyMaxHp:7,difficulty:2,intent:{name:"Bag Swing",damage:1,dangerous:false}},
+        {enemyName:"Silver Scarab",enemySprite:"🪲",enemyMaxHp:8,difficulty:2,intentCycle:[
+          {name:"Silver Scratch",damage:1,dangerous:false},{name:"Silver Scratch",damage:1,dangerous:false},{name:"COIN SHOWER",damage:3,dangerous:true}]},
+        {enemyName:"Vault Guard",enemySprite:"🔐",enemyMaxHp:10,difficulty:2,intent:{name:"Lock Bash",damage:2,dangerous:false}},
+        {enemyName:"Golden Mimic",enemySprite:"🎁",enemyMaxHp:11,difficulty:3,intentCycle:[
+          {name:"Gold Bite",damage:2,dangerous:false},{name:"Gold Bite",damage:2,dangerous:false},{name:"JACKPOT CRASH",damage:4,dangerous:true}]},
+        {enemyName:"Piggy Bank",enemySprite:"🐷",enemyMaxHp:14,difficulty:3,intentCycle:[
+          {name:"Coin Toss",damage:2,dangerous:false},{name:"Coin Toss",damage:2,dangerous:false},{name:"BANK BREAKER",damage:5,dangerous:true}]}
+      ]
+    },
+    {
+      id:"clocktower", name:"Clocktower", label:"CLOCKTOWER", topic:"time",
+      description:"Reading clocks and elapsed time",
+      bossName:"Time Wizard", bossIcon:"🧙",
+      completionTitle:"Clocktower Cleared!",
+      completionText:"You broke the Time Wizard's spell and recovered the Time Crystal.",
+      nextWorldLabel:"Adventure Complete", unlockPowerStrike:false, crystalName:"Time Crystal",
+      battles:[
+        {enemyName:"Clock Sprite",enemySprite:"🕒",enemyMaxHp:5,difficulty:1,intent:{name:"Tick",damage:1,dangerous:false}},
+        {enemyName:"Minute Bat",enemySprite:"🦇",enemyMaxHp:6,difficulty:1,intent:{name:"Minute Swipe",damage:1,dangerous:false}},
+        {enemyName:"Hour Hound",enemySprite:"🐕",enemyMaxHp:7,difficulty:2,intent:{name:"Hour Bite",damage:1,dangerous:false}},
+        {enemyName:"Pendulum Phantom",enemySprite:"👻",enemyMaxHp:8,difficulty:2,intentCycle:[
+          {name:"Pendulum Tap",damage:1,dangerous:false},{name:"Pendulum Tap",damage:1,dangerous:false},{name:"TIME SWING",damage:3,dangerous:true}]},
+        {enemyName:"Gear Golem",enemySprite:"⚙️",enemyMaxHp:10,difficulty:2,intent:{name:"Gear Grind",damage:2,dangerous:false}},
+        {enemyName:"Clockwork Knight",enemySprite:"🤖",enemyMaxHp:11,difficulty:3,intentCycle:[
+          {name:"Clock Jab",damage:2,dangerous:false},{name:"Clock Jab",damage:2,dangerous:false},{name:"SECOND HAND",damage:4,dangerous:true}]},
+        {enemyName:"Time Wizard",enemySprite:"🧙",enemyMaxHp:15,difficulty:3,intentCycle:[
+          {name:"Time Bolt",damage:2,dangerous:false},{name:"Time Bolt",damage:2,dangerous:false},{name:"TIME FREEZE",damage:5,dangerous:true}]}
       ]
     }
   ];
@@ -191,6 +178,24 @@ MathQuest.Combat = (() => {
     state.streak = 0;
     state.battleIndex = 0;
     resetBattle();
+  }
+
+  function selectWorld(worldIndex) {
+    if (worldIndex < 0 || worldIndex >= worlds.length) {
+      return false;
+    }
+
+    state.worldIndex = worldIndex;
+    state.battleIndex = 0;
+    state.heroHp = state.heroMaxHp;
+    state.streak = 0;
+
+    if (worldIndex > 0) {
+      state.powerStrikeUnlocked = true;
+    }
+
+    resetBattle();
+    return true;
   }
 
   function beginNextWorld() {
@@ -372,6 +377,7 @@ MathQuest.Combat = (() => {
     currentIntent,
 
     beginGame,
+    selectWorld,
     beginNextWorld,
     restartCurrentWorld,
 
