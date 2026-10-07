@@ -200,3 +200,37 @@ Choose World now allows direct practice in any area:
 5. Clocktower — time
 
 Each world has 7 battles. Later-world enemies use emoji placeholders until dedicated art is added. Choosing a later world restores full HP and enables Power Strike for focused practice.
+
+
+## v19 visual money and clock questions
+
+### The Vault
+Money questions now show visual coin groups instead of text-only coin facts.
+
+Examples:
+- five nickel images -> `___ cents`
+- mixed coin images for Power Strike challenge questions
+
+Coins are rendered visually with their cent values.
+
+### Clocktower
+Clocktower questions now show an analog clock face.
+
+The player types the time into two fields:
+
+```text
+[ hour ] : [ minutes ]
+```
+
+The colon is always shown, so the player never needs to type it.
+
+Normal difficulty begins with hour/half-hour clocks, then adds quarter-hour and 5-minute increments. Power Strike uses the harder clock readings from the same world topic.
+
+
+## v20 world-specific tools
+
+- Whispering Woods and Breakstone Mines keep the base-10 block workspace.
+- Living Library hides the block workspace so word problems have more room.
+- The Vault uses an interactive coin tray for subtraction/give-away problems. The player taps coins to move them into a Give to your friend area, then submits the tray. No running total is displayed.
+- Clocktower hides the block workspace and enlarges the analog clock. Power Strike now asks elapsed-time subtraction questions such as showing 7:45 and asking the player to subtract 15 minutes, with 7:30 as the answer.
+- Later normal Vault battles can also use coin-removal problems; Power Strike always uses them.

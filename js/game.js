@@ -10,6 +10,7 @@ window.MathQuest = window.MathQuest || {};
   let battleComplete = false;
   let guardTutorialSeen = false;
   let battleXpAnimating = false;
+  let coinTrayState = [];
 const skillInfo = {
     slash: {
       label: "⚔️ SWORD SLASH",
@@ -334,6 +335,243 @@ const skillInfo = {
     newProblem();
   }
 
+  function renderCoinVisual(visual) {
+    const wrap =
+      document.createElement("div");
+
+    wrap.className =
+      "coin-row";
+
+    visual.coins.forEach(coin => {
+      const coinEl =
+        document.createElement("div");
+
+      coinEl.className =
+        `coin coin-${coin.name}`;
+
+      coinEl.setAttribute(
+        "aria-label",
+        `${coin.name}, ${coin.value} cents`
+      );
+
+      coinEl.innerHTML =
+        `<span>${coin.label}</span>`;
+
+      wrap.appendChild(
+        coinEl
+      );
+    });
+
+    return wrap;
+  }
+
+  function renderClockVisual(visual) {
+    const size = 240;
+    const center = 120;
+    const radius = 96;
+
+    const minuteAngle =
+      visual.minute * 6;
+
+    const hourAngle =
+      ((visual.hour % 12) * 30) +
+      (visual.minute * 0.5);
+
+    const handEnd = (angle, length) => {
+      const radians =
+        (angle - 90) *
+        Math.PI / 180;
+
+      return {
+        x:
+          center +
+          Math.cos(radians) *
+          length,
+
+        y:
+          center +
+          Math.sin(radians) *
+          length
+      };
+    };
+
+    const minuteEnd =
+      handEnd(
+        minuteAngle,
+        78
+      );
+
+    const hourEnd =
+      handEnd(
+        hourAngle,
+        56
+      );
+
+    const numbers =
+      Array.from(
+        {length:12},
+        (_,index) => {
+          const number =
+            index + 1;
+
+          const angle =
+            number * 30 - 90;
+
+          const radians =
+            angle *
+            Math.PI / 180;
+
+          const x =
+            center +
+            Math.cos(radians) *
+            78;
+
+          const y =
+            center +
+            Math.sin(radians) *
+            78 +
+            6;
+
+          return `
+            <text
+              x="${x}"
+              y="${y}"
+              text-anchor="middle"
+              class="clock-number"
+            >${number}</text>
+          `;
+        }
+      )
+      .join("");
+
+    const svg =
+      document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "svg"
+      );
+
+    svg.setAttribute(
+      "viewBox",
+      `0 0 ${size} ${size}`
+    );
+
+    svg.setAttribute(
+      "class",
+      "clock-face"
+    );
+
+    svg.setAttribute(
+      "role",
+      "img"
+    );
+
+    svg.setAttribute(
+      "aria-label",
+      "Analog clock"
+    );
+
+    svg.innerHTML =
+      `
+      <circle
+        cx="${center}"
+        cy="${center}"
+        r="${radius}"
+        class="clock-ring"
+      />
+
+      ${numbers}
+
+      <line
+        x1="${center}"
+        y1="${center}"
+        x2="${hourEnd.x}"
+        y2="${hourEnd.y}"
+        class="clock-hand clock-hour"
+      />
+
+      <line
+        x1="${center}"
+        y1="${center}"
+        x2="${minuteEnd.x}"
+        y2="${minuteEnd.y}"
+        class="clock-hand clock-minute"
+      />
+
+      <circle
+        cx="${center}"
+        cy="${center}"
+        r="6"
+        class="clock-center"
+      />
+      `;
+
+    return svg;
+  }
+
+  function renderProblemVisual(problem) {
+    const host =
+      $("problemVisual");
+
+    host.innerHTML = "";
+
+    if (!problem.visual) {
+      host.classList.add(
+        "hidden"
+      );
+      return;
+    }
+
+    host.classList.remove(
+      "hidden"
+    );
+
+    if (
+      problem.visual.type ===
+      "coins"
+    ) {
+      host.appendChild(
+        renderCoinVisual(
+          problem.visual
+        )
+      );
+    }
+
+    if (
+      problem.visual.type ===
+      "clock"
+    ) {
+      host.appendChild(
+        renderClockVisual(
+          problem.visual
+        )
+      );
+    }
+  }
+
+  function updateAnswerMode(problem) {
+    const isTime = problem.answerType === "time";
+    const isCoinTray = problem.answerType === "coinTray";
+
+    $("normalAnswerLabel").classList.toggle("hidden", isTime || isCoinTray);
+    $("timeAnswerGroup").classList.toggle("hidden", !isTime);
+
+    $("answerInput").value = "";
+    $("timeHourInput").value = "";
+    $("timeMinuteInput").value = "";
+
+    $("submitAnswerBtn").textContent =
+      isCoinTray
+        ? "✅ SUBMIT COINS"
+        : "⚔️ ATTACK";
+
+    if (isTime) {
+      $("timeHourInput").focus();
+    }
+    else if (!isCoinTray) {
+      $("answerInput").focus();
+    }
+  }
+
   function newProblem() {
     if (battleComplete) {
       return;
@@ -366,6 +604,18 @@ const skillInfo = {
       currentProblem.prompt.length >= 12
     );
 
+    renderProblemVisual(
+      currentProblem
+    );
+
+    updateAnswerMode(
+      currentProblem
+    );
+
+    updateWorkspace(
+      currentProblem
+    );
+
     $("answerInput").value = "";
 
     $("feedback").textContent = "";
@@ -382,8 +632,6 @@ const skillInfo = {
     MathQuest.BlockWorkspace.setMode("cross");
 
     updateIntent();
-
-    $("answerInput").focus();
   }
 
   function showHint() {
@@ -940,36 +1188,75 @@ const skillInfo = {
   function submitAnswer(event) {
     event.preventDefault();
 
-    if (
-      locked ||
-      battleComplete
-    ) {
+    if (locked || battleComplete) {
       return;
     }
 
-    const answer =
-      Number.parseInt(
-        $("answerInput").value,
-        10
-      );
+    let isCorrect = false;
 
-    if (!Number.isFinite(answer)) {
-      $("feedback").textContent =
-        "Enter an answer first.";
-      return;
+    if (currentProblem.answerType === "time") {
+      const hour = Number.parseInt($("timeHourInput").value, 10);
+      const minute = Number.parseInt($("timeMinuteInput").value, 10);
+
+      if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
+        $("feedback").textContent = "Enter the hour and minutes.";
+        return;
+      }
+
+      isCorrect =
+        hour === currentProblem.answer.hour &&
+        minute === currentProblem.answer.minute;
+    }
+    else if (currentProblem.answerType === "coinTray") {
+      const removedTotal = coinTrayState
+        .filter(item => item.removed)
+        .reduce((sum, item) => sum + item.coin.value, 0);
+
+      const remainingTotal = coinTrayState
+        .filter(item => !item.removed)
+        .reduce((sum, item) => sum + item.coin.value, 0);
+
+      isCorrect =
+        removedTotal === currentProblem.coinTray.removeAmount &&
+        remainingTotal === currentProblem.coinTray.targetRemaining;
+    }
+    else {
+      const answer = Number.parseInt($("answerInput").value, 10);
+
+      if (!Number.isFinite(answer)) {
+        $("feedback").textContent = "Enter an answer first.";
+        return;
+      }
+
+      isCorrect = answer === currentProblem.answer;
     }
 
     locked = true;
 
-    if (
-      answer ===
-      currentProblem.answer
-    ) {
+    if (isCorrect) {
       handleCorrect();
+      return;
+    }
+
+    if (currentProblem.answerType === "time") {
+      $("feedback").textContent =
+        `Not quite. The correct time is ${currentProblem.answer.hour}:${String(currentProblem.answer.minute).padStart(2,"0")}.`;
+    }
+    else if (currentProblem.answerType === "coinTray") {
+      $("feedback").textContent =
+        "Not quite. Check which coins you gave away and try the next one.";
     }
     else {
-      handleWrong();
+      $("feedback").textContent = `Not quite. The answer is ${currentProblem.answer}.`;
     }
+
+    MathQuest.Combat.addWrong();
+
+    enemyTurn().then(survived => {
+      if (!survived) return;
+      $("battleMessage").textContent = "YOUR TURN";
+      setTimeout(newProblem, 550);
+    });
   }
 
   function init() {
@@ -1040,6 +1327,21 @@ const skillInfo = {
       .addEventListener(
         "click",
         showHint
+      );
+
+    $("timeHourInput")
+      .addEventListener(
+        "input",
+        () => {
+          if (
+            $("timeHourInput")
+              .value
+              .length >= 2
+          ) {
+            $("timeMinuteInput")
+              .focus();
+          }
+        }
       );
 $("answerForm")
       .addEventListener(

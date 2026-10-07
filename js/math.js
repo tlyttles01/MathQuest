@@ -288,51 +288,212 @@ MathQuest.MathEngine = (() => {
     return {prompt:`The Knight had ${start} torches. He used ${used}, then found ${found}. How many now?`,answer:start-used+found,hint:`Subtract what was used, then add what was found.`};
   }
 
+  const coinTypes = {
+    penny: {name:"penny", value:1, label:"1¢"},
+    nickel: {name:"nickel", value:5, label:"5¢"},
+    dime: {name:"dime", value:10, label:"10¢"},
+    quarter: {name:"quarter", value:25, label:"25¢"}
+  };
+
+  function coinCopies(name, count) {
+    const coin = coinTypes[name];
+    return Array.from({length:count}, () => ({...coin}));
+  }
+
+  function buildCoinAmount(total) {
+    let left = total;
+    const coins = [];
+
+    for (const name of ["quarter","dime","nickel","penny"]) {
+      const coin = coinTypes[name];
+      const count = Math.floor(left / coin.value);
+      coins.push(...coinCopies(name, count));
+      left -= count * coin.value;
+    }
+
+    return coins;
+  }
+
   function moneyNormal(difficulty) {
     if (difficulty <= 1) {
-      return choose([
-        {prompt:`1 nickel = ___ cents`,answer:5,hint:`A nickel is worth 5 cents.`},
-        {prompt:`1 dime = ___ cents`,answer:10,hint:`A dime is worth 10 cents.`},
-        {prompt:`1 quarter = ___ cents`,answer:25,hint:`A quarter is worth 25 cents.`},
-        {prompt:`3 pennies = ___ cents`,answer:3,hint:`Each penny is 1 cent.`}
+      const coin = choose([
+        coinTypes.penny,
+        coinTypes.nickel,
+        coinTypes.dime
       ]);
+      const count = randomInt(2, 5);
+
+      return {
+        prompt: `How many cents?`,
+        answer: coin.value * count,
+        hint: `Each ${coin.name} is worth ${coin.value} cents. Count by ${coin.value}s.`,
+        visual: {
+          type: "coins",
+          coins: Array.from({length:count}, () => ({...coin}))
+        }
+      };
     }
-    const q=randomInt(0,2), d=randomInt(0,3), n=randomInt(0,2);
-    return {prompt:`${q} quarter${q===1?"":"s"}, ${d} dime${d===1?"":"s"}, ${n} nickel${n===1?"":"s"} = ___ cents`,answer:q*25+d*10+n*5,hint:`Quarter = 25, dime = 10, nickel = 5.`};
+
+    if (difficulty === 2) {
+      const coinA = choose([coinTypes.nickel, coinTypes.dime, coinTypes.quarter]);
+      const coinB = choose([coinTypes.penny, coinTypes.nickel, coinTypes.dime]);
+      const countA = randomInt(1, 3);
+      const countB = randomInt(1, 3);
+      const coins = [
+        ...Array.from({length:countA}, () => ({...coinA})),
+        ...Array.from({length:countB}, () => ({...coinB}))
+      ];
+
+      return {
+        prompt: `How many cents altogether?`,
+        answer: coins.reduce((sum, coin) => sum + coin.value, 0),
+        hint: `Find the value of each coin, then add them together.`,
+        visual: {type:"coins", coins}
+      };
+    }
+
+    return moneyRemovalProblem(difficulty, false);
+  }
+
+  function moneyRemovalProblem(difficulty, challenge) {
+    const examples = challenge
+      ? [
+          {start:85, remove:5},
+          {start:75, remove:10},
+          {start:90, remove:15},
+          {start:100, remove:25},
+          {start:65, remove:20}
+        ]
+      : [
+          {start:55, remove:5},
+          {start:60, remove:10},
+          {start:75, remove:5},
+          {start:80, remove:10}
+        ];
+
+    const selected = choose(examples);
+    let coins = buildCoinAmount(selected.start - selected.remove);
+    coins.push(...buildCoinAmount(selected.remove));
+
+    // Mix the tray so the coin to remove is not always at the end.
+    coins = coins
+      .map(coin => ({coin, sort:Math.random()}))
+      .sort((a,b) => a.sort - b.sort)
+      .map(item => item.coin);
+
+    return {
+      prompt: `You have ${selected.start}¢, but you need to give your friend ${selected.remove}¢. Remove ${selected.remove}¢ from the tray.`,
+      answerType: "coinTray",
+      answer: selected.start - selected.remove,
+      hint: `Move coin${selected.remove === 1 ? "" : "s"} worth ${selected.remove}¢ into the Give to your friend area.`,
+      coinTray: {
+        startingTotal: selected.start,
+        removeAmount: selected.remove,
+        targetRemaining: selected.start - selected.remove,
+        coins
+      }
+    };
   }
 
   function moneyChallenge(difficulty) {
-    if (difficulty <= 1) {
-      const total=choose([15,20,25,30,35,40]);
-      return {prompt:`A dime is 10¢. How many more cents are needed to make ${total}¢?`,answer:total-10,hint:`Find the difference between ${total} and 10.`};
-    }
-    const price=randomInt(20,70), paid=choose([75,100]);
-    return {prompt:`An item costs ${price}¢. You pay ${paid}¢. How many cents should you get back?`,answer:paid-price,hint:`Subtract the price from the amount paid.`};
+    return moneyRemovalProblem(difficulty, true);
   }
 
   function formatTime(hour, minute) {
     return `${hour}:${String(minute).padStart(2,"0")}`;
   }
 
+  function clockProblem(hour, minute, hint) {
+    return {
+      prompt: `What time is it?`,
+      answerType: "time",
+      answer: {
+        hour,
+        minute
+      },
+      hint,
+      visual: {
+        type: "clock",
+        hour,
+        minute
+      }
+    };
+  }
+
   function timeNormal(difficulty) {
     if (difficulty <= 1) {
-      const hour=randomInt(1,12), minute=choose([0,30]);
-      return {prompt:`The clock shows ${formatTime(hour,minute)}. What hour is it?`,answer:hour,hint:`Look at the hour number.`};
+      const hour = randomInt(1, 12);
+      const minute = choose([0, 30]);
+
+      return clockProblem(
+        hour,
+        minute,
+        minute === 0
+          ? `The minute hand points to 12, so it is exactly ${hour} o'clock.`
+          : `The minute hand points to 6, which means 30 minutes past the hour.`
+      );
     }
-    const hour=randomInt(1,11), minute=choose([0,15,30,45]);
-    return {prompt:`It is ${formatTime(hour,minute)}. How many minutes past the hour?`,answer:minute,hint:`Use the minutes after the colon.`};
+
+    if (difficulty === 2) {
+      const hour = randomInt(1, 12);
+      const minute = choose([0, 15, 30, 45]);
+
+      return clockProblem(
+        hour,
+        minute,
+        `The long hand tells the minutes. Count by 5s around the clock.`
+      );
+    }
+
+    const hour = randomInt(1, 12);
+    const minute = choose([5,10,15,20,25,30,35,40,45,50,55]);
+
+    return clockProblem(
+      hour,
+      minute,
+      `Read the hour hand first, then count the minute marks by 5s.`
+    );
+  }
+
+  function subtractMinutes(hour, minute, amount) {
+    let total = ((hour % 12) * 60) + minute - amount;
+    while (total < 0) total += 12 * 60;
+
+    let answerHour = Math.floor(total / 60) % 12;
+    if (answerHour === 0) answerHour = 12;
+
+    return {
+      hour: answerHour,
+      minute: total % 60
+    };
   }
 
   function timeChallenge(difficulty) {
-    if (difficulty <= 1) {
-      const hour=randomInt(1,11);
-      return {prompt:`It is ${formatTime(hour,30)}. How many minutes until ${formatTime(hour+1,0)}?`,answer:30,hint:`Half an hour is 30 minutes.`};
-    }
-    const hour=randomInt(1,9), startMinute=choose([0,15,30]), elapsed=choose([30,45,60]);
-    let total=hour*60+startMinute+elapsed;
-    let endHour=Math.floor(total/60);
-    if (endHour>12) endHour-=12;
-    return {prompt:`It is ${formatTime(hour,startMinute)}. ${elapsed} minutes pass. What is the new hour?`,answer:endHour,hint:`Move forward ${elapsed} minutes and track when the hour changes.`};
+    const subtractAmount =
+      difficulty <= 1
+        ? 15
+        : choose([15, 30]);
+
+    const minuteChoices =
+      difficulty <= 1
+        ? [15,30,45]
+        : [0,5,10,15,20,25,30,35,40,45,50,55];
+
+    const hour = randomInt(1, 12);
+    const minute = choose(minuteChoices);
+    const answer = subtractMinutes(hour, minute, subtractAmount);
+
+    return {
+      prompt: `Subtract ${subtractAmount} minutes from the time on the clock. What time will it be?`,
+      answerType: "time",
+      answer,
+      hint: `Move backward ${subtractAmount} minutes. Count backward by 5s around the clock.`,
+      visual: {
+        type: "clock",
+        hour,
+        minute
+      }
+    };
   }
 
   function createProblem(options = {}) {
