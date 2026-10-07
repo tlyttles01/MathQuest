@@ -241,3 +241,25 @@ Normal difficulty begins with hour/half-hour clocks, then adds quarter-hour and 
 The Vault no longer prints 1¢ / 5¢ / 10¢ / 25¢ on the coins themselves. Coins now use custom U.S.-style illustrated faces with recognizable relative sizes, copper/silver coloring, portrait/reverse details, and mixed heads/tails. The internal values are unchanged, so the player must recognize the coin type instead of reading the answer from the coin.
 
 This release also completes the interactive coin-tray workspace code used by the v20 money-removal questions.
+
+
+## v22 coin recognition and word-problem layout
+
+- Increased the visual size difference between nickel, dime, and quarter.
+- Nickel now has a smooth edge; dime and quarter have clearly ridged edges.
+- Silver tones and portrait scaling differ more so the coins are easier to recognize without printed cent values.
+- Living Library word problems now wrap inside the question area instead of inheriting the one-line equation rule.
+- Long story text uses a smaller responsive font and is bounded to the page width.
+
+
+## v23 supplied coin artwork
+
+The Vault now uses the user-provided pixel-art images for:
+- penny
+- nickel
+- dime
+- quarter
+
+Half-dollar and dollar-coin artwork from the reference sheet are intentionally not used.
+
+The coins no longer display generated cent values or generic SVG portraits. Their existing relative game sizes remain different so students can use the visual appearance and physical size cues to identify them.

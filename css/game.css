@@ -928,3 +928,119 @@
   .coin-dime{ width:52px; height:52px; }
   .coin-quarter{ width:72px; height:72px; }
 }
+
+
+/* v22: clearer coin recognition + bounded word problems */
+.question-side .problem.word-problem,
+.single-column-learning .problem.word-problem{
+  white-space:normal;
+  width:100%;
+  max-width:760px;
+  overflow-wrap:break-word;
+  word-break:normal;
+  font-size:clamp(1.65rem,3.4vw,2.75rem);
+  line-height:1.18;
+  letter-spacing:0;
+}
+
+.single-column-learning .question-side{
+  min-width:0;
+  width:100%;
+  max-width:100%;
+}
+
+.single-column-learning .problem-head{
+  min-width:0;
+  max-width:100%;
+}
+
+/* Make the silver coins much easier to distinguish by size, edge and tone. */
+.coin-nickel{ width:82px; height:82px; }
+.coin-dime{ width:56px; height:56px; }
+.coin-quarter{ width:98px; height:98px; }
+
+.coin-nickel .coin-rim,
+.coin-nickel .coin-field{
+  fill:#d8dce0;
+  stroke:#8e959c;
+}
+
+.coin-dime .coin-rim,
+.coin-dime .coin-field{
+  fill:#eef0f2;
+  stroke:#686f76;
+}
+
+.coin-quarter .coin-rim,
+.coin-quarter .coin-field{
+  fill:#bfc5cb;
+  stroke:#5f6871;
+}
+
+.coin-nickel .coin-rim{
+  stroke-width:2.1;
+  stroke-dasharray:none;
+}
+
+.coin-dime .coin-rim,
+.coin-quarter .coin-rim{
+  stroke-width:3.4;
+  stroke-dasharray:2.3 1.25;
+}
+
+.coin-nickel .coin-portrait{
+  transform:translate(-2px,1px) scale(.93);
+  transform-origin:center;
+}
+
+.coin-dime .coin-portrait{
+  transform:translate(2px,-1px) scale(.9);
+  transform-origin:center;
+}
+
+.coin-quarter .coin-portrait{
+  transform:translate(4px,-2px) scale(1.04);
+  transform-origin:center;
+}
+
+@media(max-width:700px){
+  .coin-nickel{ width:70px; height:70px; }
+  .coin-dime{ width:48px; height:48px; }
+  .coin-quarter{ width:82px; height:82px; }
+
+  .question-side .problem.word-problem,
+  .single-column-learning .problem.word-problem{
+    font-size:clamp(1.45rem,6.2vw,2.15rem);
+  }
+}
+
+
+/* v23: use the supplied pixel-art U.S. coin images */
+.coin{
+  overflow:hidden;
+  padding:0;
+  background:transparent;
+  border:none;
+  box-shadow:none;
+}
+
+.coin-image{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+  image-rendering:pixelated;
+  user-select:none;
+  pointer-events:none;
+}
+
+.tray-coin{
+  border:none;
+  background:transparent;
+}
+
+.tray-coin:focus-visible{
+  outline:3px solid var(--accent);
+  outline-offset:4px;
+}
