@@ -268,7 +268,7 @@ MathQuest.Combat = (() => {
     const bossBonus =
       state.battleIndex ===
       currentWorld().battles.length - 1
-        ? 10
+        ? 18
         : 0;
 
     return (

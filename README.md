@@ -165,3 +165,20 @@ XP is no longer awarded on each correct answer.
   - the bar resets for the next level
   - the Knight receives +2 max HP and a full heal
 - Later/harder battles award slightly more XP, and bosses receive an XP bonus.
+
+
+## v16 XP timing
+
+XP is now strictly a post-battle reward.
+
+- Correct answers give score and streak only.
+- Defeating an enemy opens the Victory popup.
+- The XP bar then animates from its current value to the new value.
+- Next Battle stays disabled until the animation finishes.
+- Level-up happens inside that same XP animation instead of a separate level-up popup.
+- Whispering Woods is tuned to reach Level 2 after defeating the Goblin King:
+  - Battles 1–3: 10 XP each
+  - Battles 4–6: 13 XP each
+  - Goblin King: 31 XP
+  - Total: 100 XP
+- Level 2 still grants +2 maximum HP and a full heal.

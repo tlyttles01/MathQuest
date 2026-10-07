@@ -427,3 +427,35 @@
     filter:brightness(1.8);
   }
 }
+
+
+/* v16: battle XP is awarded only after victory */
+.battle-xp-panel{
+  position:relative;
+  overflow:hidden;
+}
+
+.battle-xp-panel::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(139,92,246,.06),
+    transparent
+  );
+}
+
+.battle-xp-heading strong{
+  font-size:1.05rem;
+}
+
+.battle-xp-message{
+  transition:transform .2s ease, color .2s ease;
+}
+
+.battle-xp-fill.level-flash + .battle-xp-message{
+  color:#7c3aed;
+}

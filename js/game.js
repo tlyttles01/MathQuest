@@ -502,7 +502,7 @@ const skillInfo = {
       `${(startXp / startXpToNext) * 100}%`;
 
     $("battleXpMessage").textContent =
-      "Adding battle XP...";
+      "Battle complete — adding XP...";
 
     $("nextBattleBtn").disabled =
       true;
@@ -565,7 +565,7 @@ const skillInfo = {
         currentLevel++;
 
         $("battleXpMessage").textContent =
-          `LEVEL UP! Knight reached Level ${currentLevel}!`;
+          `${MathQuest.Combat.currentHero().name} reached Level ${currentLevel}!`;
 
         $("battleXpFill")
           .classList.add(
@@ -684,6 +684,10 @@ const skillInfo = {
   }
 
   function nextBattle() {
+    if (battleXpAnimating) {
+      return;
+    }
+
     $("victoryPanel")
       .classList.add("hidden");
 
