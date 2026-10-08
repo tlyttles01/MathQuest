@@ -282,3 +282,8 @@ Added supplied pixel-art monster sprites for all 21 enemies in:
 - Clocktower
 
 The previous emoji placeholders have been replaced with image files in `characterImages/`.
+
+
+## v26 transparent monster sprites
+
+The 21 supplied monster sprites for Living Library, The Vault, and Clocktower now use transparent PNG backgrounds. The printed labels from the original sprite sheet are excluded from the individual assets.
