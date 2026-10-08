@@ -272,3 +272,13 @@ The coins no longer display generated cent values or generic SVG portraits. Thei
 - Living Library word problems use a smaller responsive font and normal wrapping.
 - Long Vault prompts such as "You have 65¢..." also wrap correctly.
 - Only short equation-style prompts remain forced onto one line.
+
+
+## v25 monster art
+
+Added supplied pixel-art monster sprites for all 21 enemies in:
+- Living Library
+- The Vault
+- Clocktower
+
+The previous emoji placeholders have been replaced with image files in `characterImages/`.

@@ -51,15 +51,15 @@ MathQuest.Combat = (() => {
       completionText:"You closed the Great Book and recovered the Story Crystal.",
       nextWorldLabel:"Enter The Vault", unlockPowerStrike:false, crystalName:"Story Crystal",
       battles:[
-        {enemyName:"Letter Sprite",enemySprite:"🔤",enemyMaxHp:5,difficulty:1,intent:{name:"Letter Flick",damage:1,dangerous:false}},
-        {enemyName:"Bookworm",enemySprite:"🐛",enemyMaxHp:6,difficulty:1,intent:{name:"Page Nibble",damage:1,dangerous:false}},
-        {enemyName:"Possessed Book",enemySprite:"📘",enemyMaxHp:7,difficulty:2,intent:{name:"Page Slap",damage:1,dangerous:false}},
-        {enemyName:"Ink Blob",enemySprite:"🖋️",enemyMaxHp:8,difficulty:2,intentCycle:[
+        {enemyName:"Letter Sprite",enemyImage:"characterImages/letter-sprite.png",enemyMaxHp:5,difficulty:1,intent:{name:"Letter Flick",damage:1,dangerous:false}},
+        {enemyName:"Bookworm",enemyImage:"characterImages/bookworm.png",enemyMaxHp:6,difficulty:1,intent:{name:"Page Nibble",damage:1,dangerous:false}},
+        {enemyName:"Possessed Book",enemyImage:"characterImages/possessed-book.png",enemyMaxHp:7,difficulty:2,intent:{name:"Page Slap",damage:1,dangerous:false}},
+        {enemyName:"Ink Blob",enemyImage:"characterImages/ink-blob.png",enemyMaxHp:8,difficulty:2,intentCycle:[
           {name:"Ink Splash",damage:1,dangerous:false},{name:"Ink Splash",damage:1,dangerous:false},{name:"INK BURST",damage:3,dangerous:true}]},
-        {enemyName:"Riddle Raven",enemySprite:"🐦‍⬛",enemyMaxHp:9,difficulty:2,intent:{name:"Riddle Peck",damage:2,dangerous:false}},
-        {enemyName:"Library Guardian",enemySprite:"📚",enemyMaxHp:11,difficulty:3,intentCycle:[
+        {enemyName:"Riddle Raven",enemyImage:"characterImages/riddle-raven.png",enemyMaxHp:9,difficulty:2,intent:{name:"Riddle Peck",damage:2,dangerous:false}},
+        {enemyName:"Library Guardian",enemyImage:"characterImages/library-guardian.png",enemyMaxHp:11,difficulty:3,intentCycle:[
           {name:"Book Bash",damage:2,dangerous:false},{name:"Book Bash",damage:2,dangerous:false},{name:"SHELF SLAM",damage:4,dangerous:true}]},
-        {enemyName:"The Great Book",enemySprite:"📕",enemyMaxHp:14,difficulty:3,intentCycle:[
+        {enemyName:"The Great Book",enemyImage:"characterImages/the-great-book.png",enemyMaxHp:14,difficulty:3,intentCycle:[
           {name:"Page Storm",damage:2,dangerous:false},{name:"Page Storm",damage:2,dangerous:false},{name:"FINAL CHAPTER",damage:5,dangerous:true}]}
       ]
     },
@@ -71,15 +71,15 @@ MathQuest.Combat = (() => {
       completionText:"You cracked the Piggy Bank and recovered the Coin Crystal.",
       nextWorldLabel:"Enter Clocktower", unlockPowerStrike:false, crystalName:"Coin Crystal",
       battles:[
-        {enemyName:"Copper Coin",enemySprite:"🪙",enemyMaxHp:5,difficulty:1,intent:{name:"Coin Ping",damage:1,dangerous:false}},
-        {enemyName:"Coin Mimic",enemySprite:"🪙",enemyMaxHp:6,difficulty:1,intent:{name:"Coin Bite",damage:1,dangerous:false}},
-        {enemyName:"Treasure Goblin",enemySprite:"💰",enemyMaxHp:7,difficulty:2,intent:{name:"Bag Swing",damage:1,dangerous:false}},
-        {enemyName:"Silver Scarab",enemySprite:"🪲",enemyMaxHp:8,difficulty:2,intentCycle:[
+        {enemyName:"Copper Coin",enemyImage:"characterImages/copper-coin.png",enemyMaxHp:5,difficulty:1,intent:{name:"Coin Ping",damage:1,dangerous:false}},
+        {enemyName:"Coin Mimic",enemyImage:"characterImages/coin-mimic.png",enemyMaxHp:6,difficulty:1,intent:{name:"Coin Bite",damage:1,dangerous:false}},
+        {enemyName:"Treasure Goblin",enemyImage:"characterImages/treasure-goblin.png",enemyMaxHp:7,difficulty:2,intent:{name:"Bag Swing",damage:1,dangerous:false}},
+        {enemyName:"Silver Scarab",enemyImage:"characterImages/silver-scarab.png",enemyMaxHp:8,difficulty:2,intentCycle:[
           {name:"Silver Scratch",damage:1,dangerous:false},{name:"Silver Scratch",damage:1,dangerous:false},{name:"COIN SHOWER",damage:3,dangerous:true}]},
-        {enemyName:"Vault Guard",enemySprite:"🔐",enemyMaxHp:10,difficulty:2,intent:{name:"Lock Bash",damage:2,dangerous:false}},
-        {enemyName:"Golden Mimic",enemySprite:"🎁",enemyMaxHp:11,difficulty:3,intentCycle:[
+        {enemyName:"Vault Guard",enemyImage:"characterImages/vault-guard.png",enemyMaxHp:10,difficulty:2,intent:{name:"Lock Bash",damage:2,dangerous:false}},
+        {enemyName:"Golden Mimic",enemyImage:"characterImages/golden-mimic.png",enemyMaxHp:11,difficulty:3,intentCycle:[
           {name:"Gold Bite",damage:2,dangerous:false},{name:"Gold Bite",damage:2,dangerous:false},{name:"JACKPOT CRASH",damage:4,dangerous:true}]},
-        {enemyName:"Piggy Bank",enemySprite:"🐷",enemyMaxHp:14,difficulty:3,intentCycle:[
+        {enemyName:"Piggy Bank",enemyImage:"characterImages/piggy-bank.png",enemyMaxHp:14,difficulty:3,intentCycle:[
           {name:"Coin Toss",damage:2,dangerous:false},{name:"Coin Toss",damage:2,dangerous:false},{name:"BANK BREAKER",damage:5,dangerous:true}]}
       ]
     },
@@ -91,15 +91,15 @@ MathQuest.Combat = (() => {
       completionText:"You broke the Time Wizard's spell and recovered the Time Crystal.",
       nextWorldLabel:"Adventure Complete", unlockPowerStrike:false, crystalName:"Time Crystal",
       battles:[
-        {enemyName:"Clock Sprite",enemySprite:"🕒",enemyMaxHp:5,difficulty:1,intent:{name:"Tick",damage:1,dangerous:false}},
-        {enemyName:"Minute Bat",enemySprite:"🦇",enemyMaxHp:6,difficulty:1,intent:{name:"Minute Swipe",damage:1,dangerous:false}},
-        {enemyName:"Hour Hound",enemySprite:"🐕",enemyMaxHp:7,difficulty:2,intent:{name:"Hour Bite",damage:1,dangerous:false}},
-        {enemyName:"Pendulum Phantom",enemySprite:"👻",enemyMaxHp:8,difficulty:2,intentCycle:[
+        {enemyName:"Clock Sprite",enemyImage:"characterImages/clock-sprite.png",enemyMaxHp:5,difficulty:1,intent:{name:"Tick",damage:1,dangerous:false}},
+        {enemyName:"Minute Bat",enemyImage:"characterImages/minute-bat.png",enemyMaxHp:6,difficulty:1,intent:{name:"Minute Swipe",damage:1,dangerous:false}},
+        {enemyName:"Hour Hound",enemyImage:"characterImages/hour-hound.png",enemyMaxHp:7,difficulty:2,intent:{name:"Hour Bite",damage:1,dangerous:false}},
+        {enemyName:"Pendulum Phantom",enemyImage:"characterImages/pendulum-phantom.png",enemyMaxHp:8,difficulty:2,intentCycle:[
           {name:"Pendulum Tap",damage:1,dangerous:false},{name:"Pendulum Tap",damage:1,dangerous:false},{name:"TIME SWING",damage:3,dangerous:true}]},
-        {enemyName:"Gear Golem",enemySprite:"⚙️",enemyMaxHp:10,difficulty:2,intent:{name:"Gear Grind",damage:2,dangerous:false}},
-        {enemyName:"Clockwork Knight",enemySprite:"🤖",enemyMaxHp:11,difficulty:3,intentCycle:[
+        {enemyName:"Gear Golem",enemyImage:"characterImages/gear-golem.png",enemyMaxHp:10,difficulty:2,intent:{name:"Gear Grind",damage:2,dangerous:false}},
+        {enemyName:"Clockwork Knight",enemyImage:"characterImages/clockwork-knight.png",enemyMaxHp:11,difficulty:3,intentCycle:[
           {name:"Clock Jab",damage:2,dangerous:false},{name:"Clock Jab",damage:2,dangerous:false},{name:"SECOND HAND",damage:4,dangerous:true}]},
-        {enemyName:"Time Wizard",enemySprite:"🧙",enemyMaxHp:15,difficulty:3,intentCycle:[
+        {enemyName:"Time Wizard",enemyImage:"characterImages/time-wizard.png",enemyMaxHp:15,difficulty:3,intentCycle:[
           {name:"Time Bolt",damage:2,dangerous:false},{name:"Time Bolt",damage:2,dangerous:false},{name:"TIME FREEZE",damage:5,dangerous:true}]}
       ]
     }
