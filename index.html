@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=26">
+  <link rel="stylesheet" href="css/game.css?v=27">
 </head>
 <body>
 <main class="game-shell">
@@ -157,6 +157,21 @@
               <div id="coinTrayRemoved" class="coin-tray-zone removed-zone"></div>
             </div>
           </div>
+
+          <div id="scratchpadTools" class="scratchpad-workspace hidden">
+            <div class="scratchpad-toolbar" role="group" aria-label="Scratch pad tools">
+              <button id="scratchPen" class="tool active" type="button">✏️ Draw</button>
+              <button id="scratchErase" class="tool" type="button">🧽 Erase</button>
+              <button id="scratchClear" class="tool danger" type="button">Clear</button>
+            </div>
+
+            <div class="scratchpad-paper">
+              <canvas id="scratchCanvas" aria-label="Scratch pad for working out the word problem"></canvas>
+            </div>
+
+            <p class="scratchpad-note">Use your finger, mouse, or stylus to work out the problem. Nothing you write here is graded.</p>
+          </div>
+
         </section>
       </aside>
     </div>
@@ -272,11 +287,11 @@
   </div>
 </div>
 
-<script src="js/heroes.js?v=26"></script>
-<script src="js/math.js?v=26"></script>
-<script src="js/blocks.js?v=26"></script>
-<script src="js/combat.js?v=26"></script>
-<script src="js/animations.js?v=26"></script>
-<script src="js/game.js?v=26"></script>
+<script src="js/heroes.js?v=27"></script>
+<script src="js/math.js?v=27"></script>
+<script src="js/blocks.js?v=27"></script>
+<script src="js/combat.js?v=27"></script>
+<script src="js/animations.js?v=27"></script>
+<script src="js/game.js?v=27"></script>
 </body>
 </html>

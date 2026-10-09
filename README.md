@@ -287,3 +287,14 @@ The previous emoji placeholders have been replaced with image files in `characte
 ## v26 transparent monster sprites
 
 The 21 supplied monster sprites for Living Library, The Vault, and Clocktower now use transparent PNG backgrounds. The printed labels from the original sprite sheet are excluded from the individual assets.
+
+
+## v27 Living Library improvements
+
+- Rewrote Living Library story problems to use clearer, more natural wording.
+- Added more distinct difficulty progression for one-step and two-step stories.
+- Added a real Scratch Pad workspace to Living Library.
+- Scratch Pad supports mouse, touch, and stylus drawing.
+- Includes Draw, Erase, and Clear controls.
+- Scratch work is never graded; it is only a solving aid.
+- Word problems are explicitly constrained to the question column and wrap responsively.

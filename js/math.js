@@ -268,24 +268,88 @@ MathQuest.MathEngine = (() => {
 
   function storyNormal(difficulty) {
     if (difficulty <= 1) {
-      const a = randomInt(2, 9), b = randomInt(1, 7);
+      const a = randomInt(3, 9);
+      const b = randomInt(1, 6);
+
       return Math.random() < 0.5
-        ? {prompt:`Mia has ${a} apples. She gets ${b} more. How many apples does she have?`,answer:a+b,hint:`She gets more, so add ${a} + ${b}.`}
-        : {prompt:`There are ${a+b} books. ${b} are checked out. How many are left?`,answer:a,hint:`Some were taken away, so subtract.`};
+        ? {
+            prompt: `Mia has ${a} apples. Her friend gives her ${b} more apples. How many apples does Mia have now?`,
+            answer: a + b,
+            hint: `Mia gets more apples, so add ${a} + ${b}.`
+          }
+        : {
+            prompt: `There are ${a + b} books on a shelf. ${b} books are checked out. How many books are still on the shelf?`,
+            answer: a,
+            hint: `${b} books were taken away, so subtract ${a + b} - ${b}.`
+          };
     }
-    const a = randomInt(8,20), b = randomInt(2,9);
+
+    if (difficulty === 2) {
+      const a = randomInt(8, 18);
+      const b = randomInt(2, 9);
+
+      return Math.random() < 0.5
+        ? {
+            prompt: `The Knight finds ${a} gems in one chest and ${b} gems in another chest. How many gems does he find altogether?`,
+            answer: a + b,
+            hint: `The gems from both chests are being combined. Add ${a} + ${b}.`
+          }
+        : {
+            prompt: `A library shelf has ${a + b} books. A student checks out ${b} of them. How many books are left on the shelf?`,
+            answer: a,
+            hint: `Some books leave the shelf, so subtract ${a + b} - ${b}.`
+          };
+    }
+
+    const start = randomInt(18, 30);
+    const change = randomInt(5, 12);
+
     return Math.random() < 0.5
-      ? {prompt:`The Knight found ${a} gems and then found ${b} more. How many gems now?`,answer:a+b,hint:`The amount grows, so add.`}
-      : {prompt:`A shelf had ${a+b} books. ${b} fell off. How many remain?`,answer:a,hint:`Books were removed, so subtract.`};
+      ? {
+          prompt: `The Library Guardian has ${start} magic scrolls. He finds ${change} more scrolls. How many scrolls does he have altogether?`,
+          answer: start + change,
+          hint: `He finds more scrolls, so add ${start} + ${change}.`
+        }
+      : {
+          prompt: `The Library Guardian has ${start + change} magic scrolls. He gives ${change} scrolls to the Knight. How many scrolls does he have left?`,
+          answer: start,
+          hint: `He gives some away, so subtract ${start + change} - ${change}.`
+        };
   }
 
   function storyChallenge(difficulty) {
     if (difficulty <= 1) {
-      const a=randomInt(5,12), b=randomInt(2,8);
-      return {prompt:`A chest has ${a} red gems and ${b} blue gems. How many gems are in the chest?`,answer:a+b,hint:`Combine both groups.`};
+      const red = randomInt(5, 12);
+      const blue = randomInt(2, 8);
+
+      return {
+        prompt: `A treasure chest holds ${red} red gems and ${blue} blue gems. How many gems are in the chest altogether?`,
+        answer: red + blue,
+        hint: `Both groups are in the same chest. Add ${red} + ${blue}.`
+      };
     }
-    const start=randomInt(12,25), used=randomInt(3,8), found=randomInt(2,6);
-    return {prompt:`The Knight had ${start} torches. He used ${used}, then found ${found}. How many now?`,answer:start-used+found,hint:`Subtract what was used, then add what was found.`};
+
+    if (difficulty === 2) {
+      const start = randomInt(12, 24);
+      const used = randomInt(3, 8);
+      const found = randomInt(2, 7);
+
+      return {
+        prompt: `The Knight starts with ${start} torches. He uses ${used} torches, then finds ${found} more. How many torches does he have now?`,
+        answer: start - used + found,
+        hint: `First subtract the ${used} torches he uses. Then add the ${found} torches he finds.`
+      };
+    }
+
+    const start = randomInt(20, 35);
+    const borrowed = randomInt(5, 12);
+    const returned = randomInt(2, borrowed - 1);
+
+    return {
+      prompt: `The library has ${start} spell books. Students borrow ${borrowed} books, then return ${returned}. How many spell books are in the library now?`,
+      answer: start - borrowed + returned,
+      hint: `First subtract the borrowed books. Then add the books that were returned.`
+    };
   }
 
   const coinTypes = {

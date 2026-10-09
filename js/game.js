@@ -11,6 +11,9 @@ window.MathQuest = window.MathQuest || {};
   let guardTutorialSeen = false;
   let battleXpAnimating = false;
   let coinTrayState = [];
+  let scratchMode = "draw";
+  let scratchDrawing = false;
+  let scratchLastPoint = null;
 const skillInfo = {
     slash: {
       label: "⚔️ SWORD SLASH",
@@ -607,23 +610,163 @@ const skillInfo = {
     }
   }
 
+
+  function resizeScratchCanvas() {
+    const canvas = $("scratchCanvas");
+    if (!canvas) {
+      return;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+    const ratio = window.devicePixelRatio || 1;
+
+    if (
+      canvas.width === Math.round(rect.width * ratio) &&
+      canvas.height === Math.round(rect.height * ratio)
+    ) {
+      return;
+    }
+
+    const old = document.createElement("canvas");
+    old.width = canvas.width;
+    old.height = canvas.height;
+
+    if (canvas.width && canvas.height) {
+      old.getContext("2d").drawImage(canvas, 0, 0);
+    }
+
+    canvas.width = Math.max(1, Math.round(rect.width * ratio));
+    canvas.height = Math.max(1, Math.round(rect.height * ratio));
+
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    if (old.width && old.height) {
+      ctx.drawImage(
+        old,
+        0,
+        0,
+        old.width,
+        old.height,
+        0,
+        0,
+        rect.width,
+        rect.height
+      );
+    }
+  }
+
+  function scratchPoint(event) {
+    const canvas = $("scratchCanvas");
+    const rect = canvas.getBoundingClientRect();
+
+    return {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    };
+  }
+
+  function beginScratch(event) {
+    scratchDrawing = true;
+    scratchLastPoint = scratchPoint(event);
+
+    if (event.pointerId !== undefined) {
+      $("scratchCanvas").setPointerCapture(event.pointerId);
+    }
+  }
+
+  function moveScratch(event) {
+    if (!scratchDrawing || !scratchLastPoint) {
+      return;
+    }
+
+    const canvas = $("scratchCanvas");
+    const ctx = canvas.getContext("2d");
+    const next = scratchPoint(event);
+
+    ctx.save();
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    if (scratchMode === "erase") {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.lineWidth = 22;
+    }
+    else {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.strokeStyle = "#24324a";
+      ctx.lineWidth = 4;
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(scratchLastPoint.x, scratchLastPoint.y);
+    ctx.lineTo(next.x, next.y);
+    ctx.stroke();
+    ctx.restore();
+
+    scratchLastPoint = next;
+    event.preventDefault();
+  }
+
+  function endScratch() {
+    scratchDrawing = false;
+    scratchLastPoint = null;
+  }
+
+  function setScratchMode(mode) {
+    scratchMode = mode;
+
+    $("scratchPen").classList.toggle(
+      "active",
+      mode === "draw"
+    );
+
+    $("scratchErase").classList.toggle(
+      "active",
+      mode === "erase"
+    );
+  }
+
+  function clearScratchPad() {
+    const canvas = $("scratchCanvas");
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
   function updateWorkspace(problem) {
     const world = MathQuest.Combat.currentWorld();
     const layout = $("learningLayout");
     const workspace = $("workspaceSide");
     const blocks = $("blockWorkspaceTools");
     const coins = $("coinWorkspaceTools");
+    const scratch = $("scratchpadTools");
 
     layout.classList.remove("single-column-learning");
     workspace.classList.remove("hidden");
     blocks.classList.add("hidden");
     coins.classList.add("hidden");
+    scratch.classList.add("hidden");
 
     if (world.id === "woods" || world.id === "mines") {
       $("workspaceTitle").textContent = "Block Workspace";
       $("toolHelp").textContent = "Build, break apart, and cross out blocks whenever they help.";
       blocks.classList.remove("hidden");
       coinTrayState = [];
+      return;
+    }
+
+    if (world.id === "library") {
+      $("workspaceTitle").textContent = "Scratch Pad";
+      $("toolHelp").textContent = "Draw a picture, write an equation, or make tally marks to help solve the story.";
+      scratch.classList.remove("hidden");
+      coinTrayState = [];
+
+      requestAnimationFrame(() => {
+        resizeScratchCanvas();
+      });
+
       return;
     }
 
@@ -640,7 +783,7 @@ const skillInfo = {
       return;
     }
 
-    // Story problems, visual money questions, and clock questions do not need blocks.
+    // Visual money questions and clock questions do not need a workspace.
     workspace.classList.add("hidden");
     layout.classList.add("single-column-learning");
     coinTrayState = [];
@@ -1440,6 +1583,46 @@ const skillInfo = {
           }
         }
       );
+    $("scratchPen").addEventListener(
+      "click",
+      () => setScratchMode("draw")
+    );
+
+    $("scratchErase").addEventListener(
+      "click",
+      () => setScratchMode("erase")
+    );
+
+    $("scratchClear").addEventListener(
+      "click",
+      clearScratchPad
+    );
+
+    $("scratchCanvas").addEventListener(
+      "pointerdown",
+      beginScratch
+    );
+
+    $("scratchCanvas").addEventListener(
+      "pointermove",
+      moveScratch
+    );
+
+    $("scratchCanvas").addEventListener(
+      "pointerup",
+      endScratch
+    );
+
+    $("scratchCanvas").addEventListener(
+      "pointercancel",
+      endScratch
+    );
+
+    window.addEventListener(
+      "resize",
+      resizeScratchCanvas
+    );
+
 $("answerForm")
       .addEventListener(
         "submit",
