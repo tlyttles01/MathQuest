@@ -1191,6 +1191,12 @@ const skillInfo = {
       intent.dangerous &&
       !guardTutorialSeen
     ) {
+      $("guardTutorialAttackName").textContent =
+        intent.name;
+
+      $("guardTutorialDamage").textContent =
+        intent.damage;
+
       $("tutorialOverlay")
         .classList.remove("hidden");
     }
@@ -2983,6 +2989,20 @@ const skillInfo = {
     });
   }
 
+  function openCampfire() {
+    if (locked) {
+      return;
+    }
+
+    $("campfirePanel")
+      .classList.remove("hidden");
+  }
+
+  function closeCampfire() {
+    $("campfirePanel")
+      .classList.add("hidden");
+  }
+
   function init() {
     MathQuest.BlockWorkspace.init();
 
@@ -3218,6 +3238,17 @@ $("beginJourneyBtn")
 
     $("worldSelectBtn").addEventListener("click", openWorldSelect);
     $("closeWorldSelectBtn").addEventListener("click", closeWorldSelect);
+
+    $("campfireBtn").addEventListener(
+      "click",
+      openCampfire
+    );
+
+    $("closeCampfireBtn").addEventListener(
+      "click",
+      closeCampfire
+    );
+
     renderWorldSelect();
 
     newProblem();

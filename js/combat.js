@@ -238,7 +238,7 @@ MathQuest.Combat = (() => {
       Math.max(
         hero.startingMaxHp,
         Number(saved.heroMaxHp) ||
-        (hero.startingMaxHp + (state.level - 1) * 2)
+        (hero.startingMaxHp + (state.level - 1) * 3)
       );
 
     state.heroHp =
@@ -405,9 +405,9 @@ MathQuest.Combat = (() => {
       newLevel = state.level;
       leveledUp = true;
 
-      // Each level makes the Knight sturdier without
+      // Each level adds 3 max HP without
       // shortening the math practice by increasing damage.
-      state.heroMaxHp += 2;
+      state.heroMaxHp += 3;
       state.heroHp = state.heroMaxHp;
 
       // Slightly larger requirement for the next level.

@@ -4,16 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=37">
+  <link rel="stylesheet" href="css/game.css?v=41">
 </head>
 <body>
 <main class="game-shell">
   <section class="battle-panel">
     <header class="topbar">
-      <div><div class="build-row"><span id="buildVersion" class="build-version">v37</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
+      <div><div class="build-row"><span id="buildVersion" class="build-version">v41</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
       <div class="stats">
         <button id="adventureMapBtn" class="secondary compact-control" type="button">🧭 Adventure Map</button>
         <button id="worldSelectBtn" class="secondary compact-control" type="button">🎯 Practice Mode</button>
+        <button id="campfireBtn" class="secondary compact-control" type="button">🔥 Campfire</button>
         <span>⭐ <b id="score">0</b></span>
         <span title="Skill Stars">🌟 <b id="skillStars">0</b></span>
         <span>🔥 <b id="streak">0</b></span>
@@ -26,7 +27,7 @@
           <b id="heroName">Knight</b>
           <span>Lv. <span id="heroLevel">1</span></span>
         </div>
-        <div class="hp-line"><span>❤️</span><b><span id="heroHp">20</span>/<span id="heroMaxHp">20</span></b></div>
+        <div class="hp-line"><span>❤️</span><b><span id="heroHp">30</span>/<span id="heroMaxHp">30</span></b></div>
         <div class="hp-track"><div id="heroHpBar" class="hp-fill hero-fill"></div></div>
         <div class="xp-row">
           <span>XP</span>
@@ -342,6 +343,73 @@
 </div>
 
 
+
+<div id="campfirePanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="campfireTitle">
+  <div class="modal-card campfire-modal">
+    <div class="campfire-hero">
+      <div class="campfire-flame" aria-hidden="true">🔥</div>
+      <div>
+        <div class="eyebrow">PARTY CAMP</div>
+        <h2 id="campfireTitle">Campfire</h2>
+        <p>Rest by the fire and see the heroes who can join the adventure.</p>
+      </div>
+    </div>
+
+    <div class="campfire-scene" aria-hidden="true">
+      <div class="campfire-ground"></div>
+      <div class="campfire-fire">🔥</div>
+    </div>
+
+    <div class="character-slot-grid">
+      <article class="character-slot available">
+        <div class="character-slot-art">
+          <img src="characterImages/knight.png?v=41" alt="Knight">
+        </div>
+        <div class="character-slot-copy">
+          <div class="character-status ready">CURRENT HERO</div>
+          <h3>Knight</h3>
+          <p>Defensive fighter who blocks dangerous attacks and turns perfect Guards into Counters.</p>
+          <div class="character-tags">
+            <span>🛡️ Defense</span>
+            <span>⚔️ Counter</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="character-slot coming-soon">
+        <div class="character-slot-art mystery">?</div>
+        <div class="character-slot-copy">
+          <div class="character-status">COMING SOON</div>
+          <h3>Hero Slot 2</h3>
+          <p>A new hero with a different way to use math in battle.</p>
+        </div>
+      </article>
+
+      <article class="character-slot coming-soon">
+        <div class="character-slot-art mystery">?</div>
+        <div class="character-slot-copy">
+          <div class="character-status">COMING SOON</div>
+          <h3>Hero Slot 3</h3>
+          <p>A future class will bring a new combat style to the party.</p>
+        </div>
+      </article>
+
+      <article class="character-slot coming-soon">
+        <div class="character-slot-art mystery">?</div>
+        <div class="character-slot-copy">
+          <div class="character-status">COMING SOON</div>
+          <h3>Hero Slot 4</h3>
+          <p>Another hero is still training somewhere in the kingdom.</p>
+        </div>
+      </article>
+    </div>
+
+    <button id="closeCampfireBtn" class="primary modal-primary" type="button">
+      Return to Adventure
+    </button>
+  </div>
+</div>
+
 <div id="merchantPanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="merchantTitle">
   <div class="modal-card merchant-modal">
     <div class="merchant-head">
@@ -483,7 +551,7 @@
       <div class="power-tutorial-arrow">→</div>
       <div><strong>⚡ 2 Focus</strong><span>Ready!</span></div>
       <div class="power-tutorial-arrow">→</div>
-      <div><strong>💥 Power Strike</strong><span>4 damage</span></div>
+      <div><strong>💥 Power Strike</strong><span>6 damage</span></div>
     </div>
 
     <p>Power Strike uses <b>2 Focus</b> and gives you a <b>harder question</b>. Use it when the extra damage is worth it.</p>
@@ -499,17 +567,17 @@
   <div class="tutorial-card">
     <div class="tutorial-icon">🛡️</div><div class="eyebrow">NEW SKILL</div><h2 id="guardTutorialTitle">Guard</h2>
     <p>Some enemies charge a <b>big attack</b>.</p>
-    <div class="warning">🚨 HEAVY SMASH<br><b>4 DAMAGE</b></div>
-    <p>Use <b>Guard</b> and answer correctly to block it.</p>
+    <div class="warning">🚨 <span id="guardTutorialAttackName">BIG ATTACK</span><br><b><span id="guardTutorialDamage">0</span> DAMAGE</b></div>
+    <p>Use <b>Guard</b> and answer correctly to block it. Blocking a dangerous attack also readies the Knight\'s <b>Counter</b>.</p>
     <div class="tutorial-actions"><button id="tutorialTryBtn" class="primary" type="button">Got it!</button><button id="tutorialSkipBtn" class="secondary" type="button">Skip Tutorial</button></div>
   </div>
 </div>
 
-<script src="js/heroes.js?v=37"></script>
-<script src="js/math.js?v=37"></script>
-<script src="js/blocks.js?v=37"></script>
-<script src="js/combat.js?v=37"></script>
-<script src="js/animations.js?v=37"></script>
-<script src="js/game.js?v=37"></script>
+<script src="js/heroes.js?v=41"></script>
+<script src="js/math.js?v=41"></script>
+<script src="js/blocks.js?v=41"></script>
+<script src="js/combat.js?v=41"></script>
+<script src="js/animations.js?v=41"></script>
+<script src="js/game.js?v=41"></script>
 </body>
 </html>

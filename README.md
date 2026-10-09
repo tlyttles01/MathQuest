@@ -465,3 +465,35 @@ Enemies now advertise combat roles:
 - Boss — longer patterned fights
 
 The goal is to give Knight defense/counterplay room to matter while keeping the math-question count reasonable for a second grader.
+
+
+## v38 Tutorial balance fix
+
+- Guard tutorial now reads the actual incoming dangerous attack name and damage from combat data instead of hard-coding `HEAVY SMASH / 4 DAMAGE`.
+- With the current Goblin Brute balance it will correctly show `HEAVY SMASH / 6 DAMAGE`.
+- The Guard tutorial now also teaches the Knight's Counter mechanic.
+- Power Strike tutorial text was updated from 4 damage to the current 6 damage.
+
+
+## v39 Health balance adjustment
+
+- Knight starting HP increased from 26 to 35.
+- Existing saves will also respect the new 35 HP minimum because saved max HP is clamped to the hero's starting max HP.
+- Level-ups still add +2 max HP and fully heal the Knight.
+
+
+## v40 Health progression adjustment
+
+- Knight starting HP changed from 35 to 30.
+- Each level now grants +3 max HP instead of +2.
+- Level-up still fully heals the Knight.
+- Max HP fallback calculations for saved games now use the same +3-per-level progression.
+
+
+## v41 Campfire roster
+
+- Added a Campfire button to the main battle navigation.
+- Campfire opens a party/character roster screen.
+- Knight is shown as the current playable hero with his defensive/counter identity.
+- Added three additional character slots marked Coming Soon.
+- The Campfire is presentation-only for now; future classes can plug into these slots later.
