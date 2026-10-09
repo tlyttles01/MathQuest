@@ -6,9 +6,9 @@ MathQuest.Heroes = (() => {
       id: "knight",
       name: "Knight",
       image: "characterImages/knight.png",
-      startingMaxHp: 20,
+      startingMaxHp: 26,
       unlocked: true,
-      description: "A sturdy hero who can protect against dangerous attacks."
+      description: "A defensive fighter who reads enemy attacks, blocks big hits, and turns perfect Guards into powerful counters."
     }
 
     /*

@@ -39,15 +39,19 @@ window.MathQuest = window.MathQuest || {};
 const skillInfo = {
     slash: {
       label: "⚔️ SWORD SLASH",
-      effect: "2 damage · gain 1 Focus"
+      effect: "3 damage · gain 1 Focus"
     },
     power: {
       label: "💥 POWER STRIKE",
-      effect: "4 damage · costs 2 Focus"
+      effect: "6 damage · costs 2 Focus"
     },
     guard: {
       label: "🛡️ GUARD",
       effect: "Block incoming attack · gain 1 Focus"
+    },
+    shieldBash: {
+      label: "🛡️⚔️ SHIELD BASH",
+      effect: "2 damage · reduce incoming damage by 2 · gain 1 Focus"
     }
   };
 
@@ -1138,6 +1142,16 @@ const skillInfo = {
     $("heroFocusBar").style.width =
       `${(state.focus / state.maxFocus) * 100}%`;
 
+    $("counterStatus").textContent =
+      state.counterReady
+        ? "⚔️ COUNTER READY — next Sword Slash +2 damage"
+        : "Counter not ready";
+
+    $("counterStatus").classList.toggle(
+      "ready",
+      state.counterReady
+    );
+
     $("enemyHpBar").style.width =
       `${(state.enemyHp / state.enemyMaxHp) * 100}%`;
   }
@@ -1194,7 +1208,7 @@ const skillInfo = {
 
     const guardUnlocked =
       world.id !== "woods" ||
-      state.battleIndex >= 4;
+      state.battleIndex >= 2;
 
     $("guardSkill").disabled =
       !guardUnlocked;
@@ -1216,7 +1230,7 @@ const skillInfo = {
       .textContent =
         guardUnlocked
           ? "Normal question · block attack · +1 Focus"
-          : "Unlocks later";
+          : "Unlocks at Battle 3";
 
     const slashHint =
       document.querySelector(
@@ -1225,7 +1239,9 @@ const skillInfo = {
 
     if (slashHint) {
       slashHint.textContent =
-        "Normal question · 2 damage · +1 Focus";
+        state.counterReady
+          ? "Normal question · 5 damage with Counter · +1 Focus"
+          : "Normal question · 3 damage · +1 Focus";
     }
 
     const powerUnlocked =
@@ -1264,8 +1280,41 @@ const skillInfo = {
         !powerUnlocked
           ? "Defeat the Goblin King to unlock"
           : hasPowerFocus
-            ? "Harder question · 4 damage · costs 2 Focus"
+            ? "Harder question · 6 damage · costs 2 Focus"
             : `Need 2 Focus · you have ${state.focus}`;
+
+    const shieldBashUnlocked =
+      state.powerStrikeUnlocked ||
+      world.id !== "woods";
+
+    $("shieldBashSkill").disabled =
+      !shieldBashUnlocked;
+
+    $("shieldBashSkill").classList.toggle(
+      "locked",
+      !shieldBashUnlocked
+    );
+
+    $("shieldBashSkill")
+      .querySelector("b")
+      .textContent =
+        shieldBashUnlocked
+          ? "🛡️⚔️ Shield Bash"
+          : "🛡️⚔️ Shield Bash 🔒";
+
+    $("shieldBashSkill")
+      .querySelector("small")
+      .textContent =
+        shieldBashUnlocked
+          ? "Normal question · 2 damage · reduce next hit by 2 · +1 Focus"
+          : "Unlocks after Whispering Woods";
+
+    if (
+      selectedSkill === "shieldBash" &&
+      !shieldBashUnlocked
+    ) {
+      selectedSkill = "slash";
+    }
 
     if (
       selectedSkill === "guard" &&
@@ -1302,6 +1351,9 @@ const skillInfo = {
 
     $("enemyName").textContent =
       battle.enemyName;
+
+    $("enemyRole").textContent =
+      `${battle.role || "Fighter"} · ${battle.roleText || ""}`;
 
     const enemyWrap =
       $("enemySprite").parentElement;
@@ -2089,10 +2141,31 @@ const skillInfo = {
     const attack =
       MathQuest.Combat.enemyAttack();
 
-    $("battleMessage").textContent =
-      attack.blocked
-        ? "BLOCKED!"
-        : "ENEMY ATTACK";
+    if (
+      attack.blocked &&
+      attack.counterReady
+    ) {
+      $("battleMessage").textContent =
+        "BLOCKED — COUNTER READY!";
+
+      $("feedback").textContent +=
+        " ⚔️ Perfect Guard! Your next Sword Slash gets +2 damage.";
+    }
+    else if (attack.blocked) {
+      $("battleMessage").textContent =
+        "BLOCKED!";
+    }
+    else if (attack.reducedBy > 0) {
+      $("battleMessage").textContent =
+        "BRACED!";
+
+      $("feedback").textContent +=
+        ` 🛡️ Shield Bash reduced the hit by ${attack.reducedBy}.`;
+    }
+    else {
+      $("battleMessage").textContent =
+        "ENEMY ATTACK";
+    }
 
     await MathQuest.Animations.enemyAttack(
       attack.damage,
@@ -2101,6 +2174,7 @@ const skillInfo = {
 
     updateHud();
     updateIntent();
+    updateSkillAvailability();
 
     if (
       MathQuest.Combat.state.heroHp <= 0
@@ -2118,6 +2192,7 @@ const skillInfo = {
 
       updateHud();
       updateIntent();
+      updateSkillAvailability();
 
       setTimeout(() => {
         battleComplete = false;
@@ -2145,7 +2220,8 @@ const skillInfo = {
     */
     if (
       selectedSkill === "slash" ||
-      selectedSkill === "guard"
+      selectedSkill === "guard" ||
+      selectedSkill === "shieldBash"
     ) {
       MathQuest.Combat.gainFocus(1);
     }
@@ -2173,12 +2249,19 @@ const skillInfo = {
         hinted
       );
 
+    const skillFeedback =
+      selectedSkill === "power"
+        ? `✅ Correct! +${reward.points} score. Power Strike used 2 Focus.`
+        : selectedSkill === "shieldBash"
+          ? `✅ Correct! +${reward.points} score. Shield Bash braces for 2 damage. +1 Focus.`
+          : selectedSkill === "guard"
+            ? `✅ Correct! +${reward.points} score. Guard is up. +1 Focus.`
+            : effect.counterUsed
+              ? `✅ Correct! +${reward.points} score. COUNTER! Sword Slash deals +2 damage. +1 Focus.`
+              : `✅ Correct! +${reward.points} score. +1 Focus.`;
+
     $("feedback").textContent =
-      (
-        selectedSkill === "power"
-          ? `✅ Correct! +${reward.points} score. Power Strike used 2 Focus.`
-          : `✅ Correct! +${reward.points} score. +1 Focus.`
-      ) +
+      skillFeedback +
       (
         earnedSkillStar
           ? " 🌟 Skill Star earned!"
@@ -2208,7 +2291,11 @@ const skillInfo = {
       $("battleMessage").textContent =
         selectedSkill === "power"
           ? "POWER STRIKE!"
-          : "SWORD SLASH!";
+          : selectedSkill === "shieldBash"
+            ? "SHIELD BASH!"
+            : effect.counterUsed
+              ? "COUNTER SLASH!"
+              : "SWORD SLASH!";
 
       await MathQuest.Animations.playerAttack(
         selectedSkill,

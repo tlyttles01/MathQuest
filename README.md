@@ -428,3 +428,40 @@ Merchant purchases are now stored in a world inventory instead of activating imm
 - Second Chance Charm: manually arm it before a risky question. It waits until the next wrong answer and can be disarmed without consuming it.
 - Items carry through the rest of the current world, including the boss, then reset for the next world.
 - Practice inventory remains separate from Adventure inventory.
+
+
+## v37 Combat foundation overhaul
+
+This build expands combat so future classes can have real identities without breaking encounter length.
+
+### Knight
+- Starting HP increased from 20 to 26.
+- Sword Slash: 3 damage + 1 Focus.
+- Power Strike: 6 damage, harder question, costs 2 Focus.
+- Guard: full block + 1 Focus.
+- Knight passive — Counter:
+  - Guard a dangerous attack.
+  - A Counter becomes ready.
+  - The next Sword Slash deals +2 damage (5 total) and consumes the Counter.
+- Shield Bash unlocks after Whispering Woods:
+  - normal question
+  - 2 damage
+  - +1 Focus
+  - reduces the next incoming hit by 2 damage.
+
+### Enemy combat scale
+- Regular enemies now generally have 6–22 HP.
+- Bosses now have 22–30 HP.
+- Normal attacks are generally 2–4 damage.
+- Dangerous attacks are generally 6–8 damage.
+- Fights are tuned around roughly 2–5 correct answers for normal enemies and 6–8 for bosses depending on skill choices.
+
+### Enemy identities
+Enemies now advertise combat roles:
+- Skirmisher — lower health, steady pressure
+- Tank — more health, lighter attacks
+- Heavy Hitter — predictable dangerous attacks
+- Trickster — changing attack strength
+- Boss — longer patterned fights
+
+The goal is to give Knight defense/counterplay room to matter while keeping the math-question count reasonable for a second grader.

@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=36">
+  <link rel="stylesheet" href="css/game.css?v=37">
 </head>
 <body>
 <main class="game-shell">
   <section class="battle-panel">
     <header class="topbar">
-      <div><div class="build-row"><span id="buildVersion" class="build-version">v36</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
+      <div><div class="build-row"><span id="buildVersion" class="build-version">v37</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
       <div class="stats">
         <button id="adventureMapBtn" class="secondary compact-control" type="button">🧭 Adventure Map</button>
         <button id="worldSelectBtn" class="secondary compact-control" type="button">🎯 Practice Mode</button>
@@ -57,7 +57,7 @@
       </div>
 
       <div class="fighter enemy">
-        <div class="fighter-title enemy-title"><b id="enemyName">Tiny Slime</b></div>
+        <div class="fighter-title enemy-title"><b id="enemyName">Tiny Slime</b></div><div id="enemyRole" class="enemy-role">Skirmisher · Low health</div>
         <div class="hp-line enemy-hp"><b><span id="enemyHp">1</span>/<span id="enemyMaxHp">1</span></b><span>❤️</span></div>
         <div class="hp-track enemy-track"><div id="enemyHpBar" class="hp-fill enemy-fill"></div></div>
         <div class="sprite-wrap enemy-wrap"><img id="enemySprite" class="sprite character-sprite" src="characterImages/tiny-slime.png" alt="Tiny Slime"><div id="enemyDamagePop" class="damage-pop hidden"></div></div>
@@ -71,10 +71,18 @@
   <section class="skills">
     <div class="eyebrow">CHOOSE AN ACTION</div>
     <div class="skill-grid">
-      <button class="skill active" data-skill="slash"><b>⚔️ Sword Slash</b><small>Normal question · 2 damage · +1 Focus</small></button>
-      <button id="powerSkill" class="skill locked" data-skill="power" disabled><b>💥 Power Strike 🔒</b><small>Harder question · 4 damage · costs 2 Focus</small></button>
+      <button class="skill active" data-skill="slash"><b>⚔️ Sword Slash</b><small>Normal question · 3 damage · +1 Focus</small></button>
+      <button id="powerSkill" class="skill locked" data-skill="power" disabled><b>💥 Power Strike 🔒</b><small>Harder question · 6 damage · costs 2 Focus</small></button>
       <button id="guardSkill" class="skill locked" data-skill="guard" disabled><b>🛡️ Guard 🔒</b><small>Unlocks later</small></button>
-      <button id="healSkill" class="skill locked" data-skill="secondWind" disabled><b>❤️ Second Wind 🔒</b><small>Unlocks later</small></button>
+      <button id="shieldBashSkill" class="skill locked" data-skill="shieldBash" disabled><b>🛡️⚔️ Shield Bash 🔒</b><small>Unlocks after Whispering Woods</small></button>
+    </div>
+    <div id="knightTactics" class="class-tactics">
+      <div>
+        <span class="class-tactics-icon">🛡️</span>
+        <strong>Knight Tactic: Counter</strong>
+      </div>
+      <p>Guard a <b>dangerous attack</b> to ready a Counter. Your next Sword Slash deals <b>+2 damage</b>.</p>
+      <span id="counterStatus" class="counter-status">Counter not ready</span>
     </div>
   </section>
 
@@ -497,11 +505,11 @@
   </div>
 </div>
 
-<script src="js/heroes.js?v=36"></script>
-<script src="js/math.js?v=36"></script>
-<script src="js/blocks.js?v=36"></script>
-<script src="js/combat.js?v=36"></script>
-<script src="js/animations.js?v=36"></script>
-<script src="js/game.js?v=36"></script>
+<script src="js/heroes.js?v=37"></script>
+<script src="js/math.js?v=37"></script>
+<script src="js/blocks.js?v=37"></script>
+<script src="js/combat.js?v=37"></script>
+<script src="js/animations.js?v=37"></script>
+<script src="js/game.js?v=37"></script>
 </body>
 </html>
