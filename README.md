@@ -334,3 +334,31 @@ Added the first full progression layer:
 - Practice mode remains available separately and can still jump to any world
 
 Save data is device/browser-local for now. A future account/cloud-save system can replace the storage layer without changing the progression UI.
+
+
+## v30 Living Library overhaul
+
+- Removed the leftover Scratch Pad HTML and CSS completely.
+- Expanded the Living Library to many more story templates.
+- Added anti-repeat logic that avoids recently used story types.
+- Normal word problems use `___ [ + / − ] ___ = ___`.
+- Power Strike word problems use two-step builders: `___ [ + / − ] ___ [ + / − ] ___ = ___`.
+- Living Library no longer shows a duplicate normal answer box.
+- The game checks the numbers, chosen operation(s), and final result.
+
+
+## v31 Focus system
+
+Power Strike is no longer the obvious best action every turn.
+
+- Knight has a 3-point Focus meter.
+- Each battle starts with at least 1 Focus.
+- Correct Sword Slash: 2 damage + 1 Focus.
+- Correct Guard: blocks the incoming attack + 1 Focus.
+- Power Strike: harder question, 4 damage, costs 2 Focus.
+- Power Strike is disabled when Focus is below 2.
+- Focus is shown beneath the Knight's XP bar.
+- Focus is included in local save data.
+
+This creates a simple rhythm:
+`Slash / Guard -> build Focus -> Power Strike -> rebuild Focus`.

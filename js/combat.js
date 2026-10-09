@@ -120,7 +120,9 @@ MathQuest.Combat = (() => {
     heroId: "knight",
     level: 1,
     xp: 0,
-    xpToNext: 100
+    xpToNext: 100,
+    focus: 1,
+    maxFocus: 3
   };
 
   function currentHero() {
@@ -151,6 +153,10 @@ MathQuest.Combat = (() => {
     state.enemyHp = battle.enemyMaxHp;
     state.turnNumber = 0;
     state.guardActive = false;
+    state.focus = Math.min(
+      state.maxFocus,
+      Math.max(1, state.focus)
+    );
   }
 
   function beginGame() {
@@ -170,6 +176,8 @@ MathQuest.Combat = (() => {
     state.level = 1;
     state.xp = 0;
     state.xpToNext = 100;
+    state.focus = 1;
+    state.maxFocus = 3;
     resetBattle();
   }
 
@@ -224,6 +232,21 @@ MathQuest.Combat = (() => {
     state.powerStrikeUnlocked =
       Boolean(saved.powerStrikeUnlocked) ||
       state.worldIndex > 0;
+
+    state.maxFocus =
+      Math.max(
+        3,
+        Number(saved.maxFocus) || 3
+      );
+
+    state.focus =
+      Math.min(
+        state.maxFocus,
+        Math.max(
+          1,
+          Number(saved.focus) || 1
+        )
+      );
 
     resetBattle();
   }
@@ -342,12 +365,48 @@ MathQuest.Combat = (() => {
     state.streak = 0;
   }
 
+  function canUsePowerStrike() {
+    return (
+      state.powerStrikeUnlocked &&
+      state.focus >= 2
+    );
+  }
+
+  function gainFocus(amount = 1) {
+    state.focus =
+      Math.min(
+        state.maxFocus,
+        state.focus + amount
+      );
+
+    return state.focus;
+  }
+
+  function spendFocus(amount = 2) {
+    if (state.focus < amount) {
+      return false;
+    }
+
+    state.focus -= amount;
+    return true;
+  }
+
   function useSkill(skill, hinted) {
     if (skill === "guard") {
       state.guardActive = true;
 
       return {
         kind: "guard",
+        value: 0
+      };
+    }
+
+    if (
+      skill === "power" &&
+      !spendFocus(2)
+    ) {
+      return {
+        kind: "no-focus",
         value: 0
       };
     }
@@ -446,6 +505,10 @@ MathQuest.Combat = (() => {
 
     useSkill,
     enemyAttack,
+
+    canUsePowerStrike,
+    gainFocus,
+    spendFocus,
 
     unlockPowerStrike,
     advanceBattle

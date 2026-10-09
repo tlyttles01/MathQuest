@@ -266,90 +266,333 @@ MathQuest.MathEngine = (() => {
   }
 
 
+  const recentStoryTemplates = [];
+
+  function chooseStoryTemplate(templates) {
+    const available =
+      templates.filter(
+        template =>
+          !recentStoryTemplates.includes(
+            template.id
+          )
+      );
+
+    const pool =
+      available.length
+        ? available
+        : templates;
+
+    const template =
+      choose(pool);
+
+    recentStoryTemplates.push(
+      template.id
+    );
+
+    while (
+      recentStoryTemplates.length > 5
+    ) {
+      recentStoryTemplates.shift();
+    }
+
+    return template;
+  }
+
+  function makeStoryProblem(template, values) {
+    const problem =
+      template.build(values);
+
+    problem.storyTemplateId =
+      template.id;
+
+    return problem;
+  }
+
   function storyNormal(difficulty) {
+    const easyTemplates = [
+      {
+        id:"apples-more",
+        build:({a,b}) => ({
+          prompt:`Mia has ${a} apples. Her friend gives her ${b} more apples. How many apples does Mia have now?`,
+          answer:a+b,
+          hint:`Mia gets more apples, so add ${a} + ${b}.`,
+          builder:{operands:[a,b],operators:["+"]}
+        })
+      },
+      {
+        id:"books-out",
+        build:({a,b}) => ({
+          prompt:`There are ${a} books on a shelf. ${b} books are checked out. How many books are still on the shelf?`,
+          answer:a-b,
+          hint:`Some books leave the shelf, so subtract ${a} - ${b}.`,
+          builder:{operands:[a,b],operators:["-"]}
+        })
+      },
+      {
+        id:"stickers-more",
+        build:({a,b}) => ({
+          prompt:`Ava has ${a} stickers. She earns ${b} more stickers. How many stickers does she have altogether?`,
+          answer:a+b,
+          hint:`She earns more, so add ${a} + ${b}.`,
+          builder:{operands:[a,b],operators:["+"]}
+        })
+      },
+      {
+        id:"birds-away",
+        build:({a,b}) => ({
+          prompt:`There are ${a} birds in a tree. ${b} birds fly away. How many birds are left?`,
+          answer:a-b,
+          hint:`Birds fly away, so subtract ${a} - ${b}.`,
+          builder:{operands:[a,b],operators:["-"]}
+        })
+      },
+      {
+        id:"cars-more",
+        build:({a,b}) => ({
+          prompt:`Noah has ${a} toy cars. He gets ${b} more for his birthday. How many toy cars does he have now?`,
+          answer:a+b,
+          hint:`He gets more cars, so add ${a} + ${b}.`,
+          builder:{operands:[a,b],operators:["+"]}
+        })
+      },
+      {
+        id:"crayons-give",
+        build:({a,b}) => ({
+          prompt:`A box has ${a} crayons. The teacher gives ${b} crayons to students. How many crayons are left in the box?`,
+          answer:a-b,
+          hint:`Crayons are taken from the box, so subtract ${a} - ${b}.`,
+          builder:{operands:[a,b],operators:["-"]}
+        })
+      },
+      {
+        id:"shells-more",
+        build:({a,b}) => ({
+          prompt:`Lily finds ${a} shells at the beach, then finds ${b} more. How many shells does she find in all?`,
+          answer:a+b,
+          hint:`Combine both groups of shells: ${a} + ${b}.`,
+          builder:{operands:[a,b],operators:["+"]}
+        })
+      },
+      {
+        id:"cookies-eaten",
+        build:({a,b}) => ({
+          prompt:`There are ${a} cookies on a plate. The family eats ${b}. How many cookies are left?`,
+          answer:a-b,
+          hint:`Cookies were eaten, so subtract ${a} - ${b}.`,
+          builder:{operands:[a,b],operators:["-"]}
+        })
+      }
+    ];
+
+    const mediumTemplates = [
+      {
+        id:"gems-chests",
+        build:({a,b}) => ({
+          prompt:`The Knight finds ${a} gems in one chest and ${b} gems in another. How many gems does he find altogether?`,
+          answer:a+b,
+          hint:`Combine the gems from both chests: ${a} + ${b}.`,
+          builder:{operands:[a,b],operators:["+"]}
+        })
+      },
+      {
+        id:"potions-used",
+        build:({a,b}) => ({
+          prompt:`The Knight carries ${a} potions. He uses ${b} of them. How many potions does he have left?`,
+          answer:a-b,
+          hint:`He uses some potions, so subtract ${a} - ${b}.`,
+          builder:{operands:[a,b],operators:["-"]}
+        })
+      },
+      {
+        id:"library-returned",
+        build:({a,b}) => ({
+          prompt:`The library has ${a} books on a cart. Students return ${b} more books. How many books are on the cart now?`,
+          answer:a+b,
+          hint:`More books are returned, so add ${a} + ${b}.`,
+          builder:{operands:[a,b],operators:["+"]}
+        })
+      },
+      {
+        id:"lanterns-broken",
+        build:({a,b}) => ({
+          prompt:`There are ${a} lanterns in the hall. ${b} lanterns go out. How many are still glowing?`,
+          answer:a-b,
+          hint:`Some lanterns go out, so subtract ${a} - ${b}.`,
+          builder:{operands:[a,b],operators:["-"]}
+        })
+      },
+      {
+        id:"runes-found",
+        build:({a,b}) => ({
+          prompt:`The Knight knows ${a} magic runes. He learns ${b} new runes. How many runes does he know now?`,
+          answer:a+b,
+          hint:`He learns more runes, so add ${a} + ${b}.`,
+          builder:{operands:[a,b],operators:["+"]}
+        })
+      },
+      {
+        id:"scrolls-given",
+        build:({a,b}) => ({
+          prompt:`A wizard has ${a} scrolls. He gives ${b} scrolls to the Knight. How many scrolls does the wizard have left?`,
+          answer:a-b,
+          hint:`He gives scrolls away, so subtract ${a} - ${b}.`,
+          builder:{operands:[a,b],operators:["-"]}
+        })
+      }
+    ];
+
+    const hardTemplates = [
+      {
+        id:"pages-added",
+        build:({a,b}) => ({
+          prompt:`A magic book has ${a} glowing pages. A spell reveals ${b} more pages. How many glowing pages are there now?`,
+          answer:a+b,
+          hint:`The spell adds pages, so add ${a} + ${b}.`,
+          builder:{operands:[a,b],operators:["+"]}
+        })
+      },
+      {
+        id:"keys-lost",
+        build:({a,b}) => ({
+          prompt:`The Library Guardian has ${a} golden keys. He loses ${b} of them. How many keys does he still have?`,
+          answer:a-b,
+          hint:`Keys are lost, so subtract ${a} - ${b}.`,
+          builder:{operands:[a,b],operators:["-"]}
+        })
+      },
+      {
+        id:"crystals-found",
+        build:({a,b}) => ({
+          prompt:`The Knight has collected ${a} crystal shards. He discovers ${b} more. How many crystal shards does he have now?`,
+          answer:a+b,
+          hint:`He discovers more shards, so add ${a} + ${b}.`,
+          builder:{operands:[a,b],operators:["+"]}
+        })
+      },
+      {
+        id:"maps-shared",
+        build:({a,b}) => ({
+          prompt:`The map room holds ${a} maps. Explorers take ${b} maps with them. How many maps remain?`,
+          answer:a-b,
+          hint:`Maps are taken away, so subtract ${a} - ${b}.`,
+          builder:{operands:[a,b],operators:["-"]}
+        })
+      }
+    ];
+
+    let templates;
+    let a;
+    let b;
+
     if (difficulty <= 1) {
-      const a = randomInt(3, 9);
-      const b = randomInt(1, 6);
-
-      return Math.random() < 0.5
-        ? {
-            prompt: `Mia has ${a} apples. Her friend gives her ${b} more apples. How many apples does Mia have now?`,
-            answer: a + b,
-            hint: `Mia gets more apples, so add ${a} + ${b}.`
-          }
-        : {
-            prompt: `There are ${a + b} books on a shelf. ${b} books are checked out. How many books are still on the shelf?`,
-            answer: a,
-            hint: `${b} books were taken away, so subtract ${a + b} - ${b}.`
-          };
+      templates = easyTemplates;
+      a = randomInt(6, 15);
+      b = randomInt(2, Math.min(7, a - 1));
+    }
+    else if (difficulty === 2) {
+      templates = mediumTemplates;
+      a = randomInt(14, 30);
+      b = randomInt(3, Math.min(12, a - 1));
+    }
+    else {
+      templates = hardTemplates;
+      a = randomInt(25, 50);
+      b = randomInt(5, Math.min(20, a - 1));
     }
 
-    if (difficulty === 2) {
-      const a = randomInt(8, 18);
-      const b = randomInt(2, 9);
-
-      return Math.random() < 0.5
-        ? {
-            prompt: `The Knight finds ${a} gems in one chest and ${b} gems in another chest. How many gems does he find altogether?`,
-            answer: a + b,
-            hint: `The gems from both chests are being combined. Add ${a} + ${b}.`
-          }
-        : {
-            prompt: `A library shelf has ${a + b} books. A student checks out ${b} of them. How many books are left on the shelf?`,
-            answer: a,
-            hint: `Some books leave the shelf, so subtract ${a + b} - ${b}.`
-          };
-    }
-
-    const start = randomInt(18, 30);
-    const change = randomInt(5, 12);
-
-    return Math.random() < 0.5
-      ? {
-          prompt: `The Library Guardian has ${start} magic scrolls. He finds ${change} more scrolls. How many scrolls does he have altogether?`,
-          answer: start + change,
-          hint: `He finds more scrolls, so add ${start} + ${change}.`
-        }
-      : {
-          prompt: `The Library Guardian has ${start + change} magic scrolls. He gives ${change} scrolls to the Knight. How many scrolls does he have left?`,
-          answer: start,
-          hint: `He gives some away, so subtract ${start + change} - ${change}.`
-        };
+    return makeStoryProblem(
+      chooseStoryTemplate(templates),
+      {a,b}
+    );
   }
 
   function storyChallenge(difficulty) {
+    const templates = [
+      {
+        id:"torches-use-find",
+        build:({a,b,c}) => ({
+          prompt:`The Knight starts with ${a} torches. He uses ${b} torches, then finds ${c} more. How many torches does he have now?`,
+          answer:a-b+c,
+          hint:`Build both steps: ${a} − ${b} + ${c}.`,
+          builder:{operands:[a,b,c],operators:["-","+"]}
+        })
+      },
+      {
+        id:"gems-find-spend",
+        build:({a,b,c}) => ({
+          prompt:`The Knight has ${a} gems. He finds ${b} more, then spends ${c} gems at a shop. How many gems does he have left?`,
+          answer:a+b-c,
+          hint:`First add the gems he finds, then subtract the gems he spends.`,
+          builder:{operands:[a,b,c],operators:["+","-"]}
+        })
+      },
+      {
+        id:"books-borrow-return",
+        build:({a,b,c}) => ({
+          prompt:`The library has ${a} books. Students borrow ${b} books, then return ${c}. How many books are in the library now?`,
+          answer:a-b+c,
+          hint:`First subtract the borrowed books, then add the returned books.`,
+          builder:{operands:[a,b,c],operators:["-","+"]}
+        })
+      },
+      {
+        id:"coins-find-give",
+        build:({a,b,c}) => ({
+          prompt:`The Knight has ${a} coins. He finds ${b} more coins, then gives ${c} coins to a friend. How many coins does he have now?`,
+          answer:a+b-c,
+          hint:`Add what he finds, then subtract what he gives away.`,
+          builder:{operands:[a,b,c],operators:["+","-"]}
+        })
+      },
+      {
+        id:"arrows-use-get",
+        build:({a,b,c}) => ({
+          prompt:`An archer has ${a} arrows. She uses ${b} arrows, then receives ${c} new arrows. How many arrows does she have now?`,
+          answer:a-b+c,
+          hint:`Subtract the arrows used, then add the new arrows.`,
+          builder:{operands:[a,b,c],operators:["-","+"]}
+        })
+      },
+      {
+        id:"stars-earn-lose",
+        build:({a,b,c}) => ({
+          prompt:`A hero has ${a} stars. She earns ${b} more stars, then loses ${c}. How many stars does she have now?`,
+          answer:a+b-c,
+          hint:`Add the stars earned, then subtract the stars lost.`,
+          builder:{operands:[a,b,c],operators:["+","-"]}
+        })
+      }
+    ];
+
+    const template =
+      chooseStoryTemplate(
+        templates
+      );
+
+    let a;
+    let b;
+    let c;
+
     if (difficulty <= 1) {
-      const red = randomInt(5, 12);
-      const blue = randomInt(2, 8);
-
-      return {
-        prompt: `A treasure chest holds ${red} red gems and ${blue} blue gems. How many gems are in the chest altogether?`,
-        answer: red + blue,
-        hint: `Both groups are in the same chest. Add ${red} + ${blue}.`
-      };
+      a = randomInt(10, 18);
+      b = randomInt(2, 6);
+      c = randomInt(1, 5);
+    }
+    else if (difficulty === 2) {
+      a = randomInt(16, 30);
+      b = randomInt(4, 10);
+      c = randomInt(2, 9);
+    }
+    else {
+      a = randomInt(25, 45);
+      b = randomInt(6, 15);
+      c = randomInt(4, 12);
     }
 
-    if (difficulty === 2) {
-      const start = randomInt(12, 24);
-      const used = randomInt(3, 8);
-      const found = randomInt(2, 7);
-
-      return {
-        prompt: `The Knight starts with ${start} torches. He uses ${used} torches, then finds ${found} more. How many torches does he have now?`,
-        answer: start - used + found,
-        hint: `First subtract the ${used} torches he uses. Then add the ${found} torches he finds.`
-      };
-    }
-
-    const start = randomInt(20, 35);
-    const borrowed = randomInt(5, 12);
-    const returned = randomInt(2, borrowed - 1);
-
-    return {
-      prompt: `The library has ${start} spell books. Students borrow ${borrowed} books, then return ${returned}. How many spell books are in the library now?`,
-      answer: start - borrowed + returned,
-      hint: `First subtract the borrowed books. Then add the books that were returned.`
-    };
+    return makeStoryProblem(
+      template,
+      {a,b,c}
+    );
   }
 
   const coinTypes = {

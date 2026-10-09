@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=29">
+  <link rel="stylesheet" href="css/game.css?v=31">
 </head>
 <body>
 <main class="game-shell">
@@ -33,6 +33,13 @@
         </div>
         <div class="xp-track">
           <div id="heroXpBar" class="xp-fill"></div>
+        </div>
+        <div class="focus-row">
+          <span>⚡ Focus</span>
+          <strong><span id="heroFocus">1</span>/<span id="heroMaxFocus">3</span></strong>
+        </div>
+        <div class="focus-track" aria-label="Power Strike Focus">
+          <div id="heroFocusBar" class="focus-fill"></div>
         </div>
         <div class="sprite-wrap"><img id="heroSprite" class="sprite character-sprite" src="characterImages/knight.png" alt="Knight"><div id="heroDamagePop" class="damage-pop hidden"></div><div id="shieldFlash" class="shield-flash hidden">🛡️</div></div>
       </div>
@@ -164,15 +171,24 @@
           </div>
 
           <div id="equationBuilderTools" class="equation-builder-workspace hidden">
-            <div class="equation-builder">
+            <div id="equationBuilder" class="equation-builder">
               <input id="equationLeft" class="equation-number" inputmode="numeric" autocomplete="off" aria-label="First number" placeholder="___">
 
-              <div class="equation-operator-picker" role="group" aria-label="Choose an operation">
-                <button id="equationPlus" class="equation-op active" type="button" aria-pressed="true">+</button>
-                <button id="equationMinus" class="equation-op" type="button" aria-pressed="false">−</button>
+              <div class="equation-operator-picker" role="group" aria-label="Choose the first operation">
+                <button id="equationPlus1" class="equation-op active" type="button" aria-pressed="true">+</button>
+                <button id="equationMinus1" class="equation-op" type="button" aria-pressed="false">−</button>
               </div>
 
-              <input id="equationRight" class="equation-number" inputmode="numeric" autocomplete="off" aria-label="Second number" placeholder="___">
+              <input id="equationMiddle" class="equation-number" inputmode="numeric" autocomplete="off" aria-label="Second number" placeholder="___">
+
+              <div id="equationSecondStep" class="equation-second-step hidden">
+                <div class="equation-operator-picker" role="group" aria-label="Choose the second operation">
+                  <button id="equationPlus2" class="equation-op active" type="button" aria-pressed="true">+</button>
+                  <button id="equationMinus2" class="equation-op" type="button" aria-pressed="false">−</button>
+                </div>
+
+                <input id="equationRight" class="equation-number" inputmode="numeric" autocomplete="off" aria-label="Third number" placeholder="___">
+              </div>
 
               <span class="equation-equals">=</span>
 
@@ -183,16 +199,9 @@
               <button id="equationClear" class="tool danger" type="button">Clear</button>
             </div>
 
-            <p class="equation-builder-note">
-              Build the math sentence from the story. Choose + or −, then solve it.
+            <p id="equationBuilderNote" class="equation-builder-note">
+              Build the math sentence from the story, then solve it.
             </p>
-          </div>
-
-            <div class="scratchpad-paper">
-              <canvas id="scratchCanvas" aria-label="Scratch pad for working out the word problem"></canvas>
-            </div>
-
-            <p class="scratchpad-note">Use your finger, mouse, or stylus to work out the problem. Nothing you write here is graded.</p>
           </div>
 
         </section>
@@ -350,11 +359,11 @@
   </div>
 </div>
 
-<script src="js/heroes.js?v=29"></script>
-<script src="js/math.js?v=29"></script>
-<script src="js/blocks.js?v=29"></script>
-<script src="js/combat.js?v=29"></script>
-<script src="js/animations.js?v=29"></script>
-<script src="js/game.js?v=29"></script>
+<script src="js/heroes.js?v=31"></script>
+<script src="js/math.js?v=31"></script>
+<script src="js/blocks.js?v=31"></script>
+<script src="js/combat.js?v=31"></script>
+<script src="js/animations.js?v=31"></script>
+<script src="js/game.js?v=31"></script>
 </body>
 </html>

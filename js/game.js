@@ -11,7 +11,7 @@ window.MathQuest = window.MathQuest || {};
   let guardTutorialSeen = false;
   let battleXpAnimating = false;
   let coinTrayState = [];
-  let equationOperator = "+";
+  let equationOperators = ["+", "+"];
 
   const SAVE_KEY =
     "mathQuestSaveV1";
@@ -35,15 +35,15 @@ window.MathQuest = window.MathQuest || {};
 const skillInfo = {
     slash: {
       label: "⚔️ SWORD SLASH",
-      effect: "2 damage"
+      effect: "2 damage · gain 1 Focus"
     },
     power: {
       label: "💥 POWER STRIKE",
-      effect: "4 damage"
+      effect: "4 damage · costs 2 Focus"
     },
     guard: {
       label: "🛡️ GUARD",
-      effect: "Block incoming attack"
+      effect: "Block incoming attack · gain 1 Focus"
     }
   };
 
@@ -178,6 +178,12 @@ const skillInfo = {
         score: state.score,
         powerStrikeUnlocked:
           state.powerStrikeUnlocked,
+
+        focus:
+          state.focus,
+
+        maxFocus:
+          state.maxFocus,
 
         worldIndex:
           progress.resumeWorldIndex,
@@ -596,6 +602,15 @@ const skillInfo = {
     $("heroXpBar").style.width =
       `${(state.xp / state.xpToNext) * 100}%`;
 
+    $("heroFocus").textContent =
+      state.focus;
+
+    $("heroMaxFocus").textContent =
+      state.maxFocus;
+
+    $("heroFocusBar").style.width =
+      `${(state.focus / state.maxFocus) * 100}%`;
+
     $("enemyHpBar").style.width =
       `${(state.enemyHp / state.enemyMaxHp) * 100}%`;
   }
@@ -679,27 +694,41 @@ const skillInfo = {
     const powerUnlocked =
       state.powerStrikeUnlocked;
 
+    const hasPowerFocus =
+      state.focus >= 2;
+
     $("powerSkill").disabled =
-      !powerUnlocked;
+      !powerUnlocked ||
+      !hasPowerFocus;
 
     $("powerSkill").classList.toggle(
       "locked",
       !powerUnlocked
     );
 
+    $("powerSkill").classList.toggle(
+      "needs-focus",
+      powerUnlocked &&
+      !hasPowerFocus
+    );
+
     $("powerSkill")
       .querySelector("b")
       .textContent =
-        powerUnlocked
-          ? "💥 Power Strike"
-          : "💥 Power Strike 🔒";
+        !powerUnlocked
+          ? "💥 Power Strike 🔒"
+          : hasPowerFocus
+            ? "💥 Power Strike"
+            : "💥 Power Strike ⚡";
 
     $("powerSkill")
       .querySelector("small")
       .textContent =
-        powerUnlocked
-          ? "Challenge question · 4 damage"
-          : "Defeat the Goblin King to unlock";
+        !powerUnlocked
+          ? "Defeat the Goblin King to unlock"
+          : hasPowerFocus
+            ? "Harder question · 4 damage · costs 2 Focus"
+            : `Need 2 Focus · you have ${state.focus}`;
 
     if (
       selectedSkill === "guard" &&
@@ -710,7 +739,10 @@ const skillInfo = {
 
     if (
       selectedSkill === "power" &&
-      !powerUnlocked
+      (
+        !powerUnlocked ||
+        !hasPowerFocus
+      )
     ) {
       selectedSkill = "slash";
     }
@@ -1079,8 +1111,16 @@ const skillInfo = {
   function updateAnswerMode(problem) {
     const isTime = problem.answerType === "time";
     const isCoinTray = problem.answerType === "coinTray";
+    const isLibrary =
+      MathQuest.Combat.currentWorld().id ===
+      "library";
 
-    $("normalAnswerLabel").classList.toggle("hidden", isTime || isCoinTray);
+    $("normalAnswerLabel").classList.toggle(
+      "hidden",
+      isTime ||
+      isCoinTray ||
+      isLibrary
+    );
     $("timeAnswerGroup").classList.toggle("hidden", !isTime);
 
     $("answerInput").value = "";
@@ -1095,7 +1135,10 @@ const skillInfo = {
     if (isTime) {
       $("timeHourInput").focus();
     }
-    else if (!isCoinTray) {
+    else if (
+      !isCoinTray &&
+      !isLibrary
+    ) {
       $("answerInput").focus();
     }
   }
@@ -1127,52 +1170,188 @@ const skillInfo = {
   }
 
 
-  function setEquationOperator(operator) {
-    equationOperator = operator === "-" ? "-" : "+";
+  function setEquationOperator(index, operator) {
+    const safeIndex =
+      index === 1 ? 1 : 0;
 
-    $("equationPlus").classList.toggle(
-      "active",
-      equationOperator === "+"
-    );
+    equationOperators[safeIndex] =
+      operator === "-" ? "-" : "+";
 
-    $("equationMinus").classList.toggle(
-      "active",
-      equationOperator === "-"
-    );
+    const suffix =
+      safeIndex + 1;
 
-    $("equationPlus").setAttribute(
-      "aria-pressed",
-      equationOperator === "+" ? "true" : "false"
-    );
+    $(`equationPlus${suffix}`)
+      .classList.toggle(
+        "active",
+        equationOperators[safeIndex] === "+"
+      );
 
-    $("equationMinus").setAttribute(
-      "aria-pressed",
-      equationOperator === "-" ? "true" : "false"
-    );
+    $(`equationMinus${suffix}`)
+      .classList.toggle(
+        "active",
+        equationOperators[safeIndex] === "-"
+      );
+
+    $(`equationPlus${suffix}`)
+      .setAttribute(
+        "aria-pressed",
+        equationOperators[safeIndex] === "+"
+          ? "true"
+          : "false"
+      );
+
+    $(`equationMinus${suffix}`)
+      .setAttribute(
+        "aria-pressed",
+        equationOperators[safeIndex] === "-"
+          ? "true"
+          : "false"
+      );
   }
 
   function clearEquationBuilder() {
     $("equationLeft").value = "";
+    $("equationMiddle").value = "";
     $("equationRight").value = "";
     $("equationResult").value = "";
-    setEquationOperator("+");
 
-    if (
-      MathQuest.Combat.currentWorld().id === "library"
-    ) {
-      $("answerInput").value = "";
-    }
+    setEquationOperator(0, "+");
+    setEquationOperator(1, "+");
+
+    $("answerInput").value = "";
+  }
+
+  function configureEquationBuilder(problem) {
+    const builder =
+      problem.builder || {
+        operands:[],
+        operators:[]
+      };
+
+    const twoStep =
+      builder.operands.length >= 3;
+
+    $("equationSecondStep")
+      .classList.toggle(
+        "hidden",
+        !twoStep
+      );
+
+    $("equationBuilder")
+      .classList.toggle(
+        "two-step",
+        twoStep
+      );
+
+    $("equationBuilderNote")
+      .textContent =
+        twoStep
+          ? "Power Strike: build both steps from the story, then solve the equation."
+          : "Build the math sentence from the story, then solve it.";
+
+    clearEquationBuilder();
+
+    requestAnimationFrame(
+      () => $("equationLeft").focus()
+    );
   }
 
   function syncEquationResult() {
     if (
-      MathQuest.Combat.currentWorld().id !== "library"
+      MathQuest.Combat.currentWorld().id !==
+      "library"
     ) {
       return;
     }
 
     $("answerInput").value =
       $("equationResult").value;
+  }
+
+  function readEquationBuilder() {
+    const builder =
+      currentProblem.builder;
+
+    if (!builder) {
+      return {
+        complete:true,
+        correct:true
+      };
+    }
+
+    const values = [
+      Number.parseInt(
+        $("equationLeft").value,
+        10
+      ),
+      Number.parseInt(
+        $("equationMiddle").value,
+        10
+      )
+    ];
+
+    if (
+      builder.operands.length >= 3
+    ) {
+      values.push(
+        Number.parseInt(
+          $("equationRight").value,
+          10
+        )
+      );
+    }
+
+    const result =
+      Number.parseInt(
+        $("equationResult").value,
+        10
+      );
+
+    const complete =
+      values.every(
+        Number.isFinite
+      ) &&
+      Number.isFinite(result);
+
+    if (!complete) {
+      return {
+        complete:false,
+        correct:false
+      };
+    }
+
+    let operandsCorrect =
+      values.every(
+        (value, index) =>
+          value ===
+          builder.operands[index]
+      );
+
+    if (
+      builder.operands.length === 2 &&
+      builder.operators[0] === "+" &&
+      !operandsCorrect
+    ) {
+      operandsCorrect =
+        values[0] === builder.operands[1] &&
+        values[1] === builder.operands[0];
+    }
+
+    const operatorsCorrect =
+      builder.operators.every(
+        (operator, index) =>
+          equationOperators[index] ===
+          operator
+      );
+
+    return {
+      complete:true,
+      correct:
+        operandsCorrect &&
+        operatorsCorrect &&
+        result ===
+          currentProblem.answer
+    };
   }
 
   function updateWorkspace(problem) {
@@ -1202,7 +1381,7 @@ const skillInfo = {
       $("toolHelp").textContent = "Turn the story into a math sentence before you answer.";
       equationBuilder.classList.remove("hidden");
       coinTrayState = [];
-      clearEquationBuilder();
+      configureEquationBuilder(problem);
       return;
     }
 
@@ -1938,6 +2117,22 @@ const skillInfo = {
         removedTotal === currentProblem.coinTray.removeAmount &&
         remainingTotal === currentProblem.coinTray.targetRemaining;
     }
+    else if (
+      MathQuest.Combat.currentWorld().id ===
+      "library"
+    ) {
+      const equation =
+        readEquationBuilder();
+
+      if (!equation.complete) {
+        $("feedback").textContent =
+          "Build the whole math sentence first.";
+        return;
+      }
+
+      isCorrect =
+        equation.correct;
+    }
     else {
       const answer = Number.parseInt($("answerInput").value, 10);
 
@@ -1963,6 +2158,13 @@ const skillInfo = {
     else if (currentProblem.answerType === "coinTray") {
       $("feedback").textContent =
         "Not quite. Check which coins you gave away and try the next one.";
+    }
+    else if (
+      MathQuest.Combat.currentWorld().id ===
+      "library"
+    ) {
+      $("feedback").textContent =
+        "Not quite. Check the numbers and operation in your math sentence.";
     }
     else {
       $("feedback").textContent = `Not quite. The answer is ${currentProblem.answer}.`;
@@ -2079,14 +2281,24 @@ const skillInfo = {
           }
         }
       );
-    $("equationPlus").addEventListener(
+    $("equationPlus1").addEventListener(
       "click",
-      () => setEquationOperator("+")
+      () => setEquationOperator(0, "+")
     );
 
-    $("equationMinus").addEventListener(
+    $("equationMinus1").addEventListener(
       "click",
-      () => setEquationOperator("-")
+      () => setEquationOperator(0, "-")
+    );
+
+    $("equationPlus2").addEventListener(
+      "click",
+      () => setEquationOperator(1, "+")
+    );
+
+    $("equationMinus2").addEventListener(
+      "click",
+      () => setEquationOperator(1, "-")
     );
 
     $("equationClear").addEventListener(
