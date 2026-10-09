@@ -519,3 +519,11 @@ The full game now uses the same dark pixel-RPG visual language as the Campfire w
 - Inventory, Knight Counter panel, practice/world cards, merchant, tutorials, victory screens, XP screens, and world-complete dialogs all share the same visual system.
 - Warm cream text, slate borders, fire-gold highlights, and muted blue accents are used throughout.
 - No combat/gameplay logic was changed in this version.
+
+
+## v44 World attrition tuning
+
+- Every battle victory restores 2 HP, up to max HP.
+- The midpoint Campfire/merchant stop restores 10 HP, up to max HP.
+- Victory rewards show the HP recovery.
+- The Campfire message shows how much HP was restored.

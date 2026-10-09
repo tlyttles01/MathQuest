@@ -892,10 +892,37 @@ const skillInfo = {
   function showMerchant() {
     locked = true;
 
+    const state =
+      MathQuest.Combat.state;
+
+    const hpBefore =
+      state.heroHp;
+
+    state.heroHp =
+      Math.min(
+        state.heroMaxHp,
+        state.heroHp + 10
+      );
+
+    const campfireHeal =
+      state.heroHp - hpBefore;
+
     $("merchantMessage").textContent =
-      playMode === "practice"
-        ? "Practice purchases are temporary and will disappear when you return to Adventure."
-        : "Skill Stars reset when you move to the next world.";
+      (
+        campfireHeal > 0
+          ? `🔥 Campfire rest restored ${campfireHeal} HP. `
+          : "🔥 You're already at full HP. "
+      ) +
+      (
+        playMode === "practice"
+          ? "Practice purchases are temporary and will disappear when you return to Adventure."
+          : "Skill Stars reset when you move to the next world."
+      );
+
+    saveGame(
+      state.worldIndex,
+      state.battleIndex
+    );
 
     renderMerchant();
 
@@ -2547,6 +2574,21 @@ const skillInfo = {
 
   function showVictory() {
     battleComplete = true;
+
+    const state =
+      MathQuest.Combat.state;
+
+    const hpBefore =
+      state.heroHp;
+
+    state.heroHp =
+      Math.min(
+        state.heroMaxHp,
+        state.heroHp + 2
+      );
+
+    const recoveredHp =
+      state.heroHp - hpBefore;
     locked = true;
 
     $("battleMessage").textContent =
@@ -2563,6 +2605,11 @@ const skillInfo = {
       <span class="reward-pill">
         🔥 Streak ${MathQuest.Combat.state.streak}
       </span>
+              ${
+          recoveredHp > 0
+            ? `<span class="reward-pill">❤️ +${recoveredHp} HP</span>`
+            : `<span class="reward-pill">❤️ Full HP</span>`
+        }
       `;
 
     $("battleXpGain").textContent =
