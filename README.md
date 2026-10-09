@@ -416,3 +416,15 @@ Practice mode is now fully separate from Adventure progression.
 - Each shop item may be purchased once per world.
 - Practice Mode gets its own temporary Skill Stars and shop purchases; they disappear when returning to Adventure.
 - Adventure shop state is included in the local save.
+
+
+## v36 Player-controlled items
+
+Merchant purchases are now stored in a world inventory instead of activating immediately.
+
+- Healing Potion: use later in any battle to restore 5 HP.
+- Focus Potion: use later in any battle to gain 2 Focus.
+- Counter Shield: manually arm it when desired. It waits until a correct Sword Slash, then that Slash also blocks the enemy attack. It can be disarmed without consuming it.
+- Second Chance Charm: manually arm it before a risky question. It waits until the next wrong answer and can be disarmed without consuming it.
+- Items carry through the rest of the current world, including the boss, then reset for the next world.
+- Practice inventory remains separate from Adventure inventory.

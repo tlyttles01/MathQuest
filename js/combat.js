@@ -127,8 +127,12 @@ MathQuest.Combat = (() => {
     starMilestones: [],
     merchantVisited: false,
     purchasedItems: {},
-    counterShieldCharges: 0,
-    secondChanceCharges: 0
+    healingPotions: 0,
+    focusPotions: 0,
+    counterShields: 0,
+    secondChanceCharms: 0,
+    counterShieldArmed: false,
+    secondChanceArmed: false
   };
 
   function resetWorldResources() {
@@ -136,8 +140,12 @@ MathQuest.Combat = (() => {
     state.starMilestones = [];
     state.merchantVisited = false;
     state.purchasedItems = {};
-    state.counterShieldCharges = 0;
-    state.secondChanceCharges = 0;
+    state.healingPotions = 0;
+    state.focusPotions = 0;
+    state.counterShields = 0;
+    state.secondChanceCharms = 0;
+    state.counterShieldArmed = false;
+    state.secondChanceArmed = false;
   }
 
   function currentHero() {
@@ -285,17 +293,33 @@ MathQuest.Combat = (() => {
         ? {...saved.purchasedItems}
         : {};
 
-    state.counterShieldCharges =
+    state.healingPotions =
+      Math.max(0, Number(saved.healingPotions) || 0);
+
+    state.focusPotions =
+      Math.max(0, Number(saved.focusPotions) || 0);
+
+    state.counterShields =
       Math.max(
         0,
-        Number(saved.counterShieldCharges) || 0
+        Number(saved.counterShields) ||
+        Number(saved.counterShieldCharges) ||
+        0
       );
 
-    state.secondChanceCharges =
+    state.secondChanceCharms =
       Math.max(
         0,
-        Number(saved.secondChanceCharges) || 0
+        Number(saved.secondChanceCharms) ||
+        Number(saved.secondChanceCharges) ||
+        0
       );
+
+    state.counterShieldArmed =
+      Boolean(saved.counterShieldArmed);
+
+    state.secondChanceArmed =
+      Boolean(saved.secondChanceArmed);
 
     resetBattle();
   }

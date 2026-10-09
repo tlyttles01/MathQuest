@@ -76,8 +76,12 @@ const skillInfo = {
       starMilestones: [...state.starMilestones],
       merchantVisited: state.merchantVisited,
       purchasedItems: {...state.purchasedItems},
-      counterShieldCharges: state.counterShieldCharges,
-      secondChanceCharges: state.secondChanceCharges,
+      healingPotions: state.healingPotions,
+      focusPotions: state.focusPotions,
+      counterShields: state.counterShields,
+      secondChanceCharms: state.secondChanceCharms,
+      counterShieldArmed: state.counterShieldArmed,
+      secondChanceArmed: state.secondChanceArmed,
       worldIndex: state.worldIndex,
       battleIndex: state.battleIndex
     };
@@ -317,11 +321,23 @@ const skillInfo = {
         purchasedItems:
           {...state.purchasedItems},
 
-        counterShieldCharges:
-          state.counterShieldCharges,
+        healingPotions:
+          state.healingPotions,
 
-        secondChanceCharges:
-          state.secondChanceCharges,
+        focusPotions:
+          state.focusPotions,
+
+        counterShields:
+          state.counterShields,
+
+        secondChanceCharms:
+          state.secondChanceCharms,
+
+        counterShieldArmed:
+          state.counterShieldArmed,
+
+        secondChanceArmed:
+          state.secondChanceArmed,
 
         worldIndex:
           progress.resumeWorldIndex,
@@ -512,11 +528,23 @@ const skillInfo = {
           ? {...runSnapshot.purchasedItems}
           : {};
 
-      state.counterShieldCharges =
-        runSnapshot.counterShieldCharges || 0;
+      state.healingPotions =
+        runSnapshot.healingPotions || 0;
 
-      state.secondChanceCharges =
-        runSnapshot.secondChanceCharges || 0;
+      state.focusPotions =
+        runSnapshot.focusPotions || 0;
+
+      state.counterShields =
+        runSnapshot.counterShields || 0;
+
+      state.secondChanceCharms =
+        runSnapshot.secondChanceCharms || 0;
+
+      state.counterShieldArmed =
+        Boolean(runSnapshot.counterShieldArmed);
+
+      state.secondChanceArmed =
+        Boolean(runSnapshot.secondChanceArmed);
 
       state.focus =
         Math.min(
@@ -827,22 +855,6 @@ const skillInfo = {
 
         let unavailableReason = "";
 
-        if (
-          itemId === "healing" &&
-          state.heroHp >= state.heroMaxHp
-        ) {
-          unavailableReason =
-            "HP is already full";
-        }
-
-        if (
-          itemId === "focus" &&
-          state.focus >= state.maxFocus
-        ) {
-          unavailableReason =
-            "Focus is already full";
-        }
-
         const affordable =
           state.skillStars >= item.cost;
 
@@ -902,73 +914,33 @@ const skillInfo = {
       return;
     }
 
-    if (
-      itemId === "healing" &&
-      state.heroHp >= state.heroMaxHp
-    ) {
-      return;
-    }
-
-    if (
-      itemId === "focus" &&
-      state.focus >= state.maxFocus
-    ) {
-      return;
-    }
-
-    state.skillStars -=
-      item.cost;
-
-    state.purchasedItems[itemId] =
-      true;
+    state.skillStars -= item.cost;
+    state.purchasedItems[itemId] = true;
 
     if (itemId === "healing") {
-      const before =
-        state.heroHp;
-
-      state.heroHp =
-        Math.min(
-          state.heroMaxHp,
-          state.heroHp + 5
-        );
-
+      state.healingPotions++;
       $("merchantMessage").textContent =
-        `❤️ Restored ${state.heroHp - before} HP.`;
+        "❤️ Healing Potion added to your items. Use it whenever you need HP.";
     }
     else if (itemId === "focus") {
-      const before =
-        state.focus;
-
-      state.focus =
-        Math.min(
-          state.maxFocus,
-          state.focus + 2
-        );
-
+      state.focusPotions++;
       $("merchantMessage").textContent =
-        `⚡ Gained ${state.focus - before} Focus.`;
+        "⚡ Focus Potion added to your items. Save it for when you need Focus.";
     }
     else if (itemId === "counter") {
-      state.counterShieldCharges =
-        1;
-
+      state.counterShields++;
       $("merchantMessage").textContent =
-        "🛡️ Your next correct Sword Slash will also Guard.";
+        "🛡️ Counter Shield added to your items. Arm it when you want Slash + Guard.";
     }
     else if (itemId === "secondChance") {
-      state.secondChanceCharges =
-        1;
-
+      state.secondChanceCharms++;
       $("merchantMessage").textContent =
-        "🍀 Your next wrong answer will not trigger an enemy attack.";
+        "🍀 Second Chance Charm added to your items. Arm it before a risky question.";
     }
 
-    saveGame(
-      state.worldIndex,
-      state.battleIndex
-    );
-
+    saveGame(state.worldIndex, state.battleIndex);
     renderMerchant();
+    renderBattleInventory();
   }
 
   function leaveMerchant() {
@@ -989,6 +961,103 @@ const skillInfo = {
     locked = false;
 
     nextBattle();
+  }
+
+  function renderBattleInventory() {
+    const state = MathQuest.Combat.state;
+
+    const itemDefs = [
+      ["useHealingPotionBtn", "healingPotionCount", state.healingPotions,
+        state.healingPotions <= 0 || state.heroHp >= state.heroMaxHp || locked || battleComplete],
+      ["useFocusPotionBtn", "focusPotionCount", state.focusPotions,
+        state.focusPotions <= 0 || state.focus >= state.maxFocus || locked || battleComplete],
+      ["useCounterShieldBtn", "counterShieldCount", state.counterShields,
+        state.counterShields <= 0 || locked || battleComplete],
+      ["useSecondChanceBtn", "secondChanceCount", state.secondChanceCharms,
+        state.secondChanceCharms <= 0 || locked || battleComplete]
+    ];
+
+    const hasItems =
+      itemDefs.some(item => item[2] > 0) ||
+      state.counterShieldArmed ||
+      state.secondChanceArmed;
+
+    $("battleInventory").classList.toggle("hidden", !hasItems);
+
+    itemDefs.forEach(([buttonId, countId, quantity, disabled]) => {
+      const button = $(buttonId);
+      $(countId).textContent = `×${quantity}`;
+      button.classList.toggle("hidden", quantity <= 0);
+      button.disabled = disabled;
+    });
+
+    $("useCounterShieldBtn").classList.toggle("armed", state.counterShieldArmed);
+    $("useSecondChanceBtn").classList.toggle("armed", state.secondChanceArmed);
+
+    $("useCounterShieldBtn").querySelector("small").textContent =
+      state.counterShieldArmed
+        ? "ARMED — next correct Sword Slash also blocks"
+        : "Arm it, then Slash + Guard together";
+
+    $("useSecondChanceBtn").querySelector("small").textContent =
+      state.secondChanceArmed
+        ? "ARMED — your next wrong answer is protected"
+        : "Arm it before a tough question";
+  }
+
+  function useBattleItem(itemId) {
+    if (locked || battleComplete) return;
+
+    const state = MathQuest.Combat.state;
+
+    if (itemId === "healing" && state.healingPotions > 0) {
+      if (state.heroHp >= state.heroMaxHp) {
+        $("inventoryMessage").textContent = "Your HP is already full.";
+        return;
+      }
+
+      const before = state.heroHp;
+      state.healingPotions--;
+      state.heroHp = Math.min(state.heroMaxHp, state.heroHp + 5);
+      $("inventoryMessage").textContent =
+        `❤️ Healing Potion restored ${state.heroHp - before} HP.`;
+    }
+    else if (itemId === "focus" && state.focusPotions > 0) {
+      if (state.focus >= state.maxFocus) {
+        $("inventoryMessage").textContent = "Your Focus is already full.";
+        return;
+      }
+
+      const before = state.focus;
+      state.focusPotions--;
+      state.focus = Math.min(state.maxFocus, state.focus + 2);
+      $("inventoryMessage").textContent =
+        `⚡ Focus Potion restored ${state.focus - before} Focus.`;
+    }
+    else if (
+      itemId === "counter" &&
+      (state.counterShields > 0 || state.counterShieldArmed)
+    ) {
+      state.counterShieldArmed = !state.counterShieldArmed;
+      $("inventoryMessage").textContent =
+        state.counterShieldArmed
+          ? "🛡️ Counter Shield armed. It will wait until you land a correct Sword Slash."
+          : "🛡️ Counter Shield put away. It was not used.";
+    }
+    else if (
+      itemId === "secondChance" &&
+      (state.secondChanceCharms > 0 || state.secondChanceArmed)
+    ) {
+      state.secondChanceArmed = !state.secondChanceArmed;
+      $("inventoryMessage").textContent =
+        state.secondChanceArmed
+          ? "🍀 Second Chance armed. It will wait until you miss a question."
+          : "🍀 Second Chance put away. It was not used.";
+    }
+
+    saveGame(state.worldIndex, state.battleIndex);
+    updateHud();
+    updateSkillAvailability();
   }
 
   function updateHud() {
@@ -1025,23 +1094,25 @@ const skillInfo = {
     $("skillStars").textContent =
       state.skillStars;
 
-    const heldItems = [];
+    const activeItems = [];
 
-    if (state.counterShieldCharges > 0) {
-      heldItems.push("🛡️ Counter Shield ready");
+    if (state.counterShieldArmed) {
+      activeItems.push("🛡️ Counter Shield ARMED");
     }
 
-    if (state.secondChanceCharges > 0) {
-      heldItems.push("🍀 Second Chance ready");
+    if (state.secondChanceArmed) {
+      activeItems.push("🍀 Second Chance ARMED");
     }
 
     $("itemStatus").textContent =
-      heldItems.join(" · ");
+      activeItems.join(" · ");
 
     $("itemStatus").classList.toggle(
       "hidden",
-      heldItems.length === 0
+      activeItems.length === 0
     );
+
+    renderBattleInventory();
 
     $("heroLevel").textContent =
       state.level;
@@ -2087,9 +2158,11 @@ const skillInfo = {
 
     if (
       selectedSkill === "slash" &&
-      state.counterShieldCharges > 0
+      state.counterShieldArmed &&
+      state.counterShields > 0
     ) {
-      state.counterShieldCharges--;
+      state.counterShields--;
+      state.counterShieldArmed = false;
       state.guardActive = true;
       counterShieldUsed = true;
     }
@@ -2119,6 +2192,11 @@ const skillInfo = {
 
     updateHud();
     updateSkillAvailability();
+
+    saveGame(
+      MathQuest.Combat.state.worldIndex,
+      MathQuest.Combat.state.battleIndex
+    );
 
     if (effect.kind === "guard") {
       $("battleMessage").textContent =
@@ -2784,17 +2862,22 @@ const skillInfo = {
     MathQuest.Combat.addWrong();
 
     if (
-      MathQuest.Combat.state
-        .secondChanceCharges > 0
+      MathQuest.Combat.state.secondChanceArmed &&
+      MathQuest.Combat.state.secondChanceCharms > 0
     ) {
-      MathQuest.Combat.state
-        .secondChanceCharges--;
+      MathQuest.Combat.state.secondChanceCharms--;
+      MathQuest.Combat.state.secondChanceArmed = false;
 
       $("feedback").textContent +=
         " 🍀 Second Chance! The enemy does not attack.";
 
       $("battleMessage").textContent =
         "SECOND CHANCE!";
+
+      saveGame(
+        MathQuest.Combat.state.worldIndex,
+        MathQuest.Combat.state.battleIndex
+      );
 
       updateHud();
 
@@ -2968,6 +3051,11 @@ $("answerForm")
         "click",
         leaveMerchant
       );
+
+    $("useHealingPotionBtn").addEventListener("click", () => useBattleItem("healing"));
+    $("useFocusPotionBtn").addEventListener("click", () => useBattleItem("focus"));
+    $("useCounterShieldBtn").addEventListener("click", () => useBattleItem("counter"));
+    $("useSecondChanceBtn").addEventListener("click", () => useBattleItem("secondChance"));
 
     $("nextBattleBtn")
       .addEventListener(

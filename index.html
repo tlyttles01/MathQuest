@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=35">
+  <link rel="stylesheet" href="css/game.css?v=36">
 </head>
 <body>
 <main class="game-shell">
   <section class="battle-panel">
     <header class="topbar">
-      <div><div class="build-row"><span id="buildVersion" class="build-version">v35</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
+      <div><div class="build-row"><span id="buildVersion" class="build-version">v36</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
       <div class="stats">
         <button id="adventureMapBtn" class="secondary compact-control" type="button">🧭 Adventure Map</button>
         <button id="worldSelectBtn" class="secondary compact-control" type="button">🎯 Practice Mode</button>
@@ -76,6 +76,45 @@
       <button id="guardSkill" class="skill locked" data-skill="guard" disabled><b>🛡️ Guard 🔒</b><small>Unlocks later</small></button>
       <button id="healSkill" class="skill locked" data-skill="secondWind" disabled><b>❤️ Second Wind 🔒</b><small>Unlocks later</small></button>
     </div>
+  </section>
+
+
+  <section id="battleInventory" class="battle-inventory hidden" aria-label="Battle items">
+    <div class="inventory-head">
+      <div>
+        <div class="eyebrow">YOUR ITEMS</div>
+        <strong>Use them when you want</strong>
+      </div>
+      <small>Items last until the end of this world.</small>
+    </div>
+
+    <div class="inventory-grid">
+      <button id="useHealingPotionBtn" class="inventory-item hidden" type="button">
+        <span class="inventory-icon">❤️</span>
+        <span><b>Healing Potion</b><small>Restore 5 HP</small></span>
+        <span id="healingPotionCount" class="inventory-count">×0</span>
+      </button>
+
+      <button id="useFocusPotionBtn" class="inventory-item hidden" type="button">
+        <span class="inventory-icon">⚡</span>
+        <span><b>Focus Potion</b><small>Gain 2 Focus</small></span>
+        <span id="focusPotionCount" class="inventory-count">×0</span>
+      </button>
+
+      <button id="useCounterShieldBtn" class="inventory-item hidden" type="button">
+        <span class="inventory-icon">🛡️</span>
+        <span><b>Counter Shield</b><small>Arm it, then Slash + Guard together</small></span>
+        <span id="counterShieldCount" class="inventory-count">×0</span>
+      </button>
+
+      <button id="useSecondChanceBtn" class="inventory-item hidden" type="button">
+        <span class="inventory-icon">🍀</span>
+        <span><b>Second Chance</b><small>Arm it before a tough question</small></span>
+        <span id="secondChanceCount" class="inventory-count">×0</span>
+      </button>
+    </div>
+
+    <div id="inventoryMessage" class="inventory-message" aria-live="polite"></div>
   </section>
 
   <section class="problem-panel">
@@ -316,7 +355,7 @@
         <div class="merchant-item-icon">❤️</div>
         <div class="merchant-item-copy">
           <h3>Healing Potion</h3>
-          <p>Restore 5 HP right now.</p>
+          <p>Keep it and restore 5 HP whenever you choose.</p>
         </div>
         <button class="merchant-buy" type="button" data-buy-item="healing">Buy · 🌟 1</button>
       </article>
@@ -325,7 +364,7 @@
         <div class="merchant-item-icon">⚡</div>
         <div class="merchant-item-copy">
           <h3>Focus Potion</h3>
-          <p>Gain 2 Focus right now.</p>
+          <p>Keep it and gain 2 Focus whenever you choose.</p>
         </div>
         <button class="merchant-buy" type="button" data-buy-item="focus">Buy · 🌟 1</button>
       </article>
@@ -334,7 +373,7 @@
         <div class="merchant-item-icon">🛡️</div>
         <div class="merchant-item-copy">
           <h3>Counter Shield</h3>
-          <p>Your next correct Sword Slash also blocks the enemy attack.</p>
+          <p>Keep it. Arm it when you want a Sword Slash to also block.</p>
         </div>
         <button class="merchant-buy" type="button" data-buy-item="counter">Buy · 🌟🌟 2</button>
       </article>
@@ -343,7 +382,7 @@
         <div class="merchant-item-icon">🍀</div>
         <div class="merchant-item-copy">
           <h3>Second Chance Charm</h3>
-          <p>Your next wrong answer will not trigger an enemy attack.</p>
+          <p>Keep it. Arm it before a question when you want mistake protection.</p>
         </div>
         <button class="merchant-buy" type="button" data-buy-item="secondChance">Buy · 🌟🌟 2</button>
       </article>
@@ -458,11 +497,11 @@
   </div>
 </div>
 
-<script src="js/heroes.js?v=35"></script>
-<script src="js/math.js?v=35"></script>
-<script src="js/blocks.js?v=35"></script>
-<script src="js/combat.js?v=35"></script>
-<script src="js/animations.js?v=35"></script>
-<script src="js/game.js?v=35"></script>
+<script src="js/heroes.js?v=36"></script>
+<script src="js/math.js?v=36"></script>
+<script src="js/blocks.js?v=36"></script>
+<script src="js/combat.js?v=36"></script>
+<script src="js/animations.js?v=36"></script>
+<script src="js/game.js?v=36"></script>
 </body>
 </html>
