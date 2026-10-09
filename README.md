@@ -362,3 +362,24 @@ Power Strike is no longer the obvious best action every turn.
 
 This creates a simple rhythm:
 `Slash / Guard -> build Focus -> Power Strike -> rebuild Focus`.
+
+
+## v32 corrective build
+
+This build specifically fixes the three reported regressions:
+
+1. Removed all remaining Scratch Pad HTML/CSS. Living Library uses only the equation builder.
+2. Fixed Focus gain so correct Sword Slash and Guard answers actually grant +1 Focus. Power Strike costs 2 Focus and is disabled below 2.
+3. Restored a prominent World Complete flow with a crystal reward and an explicit `Continue to [Next World]` button.
+
+A small `v32` badge appears above the world name so the deployed build can be verified immediately.
+
+
+## v33 Power Strike polish
+
+- Added a first-use Power Strike tutorial explaining Focus, harder questions, and 4-damage payoff.
+- Fixed Living Library Power Strike so the two-step builder always shows four number boxes:
+  `___ [op] ___ [op] ___ = ___`
+- Expanded Power Strike word problems to include `+ -`, `- +`, `+ +`, and `- -` story structures.
+- Added generation rules that strongly avoid problems where the final answer is the same as, or almost the same as, the starting amount.
+- Power Strike tutorial is remembered in the local save so it does not repeat every session.

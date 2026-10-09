@@ -153,10 +153,7 @@ MathQuest.Combat = (() => {
     state.enemyHp = battle.enemyMaxHp;
     state.turnNumber = 0;
     state.guardActive = false;
-    state.focus = Math.min(
-      state.maxFocus,
-      Math.max(1, state.focus)
-    );
+    state.focus = 1;
   }
 
   function beginGame() {

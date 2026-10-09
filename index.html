@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=31">
+  <link rel="stylesheet" href="css/game.css?v=33">
 </head>
 <body>
 <main class="game-shell">
   <section class="battle-panel">
     <header class="topbar">
-      <div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
+      <div><div class="build-row"><span id="buildVersion" class="build-version">v33</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
       <div class="stats">
         <button id="adventureMapBtn" class="secondary compact-control" type="button">🧭 Adventure Map</button>
         <button id="worldSelectBtn" class="secondary compact-control" type="button">🎯 Practice</button>
@@ -69,8 +69,8 @@
   <section class="skills">
     <div class="eyebrow">CHOOSE AN ACTION</div>
     <div class="skill-grid">
-      <button class="skill active" data-skill="slash"><b>⚔️ Sword Slash</b><small>Normal question · 2 damage</small></button>
-      <button id="powerSkill" class="skill locked" data-skill="power" disabled><b>💥 Power Strike 🔒</b><small>Defeat the Goblin King to unlock</small></button>
+      <button class="skill active" data-skill="slash"><b>⚔️ Sword Slash</b><small>Normal question · 2 damage · +1 Focus</small></button>
+      <button id="powerSkill" class="skill locked" data-skill="power" disabled><b>💥 Power Strike 🔒</b><small>Harder question · 4 damage · costs 2 Focus</small></button>
       <button id="guardSkill" class="skill locked" data-skill="guard" disabled><b>🛡️ Guard 🔒</b><small>Unlocks later</small></button>
       <button id="healSkill" class="skill locked" data-skill="secondWind" disabled><b>❤️ Second Wind 🔒</b><small>Unlocks later</small></button>
     </div>
@@ -181,7 +181,7 @@
 
               <input id="equationMiddle" class="equation-number" inputmode="numeric" autocomplete="off" aria-label="Second number" placeholder="___">
 
-              <div id="equationSecondStep" class="equation-second-step hidden">
+              <div id="equationSecondStep" class="equation-second-step">
                 <div class="equation-operator-picker" role="group" aria-label="Choose the second operation">
                   <button id="equationPlus2" class="equation-op active" type="button" aria-pressed="true">+</button>
                   <button id="equationMinus2" class="equation-op" type="button" aria-pressed="false">−</button>
@@ -342,12 +342,46 @@
       </div>
     </div>
 
+    <div id="crystalAward" class="crystal-award">
+      <div id="crystalAwardGem" class="crystal-award-gem">💎</div>
+      <div>
+        <div class="eyebrow">CRYSTAL RECOVERED</div>
+        <strong id="crystalAwardName">Learning Crystal</strong>
+      </div>
+    </div>
+
     <div id="chapterSummary" class="reward-row centered-rewards"></div>
-    <button id="nextWorldBtn" class="primary modal-primary" type="button">Enter Breakstone Mines</button>
+    <button id="nextWorldBtn" class="primary modal-primary" type="button">Continue to Breakstone Mines →</button>
     <button id="restartChapterBtn" class="secondary modal-secondary" type="button">Replay This World</button>
   </div>
 </div>
 
+
+
+<div id="powerTutorialOverlay" class="tutorial-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="powerTutorialTitle">
+  <div class="tutorial-card">
+    <div class="tutorial-icon">💥</div>
+    <div class="eyebrow">NEW SKILL</div>
+    <h2 id="powerTutorialTitle">Power Strike</h2>
+
+    <p><b>Power Strike</b> hits twice as hard, but it takes preparation.</p>
+
+    <div class="power-tutorial-flow">
+      <div><strong>⚔️ Sword Slash</strong><span>Gain 1 Focus</span></div>
+      <div class="power-tutorial-arrow">→</div>
+      <div><strong>⚡ 2 Focus</strong><span>Ready!</span></div>
+      <div class="power-tutorial-arrow">→</div>
+      <div><strong>💥 Power Strike</strong><span>4 damage</span></div>
+    </div>
+
+    <p>Power Strike uses <b>2 Focus</b> and gives you a <b>harder question</b>. Use it when the extra damage is worth it.</p>
+
+    <div class="tutorial-actions">
+      <button id="powerTutorialTryBtn" class="primary" type="button">Try Power Strike</button>
+      <button id="powerTutorialSkipBtn" class="secondary" type="button">Got it</button>
+    </div>
+  </div>
+</div>
 
 <div id="tutorialOverlay" class="tutorial-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="guardTutorialTitle">
   <div class="tutorial-card">
@@ -359,11 +393,11 @@
   </div>
 </div>
 
-<script src="js/heroes.js?v=31"></script>
-<script src="js/math.js?v=31"></script>
-<script src="js/blocks.js?v=31"></script>
-<script src="js/combat.js?v=31"></script>
-<script src="js/animations.js?v=31"></script>
-<script src="js/game.js?v=31"></script>
+<script src="js/heroes.js?v=33"></script>
+<script src="js/math.js?v=33"></script>
+<script src="js/blocks.js?v=33"></script>
+<script src="js/combat.js?v=33"></script>
+<script src="js/animations.js?v=33"></script>
+<script src="js/game.js?v=33"></script>
 </body>
 </html>

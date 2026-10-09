@@ -10,6 +10,7 @@ window.MathQuest = window.MathQuest || {};
   let battleComplete = false;
   let guardTutorialSeen = false;
   let battleXpAnimating = false;
+  let pendingPowerTutorialSelection = false;
   let coinTrayState = [];
   let equationOperators = ["+", "+"];
 
@@ -30,7 +31,8 @@ window.MathQuest = window.MathQuest || {};
     crystals: [],
     resumeWorldIndex: 0,
     resumeBattleIndex: 0,
-    hasStarted: false
+    hasStarted: false,
+    powerTutorialSeen: false
   };
 const skillInfo = {
     slash: {
@@ -111,7 +113,10 @@ const skillInfo = {
         Math.max(0, Number(raw.resumeBattleIndex) || 0),
 
       hasStarted:
-        Boolean(raw.hasStarted)
+        Boolean(raw.hasStarted),
+
+      powerTutorialSeen:
+        Boolean(raw.powerTutorialSeen)
     };
   }
 
@@ -688,8 +693,18 @@ const skillInfo = {
       .querySelector("small")
       .textContent =
         guardUnlocked
-          ? "Normal question · block incoming attack"
+          ? "Normal question · block attack · +1 Focus"
           : "Unlocks later";
+
+    const slashHint =
+      document.querySelector(
+        '[data-skill="slash"] small'
+      );
+
+    if (slashHint) {
+      slashHint.textContent =
+        "Normal question · 2 damage · +1 Focus";
+    }
 
     const powerUnlocked =
       state.powerStrikeUnlocked;
@@ -871,6 +886,19 @@ const skillInfo = {
       return;
     }
 
+    if (
+      skill === "power" &&
+      !progress.powerTutorialSeen
+    ) {
+      pendingPowerTutorialSelection =
+        true;
+
+      $("powerTutorialOverlay")
+        .classList.remove("hidden");
+
+      return;
+    }
+
     selectedSkill =
       skill;
 
@@ -884,6 +912,44 @@ const skillInfo = {
       });
 
     newProblem();
+  }
+
+  function closePowerTutorial(usePowerStrike) {
+    progress.powerTutorialSeen =
+      true;
+
+    saveGame(
+      MathQuest.Combat.state.worldIndex,
+      MathQuest.Combat.state.battleIndex
+    );
+
+    $("powerTutorialOverlay")
+      .classList.add("hidden");
+
+    const shouldSelectPower =
+      usePowerStrike &&
+      pendingPowerTutorialSelection &&
+      !battleComplete &&
+      !locked &&
+      !$("powerSkill").disabled;
+
+    pendingPowerTutorialSelection =
+      false;
+
+    if (shouldSelectPower) {
+      selectedSkill = "power";
+
+      document
+        .querySelectorAll(".skill")
+        .forEach(button => {
+          button.classList.toggle(
+            "active",
+            button.dataset.skill === "power"
+          );
+        });
+
+      newProblem();
+    }
   }
 
   function coinFaceMarkup(coin) {
@@ -1229,13 +1295,8 @@ const skillInfo = {
       };
 
     const twoStep =
+      selectedSkill === "power" ||
       builder.operands.length >= 3;
-
-    $("equationSecondStep")
-      .classList.toggle(
-        "hidden",
-        !twoStep
-      );
 
     $("equationBuilder")
       .classList.toggle(
@@ -1572,6 +1633,17 @@ const skillInfo = {
     const reward =
       MathQuest.Combat.addCorrect();
 
+    /*
+      Sword Slash and Guard build Focus.
+      Power Strike spends 2 Focus inside Combat.useSkill().
+    */
+    if (
+      selectedSkill === "slash" ||
+      selectedSkill === "guard"
+    ) {
+      MathQuest.Combat.gainFocus(1);
+    }
+
     const effect =
       MathQuest.Combat.useSkill(
         selectedSkill,
@@ -1579,9 +1651,12 @@ const skillInfo = {
       );
 
     $("feedback").textContent =
-      `✅ Correct! +${reward.points} score.`;
+      selectedSkill === "power"
+        ? `✅ Correct! +${reward.points} score. Power Strike used 2 Focus.`
+        : `✅ Correct! +${reward.points} score. +1 Focus.`;
 
     updateHud();
+    updateSkillAvailability();
 
     if (effect.kind === "guard") {
       $("battleMessage").textContent =
@@ -1589,7 +1664,7 @@ const skillInfo = {
 
       await MathQuest.Animations.guardUp();
     }
-    else {
+    else if (effect.kind === "damage") {
       $("battleMessage").textContent =
         selectedSkill === "power"
           ? "POWER STRIKE!"
@@ -1601,6 +1676,7 @@ const skillInfo = {
       );
 
       updateHud();
+      updateSkillAvailability();
 
       if (
         MathQuest.Combat.state.enemyHp <= 0
@@ -1608,6 +1684,16 @@ const skillInfo = {
         showVictory();
         return;
       }
+    }
+    else if (effect.kind === "no-focus") {
+      $("feedback").textContent =
+        "You need 2 Focus to use Power Strike.";
+
+      selectedSkill = "slash";
+      updateSkillAvailability();
+      locked = false;
+      newProblem();
+      return;
     }
 
     const continueTurn = async () => {
@@ -1945,15 +2031,19 @@ const skillInfo = {
     $("chapterCompleteIcon").textContent =
       world.bossIcon;
 
-    $("crystalAwardGem").textContent =
-      crystalInfo[
-        completedWorldIndex
-      ].icon;
+    if ($("crystalAwardGem")) {
+      $("crystalAwardGem").textContent =
+        crystalInfo[
+          completedWorldIndex
+        ].icon;
+    }
 
-    $("crystalAwardName").textContent =
-      crystalInfo[
-        completedWorldIndex
-      ].name;
+    if ($("crystalAwardName")) {
+      $("crystalAwardName").textContent =
+        crystalInfo[
+          completedWorldIndex
+        ].name;
+    }
 
     $("chapterCompleteTitle").textContent =
       world.completionTitle;
@@ -1986,8 +2076,10 @@ const skillInfo = {
 
     $("nextWorldBtn").textContent =
       hasNextWorld
-        ? world.nextWorldLabel
-        : "More Worlds Coming Soon";
+        ? `Continue to ${MathQuest.Combat.worlds[
+            MathQuest.Combat.state.worldIndex + 1
+          ].name} →`
+        : "Adventure Complete!";
 
     $("nextWorldBtn").disabled =
       !hasNextWorld;
@@ -2333,6 +2425,18 @@ $("answerForm")
       .addEventListener(
         "click",
         restartWorld
+      );
+
+    $("powerTutorialTryBtn")
+      .addEventListener(
+        "click",
+        () => closePowerTutorial(true)
+      );
+
+    $("powerTutorialSkipBtn")
+      .addEventListener(
+        "click",
+        () => closePowerTutorial(false)
       );
 
     $("tutorialTryBtn")

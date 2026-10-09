@@ -510,15 +510,17 @@ MathQuest.MathEngine = (() => {
     const templates = [
       {
         id:"torches-use-find",
+        operators:["-","+"],
         build:({a,b,c}) => ({
           prompt:`The Knight starts with ${a} torches. He uses ${b} torches, then finds ${c} more. How many torches does he have now?`,
           answer:a-b+c,
-          hint:`Build both steps: ${a} − ${b} + ${c}.`,
+          hint:`First subtract the torches he uses, then add the torches he finds.`,
           builder:{operands:[a,b,c],operators:["-","+"]}
         })
       },
       {
         id:"gems-find-spend",
+        operators:["+","-"],
         build:({a,b,c}) => ({
           prompt:`The Knight has ${a} gems. He finds ${b} more, then spends ${c} gems at a shop. How many gems does he have left?`,
           answer:a+b-c,
@@ -528,6 +530,7 @@ MathQuest.MathEngine = (() => {
       },
       {
         id:"books-borrow-return",
+        operators:["-","+"],
         build:({a,b,c}) => ({
           prompt:`The library has ${a} books. Students borrow ${b} books, then return ${c}. How many books are in the library now?`,
           answer:a-b+c,
@@ -537,15 +540,17 @@ MathQuest.MathEngine = (() => {
       },
       {
         id:"coins-find-give",
+        operators:["+","-"],
         build:({a,b,c}) => ({
           prompt:`The Knight has ${a} coins. He finds ${b} more coins, then gives ${c} coins to a friend. How many coins does he have now?`,
           answer:a+b-c,
-          hint:`Add what he finds, then subtract what he gives away.`,
+          hint:`Add the coins he finds, then subtract the coins he gives away.`,
           builder:{operands:[a,b,c],operators:["+","-"]}
         })
       },
       {
         id:"arrows-use-get",
+        operators:["-","+"],
         build:({a,b,c}) => ({
           prompt:`An archer has ${a} arrows. She uses ${b} arrows, then receives ${c} new arrows. How many arrows does she have now?`,
           answer:a-b+c,
@@ -555,11 +560,52 @@ MathQuest.MathEngine = (() => {
       },
       {
         id:"stars-earn-lose",
+        operators:["+","-"],
         build:({a,b,c}) => ({
           prompt:`A hero has ${a} stars. She earns ${b} more stars, then loses ${c}. How many stars does she have now?`,
           answer:a+b-c,
           hint:`Add the stars earned, then subtract the stars lost.`,
           builder:{operands:[a,b,c],operators:["+","-"]}
+        })
+      },
+      {
+        id:"scrolls-find-find",
+        operators:["+","+"],
+        build:({a,b,c}) => ({
+          prompt:`The Knight finds ${a} scrolls in the library. He finds ${b} more in one room and ${c} more in another. How many scrolls does he have altogether?`,
+          answer:a+b+c,
+          hint:`All three groups are being combined. Add both times.`,
+          builder:{operands:[a,b,c],operators:["+","+"]}
+        })
+      },
+      {
+        id:"potions-use-share",
+        operators:["-","-"],
+        build:({a,b,c}) => ({
+          prompt:`The Knight has ${a} potions. He uses ${b} potions and gives ${c} potions to a friend. How many potions are left?`,
+          answer:a-b-c,
+          hint:`Both actions take potions away. Subtract twice.`,
+          builder:{operands:[a,b,c],operators:["-","-"]}
+        })
+      },
+      {
+        id:"pages-read-read",
+        operators:["-","-"],
+        build:({a,b,c}) => ({
+          prompt:`A book has ${a} pages left to read. The Knight reads ${b} pages in the morning and ${c} pages at night. How many pages are left?`,
+          answer:a-b-c,
+          hint:`Pages are read twice, so subtract both groups.`,
+          builder:{operands:[a,b,c],operators:["-","-"]}
+        })
+      },
+      {
+        id:"runes-learn-learn",
+        operators:["+","+"],
+        build:({a,b,c}) => ({
+          prompt:`A wizard knows ${a} runes. She learns ${b} new runes from one book and ${c} from another. How many runes does she know now?`,
+          answer:a+b+c,
+          hint:`She learns more both times, so add twice.`,
+          builder:{operands:[a,b,c],operators:["+","+"]}
         })
       }
     ];
@@ -572,22 +618,53 @@ MathQuest.MathEngine = (() => {
     let a;
     let b;
     let c;
+    let result;
+    let attempts = 0;
 
-    if (difficulty <= 1) {
-      a = randomInt(10, 18);
-      b = randomInt(2, 6);
-      c = randomInt(1, 5);
+    do {
+      if (difficulty <= 1) {
+        a = randomInt(10, 18);
+        b = randomInt(2, 6);
+        c = randomInt(2, 6);
+      }
+      else if (difficulty === 2) {
+        a = randomInt(18, 32);
+        b = randomInt(4, 10);
+        c = randomInt(3, 9);
+      }
+      else {
+        a = randomInt(28, 48);
+        b = randomInt(6, 14);
+        c = randomInt(5, 13);
+      }
+
+      if (template.operators[0] === "-" && b >= a) {
+        b = Math.max(2, a - 4);
+      }
+
+      const afterFirst =
+        template.operators[0] === "+"
+          ? a + b
+          : a - b;
+
+      if (template.operators[1] === "-" && c >= afterFirst) {
+        c = Math.max(2, afterFirst - 3);
+      }
+
+      result =
+        template.operators[1] === "+"
+          ? afterFirst + c
+          : afterFirst - c;
+
+      attempts++;
     }
-    else if (difficulty === 2) {
-      a = randomInt(16, 30);
-      b = randomInt(4, 10);
-      c = randomInt(2, 9);
-    }
-    else {
-      a = randomInt(25, 45);
-      b = randomInt(6, 15);
-      c = randomInt(4, 12);
-    }
+    while (
+      attempts < 20 &&
+      (
+        result <= 0 ||
+        Math.abs(result - a) < 3
+      )
+    );
 
     return makeStoryProblem(
       template,
