@@ -383,3 +383,36 @@ A small `v32` badge appears above the world name so the deployed build can be ve
 - Expanded Power Strike word problems to include `+ -`, `- +`, `+ +`, and `- -` story structures.
 - Added generation rules that strongly avoid problems where the final answer is the same as, or almost the same as, the starting amount.
 - Power Strike tutorial is remembered in the local save so it does not repeat every session.
+
+
+## v34 Practice isolation
+
+Practice mode is now fully separate from Adventure progression.
+
+- Entering Practice stores an in-memory snapshot of the current Adventure hero.
+- Practice may temporarily gain XP, levels, HP, score, Focus, etc.
+- None of those Practice changes are written to the Adventure save.
+- Returning to Adventure restores the exact Adventure snapshot from before Practice.
+- Practice world completion does not award crystals, unlock Adventure worlds, or permanently unlock skills.
+- Practice completion now offers `Return to Adventure`.
+- The HUD labels the current world with `PRACTICE` while in Practice Mode.
+
+
+## v35 Mid-world merchant and Skill Stars
+
+- Added Skill Stars earned from correct-answer streak milestones:
+  - streak 3 -> +1 Skill Star
+  - streak 5 -> +1
+  - streak 7 -> +1
+  - streak 10 -> +1
+- Each milestone can pay out once per world.
+- Skill Stars survive a broken streak but reset when a new world begins.
+- A Traveling Merchant appears after Battle 4, before Battle 5.
+- Merchant items:
+  - Healing Potion (1 Star): restore 5 HP immediately
+  - Focus Potion (1 Star): gain 2 Focus immediately
+  - Counter Shield (2 Stars): next correct Sword Slash also blocks the enemy attack
+  - Second Chance Charm (2 Stars): next wrong answer does not trigger an enemy attack
+- Each shop item may be purchased once per world.
+- Practice Mode gets its own temporary Skill Stars and shop purchases; they disappear when returning to Adventure.
+- Adventure shop state is included in the local save.

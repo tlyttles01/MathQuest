@@ -4,17 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=33">
+  <link rel="stylesheet" href="css/game.css?v=35">
 </head>
 <body>
 <main class="game-shell">
   <section class="battle-panel">
     <header class="topbar">
-      <div><div class="build-row"><span id="buildVersion" class="build-version">v33</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
+      <div><div class="build-row"><span id="buildVersion" class="build-version">v35</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
       <div class="stats">
         <button id="adventureMapBtn" class="secondary compact-control" type="button">🧭 Adventure Map</button>
-        <button id="worldSelectBtn" class="secondary compact-control" type="button">🎯 Practice</button>
+        <button id="worldSelectBtn" class="secondary compact-control" type="button">🎯 Practice Mode</button>
         <span>⭐ <b id="score">0</b></span>
+        <span title="Skill Stars">🌟 <b id="skillStars">0</b></span>
         <span>🔥 <b id="streak">0</b></span>
       </div>
     </header>
@@ -41,6 +42,7 @@
         <div class="focus-track" aria-label="Power Strike Focus">
           <div id="heroFocusBar" class="focus-fill"></div>
         </div>
+        <div id="itemStatus" class="item-status hidden"></div>
         <div class="sprite-wrap"><img id="heroSprite" class="sprite character-sprite" src="characterImages/knight.png" alt="Knight"><div id="heroDamagePop" class="damage-pop hidden"></div><div id="shieldFlash" class="shield-flash hidden">🛡️</div></div>
       </div>
 
@@ -292,6 +294,69 @@
   </div>
 </div>
 
+
+<div id="merchantPanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="merchantTitle">
+  <div class="modal-card merchant-modal">
+    <div class="merchant-head">
+      <div class="merchant-icon">🧙</div>
+      <div>
+        <div class="eyebrow">MID-WORLD STOP</div>
+        <h2 id="merchantTitle">Traveling Merchant</h2>
+        <p>"You've done well out there. Spend your Skill Stars before the battles ahead."</p>
+      </div>
+    </div>
+
+    <div class="merchant-wallet">
+      <span>Skill Stars</span>
+      <strong>🌟 <span id="merchantStars">0</span></strong>
+    </div>
+
+    <div id="merchantItems" class="merchant-items">
+      <article class="merchant-item" data-item="healing">
+        <div class="merchant-item-icon">❤️</div>
+        <div class="merchant-item-copy">
+          <h3>Healing Potion</h3>
+          <p>Restore 5 HP right now.</p>
+        </div>
+        <button class="merchant-buy" type="button" data-buy-item="healing">Buy · 🌟 1</button>
+      </article>
+
+      <article class="merchant-item" data-item="focus">
+        <div class="merchant-item-icon">⚡</div>
+        <div class="merchant-item-copy">
+          <h3>Focus Potion</h3>
+          <p>Gain 2 Focus right now.</p>
+        </div>
+        <button class="merchant-buy" type="button" data-buy-item="focus">Buy · 🌟 1</button>
+      </article>
+
+      <article class="merchant-item" data-item="counter">
+        <div class="merchant-item-icon">🛡️</div>
+        <div class="merchant-item-copy">
+          <h3>Counter Shield</h3>
+          <p>Your next correct Sword Slash also blocks the enemy attack.</p>
+        </div>
+        <button class="merchant-buy" type="button" data-buy-item="counter">Buy · 🌟🌟 2</button>
+      </article>
+
+      <article class="merchant-item" data-item="secondChance">
+        <div class="merchant-item-icon">🍀</div>
+        <div class="merchant-item-copy">
+          <h3>Second Chance Charm</h3>
+          <p>Your next wrong answer will not trigger an enemy attack.</p>
+        </div>
+        <button class="merchant-buy" type="button" data-buy-item="secondChance">Buy · 🌟🌟 2</button>
+      </article>
+    </div>
+
+    <div id="merchantMessage" class="merchant-message" aria-live="polite"></div>
+
+    <button id="leaveMerchantBtn" class="primary modal-primary" type="button">
+      Continue to Battle 5 →
+    </button>
+  </div>
+</div>
+
 <div id="victoryPanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="victoryTitle">
   <div class="modal-card battle-result-modal">
     <div class="result-icon">🏆</div>
@@ -393,11 +458,11 @@
   </div>
 </div>
 
-<script src="js/heroes.js?v=33"></script>
-<script src="js/math.js?v=33"></script>
-<script src="js/blocks.js?v=33"></script>
-<script src="js/combat.js?v=33"></script>
-<script src="js/animations.js?v=33"></script>
-<script src="js/game.js?v=33"></script>
+<script src="js/heroes.js?v=35"></script>
+<script src="js/math.js?v=35"></script>
+<script src="js/blocks.js?v=35"></script>
+<script src="js/combat.js?v=35"></script>
+<script src="js/animations.js?v=35"></script>
+<script src="js/game.js?v=35"></script>
 </body>
 </html>

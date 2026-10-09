@@ -122,8 +122,23 @@ MathQuest.Combat = (() => {
     xp: 0,
     xpToNext: 100,
     focus: 1,
-    maxFocus: 3
+    maxFocus: 3,
+    skillStars: 0,
+    starMilestones: [],
+    merchantVisited: false,
+    purchasedItems: {},
+    counterShieldCharges: 0,
+    secondChanceCharges: 0
   };
+
+  function resetWorldResources() {
+    state.skillStars = 0;
+    state.starMilestones = [];
+    state.merchantVisited = false;
+    state.purchasedItems = {};
+    state.counterShieldCharges = 0;
+    state.secondChanceCharges = 0;
+  }
 
   function currentHero() {
     return MathQuest.Heroes.get(
@@ -175,6 +190,7 @@ MathQuest.Combat = (() => {
     state.xpToNext = 100;
     state.focus = 1;
     state.maxFocus = 3;
+    resetWorldResources();
     resetBattle();
   }
 
@@ -245,6 +261,42 @@ MathQuest.Combat = (() => {
         )
       );
 
+    state.skillStars =
+      Math.max(
+        0,
+        Number(saved.skillStars) || 0
+      );
+
+    state.starMilestones =
+      Array.isArray(saved.starMilestones)
+        ? saved.starMilestones
+            .map(Number)
+            .filter(value =>
+              [3,5,7,10].includes(value)
+            )
+        : [];
+
+    state.merchantVisited =
+      Boolean(saved.merchantVisited);
+
+    state.purchasedItems =
+      saved.purchasedItems &&
+      typeof saved.purchasedItems === "object"
+        ? {...saved.purchasedItems}
+        : {};
+
+    state.counterShieldCharges =
+      Math.max(
+        0,
+        Number(saved.counterShieldCharges) || 0
+      );
+
+    state.secondChanceCharges =
+      Math.max(
+        0,
+        Number(saved.secondChanceCharges) || 0
+      );
+
     resetBattle();
   }
 
@@ -252,6 +304,7 @@ MathQuest.Combat = (() => {
     state.heroHp = state.heroMaxHp;
     state.streak = 0;
     state.battleIndex = 0;
+    resetWorldResources();
     resetBattle();
   }
 
@@ -264,6 +317,7 @@ MathQuest.Combat = (() => {
     state.battleIndex = 0;
     state.heroHp = state.heroMaxHp;
     state.streak = 0;
+    resetWorldResources();
 
     if (worldIndex > 0) {
       state.powerStrikeUnlocked = true;
@@ -284,6 +338,7 @@ MathQuest.Combat = (() => {
     // Start every world refreshed so practice isn't punished by attrition.
     state.heroHp = state.heroMaxHp;
     state.streak = 0;
+    resetWorldResources();
 
     resetBattle();
     return true;
@@ -494,6 +549,7 @@ MathQuest.Combat = (() => {
     restartCurrentWorld,
 
     resetBattle,
+    resetWorldResources,
 
     addCorrect,
     addXp,

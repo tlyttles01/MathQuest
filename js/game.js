@@ -11,6 +11,8 @@ window.MathQuest = window.MathQuest || {};
   let guardTutorialSeen = false;
   let battleXpAnimating = false;
   let pendingPowerTutorialSelection = false;
+  let playMode = "adventure";
+  let adventureSnapshot = null;
   let coinTrayState = [];
   let equationOperators = ["+", "+"];
 
@@ -54,6 +56,115 @@ const skillInfo = {
       ? String(value)
       : value.toFixed(1);
 
+
+  function captureCombatSnapshot() {
+    const state =
+      MathQuest.Combat.state;
+
+    return {
+      heroId: state.heroId,
+      level: state.level,
+      xp: state.xp,
+      xpToNext: state.xpToNext,
+      heroMaxHp: state.heroMaxHp,
+      score: state.score,
+      powerStrikeUnlocked:
+        state.powerStrikeUnlocked,
+      focus: state.focus,
+      maxFocus: state.maxFocus,
+      skillStars: state.skillStars,
+      starMilestones: [...state.starMilestones],
+      merchantVisited: state.merchantVisited,
+      purchasedItems: {...state.purchasedItems},
+      counterShieldCharges: state.counterShieldCharges,
+      secondChanceCharges: state.secondChanceCharges,
+      worldIndex: state.worldIndex,
+      battleIndex: state.battleIndex
+    };
+  }
+
+  function restoreAdventureSnapshot() {
+    if (!adventureSnapshot) {
+      return false;
+    }
+
+    MathQuest.Combat.applySavedState(
+      adventureSnapshot
+    );
+
+    return true;
+  }
+
+  function enterPracticeMode(worldIndex) {
+    if (playMode !== "practice") {
+      adventureSnapshot =
+        captureCombatSnapshot();
+    }
+
+    playMode = "practice";
+
+    if (
+      !MathQuest.Combat.selectWorld(
+        worldIndex
+      )
+    ) {
+      return false;
+    }
+
+    battleComplete = false;
+    locked = false;
+    selectedSkill = "slash";
+
+    $("victoryPanel").classList.add("hidden");
+    $("chapterCompletePanel").classList.add("hidden");
+    $("battleMessage").textContent =
+      "PRACTICE";
+
+    updateBattleIdentity();
+    updateHud();
+    newProblem();
+
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
+
+    return true;
+  }
+
+  function returnToAdventure() {
+    if (playMode !== "practice") {
+      openAdventureHome();
+      return;
+    }
+
+    restoreAdventureSnapshot();
+    playMode = "adventure";
+
+    battleComplete = false;
+    locked = false;
+    selectedSkill = "slash";
+
+    document
+      .querySelectorAll(".skill")
+      .forEach(button => {
+        button.classList.toggle(
+          "active",
+          button.dataset.skill === "slash"
+        );
+      });
+
+    $("victoryPanel").classList.add("hidden");
+    $("chapterCompletePanel").classList.add("hidden");
+    $("battleMessage").textContent =
+      "YOUR TURN";
+
+    updateBattleIdentity();
+    updateHud();
+    newProblem();
+
+    openAdventureHome();
+  }
 
   function normalizeProgress(raw = {}) {
     const completed =
@@ -150,6 +261,10 @@ const skillInfo = {
   }
 
   function saveGame(resumeWorldIndex, resumeBattleIndex) {
+    if (playMode === "practice") {
+      return;
+    }
+
     const state =
       MathQuest.Combat.state;
 
@@ -189,6 +304,24 @@ const skillInfo = {
 
         maxFocus:
           state.maxFocus,
+
+        skillStars:
+          state.skillStars,
+
+        starMilestones:
+          [...state.starMilestones],
+
+        merchantVisited:
+          state.merchantVisited,
+
+        purchasedItems:
+          {...state.purchasedItems},
+
+        counterShieldCharges:
+          state.counterShieldCharges,
+
+        secondChanceCharges:
+          state.secondChanceCharges,
 
         worldIndex:
           progress.resumeWorldIndex,
@@ -327,8 +460,16 @@ const skillInfo = {
 
   function startAdventureAt(
     worldIndex,
-    battleIndex = 0
+    battleIndex = 0,
+    preserveRun = false
   ) {
+    playMode = "adventure";
+    adventureSnapshot = null;
+
+    const runSnapshot =
+      preserveRun
+        ? captureCombatSnapshot()
+        : null;
     const safeWorld =
       Math.min(
         progress.unlockedWorlds - 1,
@@ -347,6 +488,45 @@ const skillInfo = {
       );
 
     MathQuest.Combat.resetBattle();
+
+    if (
+      runSnapshot &&
+      runSnapshot.worldIndex === safeWorld
+    ) {
+      const state =
+        MathQuest.Combat.state;
+
+      state.skillStars =
+        runSnapshot.skillStars || 0;
+
+      state.starMilestones =
+        Array.isArray(runSnapshot.starMilestones)
+          ? [...runSnapshot.starMilestones]
+          : [];
+
+      state.merchantVisited =
+        Boolean(runSnapshot.merchantVisited);
+
+      state.purchasedItems =
+        runSnapshot.purchasedItems
+          ? {...runSnapshot.purchasedItems}
+          : {};
+
+      state.counterShieldCharges =
+        runSnapshot.counterShieldCharges || 0;
+
+      state.secondChanceCharges =
+        runSnapshot.secondChanceCharges || 0;
+
+      state.focus =
+        Math.min(
+          state.maxFocus,
+          Math.max(
+            1,
+            runSnapshot.focus || 1
+          )
+        );
+    }
 
     battleComplete = false;
     locked = false;
@@ -500,15 +680,22 @@ const skillInfo = {
       .disabled =
         !hasSave;
 
+    $("adventureHomeTitle").textContent =
+      playMode === "practice"
+        ? "Return to Adventure"
+        : "The Crystal Quest";
+
     $("continueAdventureBtn")
       .textContent =
-        hasSave
-          ? `Continue: ${
-              MathQuest.Combat.worlds[
-                progress.resumeWorldIndex
-              ].name
-            }`
-          : "Continue Adventure";
+        playMode === "practice"
+          ? "Return to Adventure"
+          : hasSave
+            ? `Continue: ${
+                MathQuest.Combat.worlds[
+                  progress.resumeWorldIndex
+                ].name
+              }`
+            : "Continue Adventure";
 
     $("homeStatusText")
       .textContent =
@@ -532,13 +719,21 @@ const skillInfo = {
       return;
     }
 
+    if (playMode === "practice") {
+      returnToAdventure();
+      return;
+    }
+
     startAdventureAt(
       progress.resumeWorldIndex,
-      progress.resumeBattleIndex
+      progress.resumeBattleIndex,
+      true
     );
   }
 
   function newAdventure() {
+    playMode = "adventure";
+    adventureSnapshot = null;
     clearSave();
 
     MathQuest.Combat.beginGame();
@@ -559,6 +754,241 @@ const skillInfo = {
     updateBattleIdentity();
     updateHud();
     newProblem();
+  }
+
+  const merchantCatalog = {
+    healing: {
+      cost: 1,
+      label: "Healing Potion"
+    },
+    focus: {
+      cost: 1,
+      label: "Focus Potion"
+    },
+    counter: {
+      cost: 2,
+      label: "Counter Shield"
+    },
+    secondChance: {
+      cost: 2,
+      label: "Second Chance Charm"
+    }
+  };
+
+  function awardSkillStarMilestone() {
+    const state =
+      MathQuest.Combat.state;
+
+    const milestone =
+      [3,5,7,10].find(
+        value =>
+          value === state.streak &&
+          !state.starMilestones.includes(value)
+      );
+
+    if (!milestone) {
+      return false;
+    }
+
+    state.starMilestones.push(
+      milestone
+    );
+
+    state.skillStars++;
+
+    return true;
+  }
+
+  function renderMerchant() {
+    const state =
+      MathQuest.Combat.state;
+
+    $("merchantStars").textContent =
+      state.skillStars;
+
+    document
+      .querySelectorAll("[data-item]")
+      .forEach(card => {
+        const itemId =
+          card.dataset.item;
+
+        const item =
+          merchantCatalog[itemId];
+
+        const button =
+          card.querySelector(
+            "[data-buy-item]"
+          );
+
+        const purchased =
+          Boolean(
+            state.purchasedItems[itemId]
+          );
+
+        let unavailableReason = "";
+
+        if (
+          itemId === "healing" &&
+          state.heroHp >= state.heroMaxHp
+        ) {
+          unavailableReason =
+            "HP is already full";
+        }
+
+        if (
+          itemId === "focus" &&
+          state.focus >= state.maxFocus
+        ) {
+          unavailableReason =
+            "Focus is already full";
+        }
+
+        const affordable =
+          state.skillStars >= item.cost;
+
+        button.disabled =
+          purchased ||
+          !affordable ||
+          Boolean(unavailableReason);
+
+        if (purchased) {
+          button.textContent =
+            "Purchased ✓";
+        }
+        else if (unavailableReason) {
+          button.textContent =
+            unavailableReason;
+        }
+        else {
+          button.textContent =
+            `Buy · ${"🌟".repeat(item.cost)} ${item.cost}`;
+        }
+
+        card.classList.toggle(
+          "purchased",
+          purchased
+        );
+      });
+
+    updateHud();
+  }
+
+  function showMerchant() {
+    locked = true;
+
+    $("merchantMessage").textContent =
+      playMode === "practice"
+        ? "Practice purchases are temporary and will disappear when you return to Adventure."
+        : "Skill Stars reset when you move to the next world.";
+
+    renderMerchant();
+
+    $("merchantPanel")
+      .classList.remove("hidden");
+  }
+
+  function buyMerchantItem(itemId) {
+    const state =
+      MathQuest.Combat.state;
+
+    const item =
+      merchantCatalog[itemId];
+
+    if (
+      !item ||
+      state.purchasedItems[itemId] ||
+      state.skillStars < item.cost
+    ) {
+      return;
+    }
+
+    if (
+      itemId === "healing" &&
+      state.heroHp >= state.heroMaxHp
+    ) {
+      return;
+    }
+
+    if (
+      itemId === "focus" &&
+      state.focus >= state.maxFocus
+    ) {
+      return;
+    }
+
+    state.skillStars -=
+      item.cost;
+
+    state.purchasedItems[itemId] =
+      true;
+
+    if (itemId === "healing") {
+      const before =
+        state.heroHp;
+
+      state.heroHp =
+        Math.min(
+          state.heroMaxHp,
+          state.heroHp + 5
+        );
+
+      $("merchantMessage").textContent =
+        `❤️ Restored ${state.heroHp - before} HP.`;
+    }
+    else if (itemId === "focus") {
+      const before =
+        state.focus;
+
+      state.focus =
+        Math.min(
+          state.maxFocus,
+          state.focus + 2
+        );
+
+      $("merchantMessage").textContent =
+        `⚡ Gained ${state.focus - before} Focus.`;
+    }
+    else if (itemId === "counter") {
+      state.counterShieldCharges =
+        1;
+
+      $("merchantMessage").textContent =
+        "🛡️ Your next correct Sword Slash will also Guard.";
+    }
+    else if (itemId === "secondChance") {
+      state.secondChanceCharges =
+        1;
+
+      $("merchantMessage").textContent =
+        "🍀 Your next wrong answer will not trigger an enemy attack.";
+    }
+
+    saveGame(
+      state.worldIndex,
+      state.battleIndex
+    );
+
+    renderMerchant();
+  }
+
+  function leaveMerchant() {
+    const state =
+      MathQuest.Combat.state;
+
+    state.merchantVisited =
+      true;
+
+    saveGame(
+      state.worldIndex,
+      state.battleIndex
+    );
+
+    $("merchantPanel")
+      .classList.add("hidden");
+
+    locked = false;
+
+    nextBattle();
   }
 
   function updateHud() {
@@ -591,6 +1021,27 @@ const skillInfo = {
 
     $("streak").textContent =
       state.streak;
+
+    $("skillStars").textContent =
+      state.skillStars;
+
+    const heldItems = [];
+
+    if (state.counterShieldCharges > 0) {
+      heldItems.push("🛡️ Counter Shield ready");
+    }
+
+    if (state.secondChanceCharges > 0) {
+      heldItems.push("🍀 Second Chance ready");
+    }
+
+    $("itemStatus").textContent =
+      heldItems.join(" · ");
+
+    $("itemStatus").classList.toggle(
+      "hidden",
+      heldItems.length === 0
+    );
 
     $("heroLevel").textContent =
       state.level;
@@ -771,7 +1222,9 @@ const skillInfo = {
       MathQuest.Combat.currentBattle();
 
     $("worldName").textContent =
-      world.label;
+      playMode === "practice"
+        ? `${world.label} · PRACTICE`
+        : world.label;
 
     $("battleSubtitle").textContent =
       `Battle ${MathQuest.Combat.state.battleIndex + 1} of ${world.battles.length}`;
@@ -840,30 +1293,9 @@ const skillInfo = {
   function chooseWorld(worldIndex) {
     closeWorldSelect();
 
-    if (!MathQuest.Combat.selectWorld(worldIndex)) {
-      return;
-    }
-
-    battleComplete = false;
-    locked = false;
-    selectedSkill = "slash";
-
-    document.querySelectorAll(".skill").forEach(button => {
-      button.classList.toggle(
-        "active",
-        button.dataset.skill === "slash"
-      );
-    });
-
-    $("victoryPanel").classList.add("hidden");
-    $("chapterCompletePanel").classList.add("hidden");
-    $("battleMessage").textContent = "YOUR TURN";
-
-    updateBattleIdentity();
-    updateHud();
-    newProblem();
-
-    window.scrollTo({top:0,behavior:"smooth"});
+    enterPracticeMode(
+      worldIndex
+    );
   }
 
   function selectSkill(skill) {
@@ -1633,6 +2065,9 @@ const skillInfo = {
     const reward =
       MathQuest.Combat.addCorrect();
 
+    const earnedSkillStar =
+      awardSkillStarMilestone();
+
     /*
       Sword Slash and Guard build Focus.
       Power Strike spends 2 Focus inside Combat.useSkill().
@@ -1644,6 +2079,21 @@ const skillInfo = {
       MathQuest.Combat.gainFocus(1);
     }
 
+    const state =
+      MathQuest.Combat.state;
+
+    let counterShieldUsed =
+      false;
+
+    if (
+      selectedSkill === "slash" &&
+      state.counterShieldCharges > 0
+    ) {
+      state.counterShieldCharges--;
+      state.guardActive = true;
+      counterShieldUsed = true;
+    }
+
     const effect =
       MathQuest.Combat.useSkill(
         selectedSkill,
@@ -1651,9 +2101,21 @@ const skillInfo = {
       );
 
     $("feedback").textContent =
-      selectedSkill === "power"
-        ? `✅ Correct! +${reward.points} score. Power Strike used 2 Focus.`
-        : `✅ Correct! +${reward.points} score. +1 Focus.`;
+      (
+        selectedSkill === "power"
+          ? `✅ Correct! +${reward.points} score. Power Strike used 2 Focus.`
+          : `✅ Correct! +${reward.points} score. +1 Focus.`
+      ) +
+      (
+        earnedSkillStar
+          ? " 🌟 Skill Star earned!"
+          : ""
+      ) +
+      (
+        counterShieldUsed
+          ? " 🛡️ Counter Shield activated!"
+          : ""
+      );
 
     updateHud();
     updateSkillAvailability();
@@ -1967,6 +2429,17 @@ const skillInfo = {
     $("victoryPanel")
       .classList.add("hidden");
 
+    const state =
+      MathQuest.Combat.state;
+
+    if (
+      state.battleIndex === 3 &&
+      !state.merchantVisited
+    ) {
+      showMerchant();
+      return;
+    }
+
     const advanced =
       MathQuest.Combat.advanceBattle();
 
@@ -2012,33 +2485,48 @@ const skillInfo = {
     const world =
       MathQuest.Combat.currentWorld();
 
-    if (world.unlockPowerStrike) {
-      MathQuest.Combat.unlockPowerStrike();
-    }
-
     const completedWorldIndex =
       MathQuest.Combat.state.worldIndex;
 
-    markWorldComplete(
-      completedWorldIndex
-    );
+    if (playMode === "adventure") {
+      if (world.unlockPowerStrike) {
+        MathQuest.Combat.unlockPowerStrike();
+      }
 
-    saveGame(
-      progress.resumeWorldIndex,
-      progress.resumeBattleIndex
-    );
+      markWorldComplete(
+        completedWorldIndex
+      );
+
+      saveGame(
+        progress.resumeWorldIndex,
+        progress.resumeBattleIndex
+      );
+    }
 
     $("chapterCompleteIcon").textContent =
       world.bossIcon;
 
-    if ($("crystalAwardGem")) {
+    if ($("crystalAward")) {
+      $("crystalAward").classList.toggle(
+        "hidden",
+        playMode === "practice"
+      );
+    }
+
+    if (
+      playMode === "adventure" &&
+      $("crystalAwardGem")
+    ) {
       $("crystalAwardGem").textContent =
         crystalInfo[
           completedWorldIndex
         ].icon;
     }
 
-    if ($("crystalAwardName")) {
+    if (
+      playMode === "adventure" &&
+      $("crystalAwardName")
+    ) {
       $("crystalAwardName").textContent =
         crystalInfo[
           completedWorldIndex
@@ -2046,54 +2534,83 @@ const skillInfo = {
     }
 
     $("chapterCompleteTitle").textContent =
-      world.completionTitle;
+      playMode === "practice"
+        ? `${world.name} Practice Complete!`
+        : world.completionTitle;
 
     $("chapterCompleteText").textContent =
-      world.completionText;
+      playMode === "practice"
+        ? `You finished practicing ${world.name}. Your adventure progress was not changed.`
+        : world.completionText;
 
     $("skillUnlockCard")
       .classList.toggle(
         "hidden",
+        playMode === "practice" ||
         !world.unlockPowerStrike
       );
 
     $("chapterSummary").innerHTML =
-      `
-      <span class="reward-pill">
-        ⭐ Score ${MathQuest.Combat.state.score}
-      </span>
-      <span class="reward-pill">
-        🔥 Streak ${MathQuest.Combat.state.streak}
-      </span>
-      <span class="reward-pill">
-        🏆 ${world.bossName} Defeated
-      </span>
-      `;
+      playMode === "practice"
+        ? `
+          <span class="reward-pill">
+            🎯 Practice Complete
+          </span>
+          <span class="reward-pill">
+            ⭐ Practice Score ${MathQuest.Combat.state.score}
+          </span>
+          `
+        : `
+          <span class="reward-pill">
+            ⭐ Score ${MathQuest.Combat.state.score}
+          </span>
+          <span class="reward-pill">
+            🔥 Streak ${MathQuest.Combat.state.streak}
+          </span>
+          <span class="reward-pill">
+            🏆 ${world.bossName} Defeated
+          </span>
+          `;
 
     const hasNextWorld =
       MathQuest.Combat.state.worldIndex <
       MathQuest.Combat.worlds.length - 1;
 
     $("nextWorldBtn").textContent =
-      hasNextWorld
-        ? `Continue to ${MathQuest.Combat.worlds[
-            MathQuest.Combat.state.worldIndex + 1
-          ].name} →`
-        : "Adventure Complete!";
+      playMode === "practice"
+        ? "Return to Adventure →"
+        : hasNextWorld
+          ? `Continue to ${MathQuest.Combat.worlds[
+              MathQuest.Combat.state.worldIndex + 1
+            ].name} →`
+          : "Adventure Complete!";
 
     $("nextWorldBtn").disabled =
+      playMode === "adventure" &&
       !hasNextWorld;
+
+    $("restartChapterBtn").textContent =
+      playMode === "practice"
+        ? "Practice This World Again"
+        : "Replay This World";
 
     $("chapterCompletePanel")
       .classList.remove("hidden");
 
     $("battleMessage").textContent =
-      "WORLD CLEAR!";
+      playMode === "practice"
+        ? "PRACTICE COMPLETE!"
+        : "WORLD CLEAR!";
   }
 
   function nextWorld() {
     $("chapterCompletePanel")
       .classList.add("hidden");
+
+    if (playMode === "practice") {
+      returnToAdventure();
+      return;
+    }
 
     const advanced =
       MathQuest.Combat.beginNextWorld();
@@ -2118,10 +2635,12 @@ const skillInfo = {
     $("battleMessage").textContent =
       "YOUR TURN";
 
-    saveGame(
-      MathQuest.Combat.state.worldIndex,
-      0
-    );
+    if (playMode === "adventure") {
+      saveGame(
+        MathQuest.Combat.state.worldIndex,
+        0
+      );
+    }
 
     updateBattleIdentity();
     updateHud();
@@ -2263,6 +2782,29 @@ const skillInfo = {
     }
 
     MathQuest.Combat.addWrong();
+
+    if (
+      MathQuest.Combat.state
+        .secondChanceCharges > 0
+    ) {
+      MathQuest.Combat.state
+        .secondChanceCharges--;
+
+      $("feedback").textContent +=
+        " 🍀 Second Chance! The enemy does not attack.";
+
+      $("battleMessage").textContent =
+        "SECOND CHANCE!";
+
+      updateHud();
+
+      setTimeout(
+        newProblem,
+        650
+      );
+
+      return;
+    }
 
     enemyTurn().then(survived => {
       if (!survived) return;
@@ -2407,6 +2949,24 @@ $("answerForm")
       .addEventListener(
         "submit",
         submitAnswer
+      );
+
+    document
+      .querySelectorAll("[data-buy-item]")
+      .forEach(button => {
+        button.addEventListener(
+          "click",
+          () =>
+            buyMerchantItem(
+              button.dataset.buyItem
+            )
+        );
+      });
+
+    $("leaveMerchantBtn")
+      .addEventListener(
+        "click",
+        leaveMerchant
       );
 
     $("nextBattleBtn")

@@ -1602,3 +1602,135 @@
     transform:rotate(90deg);
   }
 }
+
+
+/* v35: Skill Stars + midpoint merchant */
+.item-status{
+  max-width:245px;
+  margin-top:7px;
+  padding:6px 8px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#fff;
+  color:var(--muted);
+  font-size:.68rem;
+  font-weight:800;
+  line-height:1.25;
+}
+
+.merchant-modal{
+  width:min(720px,100%);
+}
+
+.merchant-head{
+  display:flex;
+  gap:14px;
+  align-items:center;
+  text-align:left;
+}
+
+.merchant-head h2{
+  margin:2px 0 5px;
+}
+
+.merchant-head p{
+  margin:0;
+  color:var(--muted);
+}
+
+.merchant-icon{
+  flex:0 0 auto;
+  font-size:3.6rem;
+}
+
+.merchant-wallet{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:16px 0 12px;
+  padding:11px 13px;
+  border:1px solid #f1c453;
+  border-radius:13px;
+  background:#fff9df;
+  font-weight:900;
+}
+
+.merchant-wallet strong{
+  font-size:1.25rem;
+}
+
+.merchant-items{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  text-align:left;
+}
+
+.merchant-item{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:9px 10px;
+  align-items:start;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#fff;
+}
+
+.merchant-item.purchased{
+  background:#f8fafc;
+}
+
+.merchant-item-icon{
+  grid-row:1 / span 2;
+  font-size:2rem;
+}
+
+.merchant-item-copy{
+  min-width:0;
+}
+
+.merchant-item h3{
+  margin:0;
+  font-size:1rem;
+}
+
+.merchant-item p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:.8rem;
+  line-height:1.3;
+}
+
+.merchant-buy{
+  grid-column:1 / -1;
+  min-height:42px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--accent2);
+  color:var(--accent);
+  font-weight:900;
+}
+
+.merchant-buy:disabled{
+  background:#f1f5f9;
+  color:var(--muted);
+}
+
+.merchant-message{
+  min-height:24px;
+  margin:12px 0 4px;
+  font-weight:800;
+  color:var(--muted);
+}
+
+@media(max-width:620px){
+  .merchant-items{
+    grid-template-columns:1fr;
+  }
+
+  .merchant-head{
+    align-items:flex-start;
+  }
+}
