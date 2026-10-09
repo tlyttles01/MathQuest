@@ -504,3 +504,18 @@ The goal is to give Knight defense/counterplay room to matter while keeping the 
 - Hero-select layout follows the supplied mockup: Knight, central fire, and three Coming Soon silhouettes.
 - Knight message box explains his identity: defense, dangerous-attack Guards, Counters, and Shield Bash.
 - Continue, New Adventure, World Map, and Practice are accessible from the campfire.
+
+
+## v43 Full campfire visual overhaul
+
+The full game now uses the same dark pixel-RPG visual language as the Campfire welcome screen.
+
+- Deep navy/black game background with subtle retro grid texture.
+- Chunkier square borders and offset pixel-style shadows.
+- Battle arena redesigned as a dark fantasy encounter screen.
+- Skills now look like RPG command cards.
+- Enemy intent is styled like a battle command/status window.
+- Question and math-tool panels now use dark framed RPG panels while keeping answer inputs bright and readable.
+- Inventory, Knight Counter panel, practice/world cards, merchant, tutorials, victory screens, XP screens, and world-complete dialogs all share the same visual system.
+- Warm cream text, slate borders, fire-gold highlights, and muted blue accents are used throughout.
+- No combat/gameplay logic was changed in this version.

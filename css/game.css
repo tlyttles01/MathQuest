@@ -2066,3 +2066,719 @@
 .campfire-map-section{margin-top:12px;padding:12px;border:1px solid #334155;background:#0b1220;color:#e5e7eb}.campfire-map-section .home-map-heading h3{color:#fff}.campfire-map-section .map-world-card{background:#111827;color:#e5e7eb;border-color:#475569}.campfire-map-section .map-world-card.unlocked{background:#111827}.campfire-map-section .map-world-card.completed{background:#052e16}.campfire-save-note{text-align:center;color:#94a3b8}
 @media(max-width:760px){.campfire-stage{min-height:470px}.knight-pedestal{left:2%;bottom:40px;width:190px}.knight-pedestal img{width:150px;height:175px}.slot-two{left:42%;top:70px}.slot-three{right:1%;top:120px}.slot-four{right:20%;bottom:18px}.coming-slot{width:130px}.coming-slot .hero-silhouette{width:82px;height:122px}.campfire-home-actions{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.campfire-home-shell{padding:10px}.campfire-title-plaque{padding:8px 18px}.campfire-stage{min-height:540px}.knight-pedestal{left:50%;transform:translateX(-50%);bottom:30px}.slot-two{left:4%;top:80px}.slot-three{right:4%;top:80px}.slot-four{right:50%;transform:translateX(50%);top:245px;bottom:auto}.campfire-center{bottom:205px}.campfire-home-actions{grid-template-columns:1fr}.campfire-progress-strip{grid-template-columns:1fr}.campfire-crystal-count{justify-self:start}}
+
+
+/* ==========================================================
+   v43: CAMPFIRE / PIXEL-RPG VISUAL SYSTEM
+   Extends the welcome-screen aesthetic through the full game.
+   ========================================================== */
+
+:root{
+  --bg:#050914;
+  --panel:#0b1020;
+  --alt:#111827;
+  --border:#667085;
+  --text:#f3f0df;
+  --muted:#a5adbd;
+  --accent:#526fc0;
+  --accent2:#172554;
+  --hero:#4f9b68;
+  --enemy:#b84d55;
+  --warning:#ef4444;
+  --ten:#5078c9;
+  --one:#d49a34;
+  --fire:#f59e0b;
+  --fire-soft:#fef3c7;
+  --ink:#060912;
+  --pixel-shadow:#02040a;
+}
+
+html{
+  background:var(--bg);
+}
+
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 50% -120px,rgba(75,91,145,.22),transparent 420px),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,.012) 0 1px,
+      transparent 1px 32px
+    ),
+    linear-gradient(#070b15,#050914);
+  color:var(--text);
+}
+
+body,
+button,
+input{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+
+/* Shared retro framing */
+.battle-panel,
+.problem-panel,
+.battle-inventory,
+.class-tactics,
+.workspace-side .workspace,
+.modal-card,
+.tutorial-card{
+  border:3px solid #687386;
+  border-radius:5px;
+  background:#0b1020;
+  color:var(--text);
+  box-shadow:
+    4px 4px 0 var(--pixel-shadow),
+    inset 0 0 0 1px rgba(255,255,255,.035);
+}
+
+.game-shell{
+  width:min(1120px,calc(100% - 22px));
+  gap:14px;
+  margin-top:12px;
+}
+
+.battle-panel{
+  padding:15px 17px 17px;
+}
+
+.problem-panel{
+  padding:18px;
+}
+
+.eyebrow{
+  color:#a8b1c5;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.muted,
+.solve-label,
+.effect span,
+.fighter-title span,
+.intent-note,
+.workspace-head p,
+.inventory-head small,
+.class-tactics p,
+.enemy-role{
+  color:#a5adbd;
+}
+
+/* Top HUD */
+.topbar{
+  padding:1px 2px 8px;
+  border-bottom:2px solid #30394b;
+}
+
+.build-version{
+  border:1px solid #596276;
+  border-radius:2px;
+  background:#111827;
+  color:#9ca9c0;
+}
+
+.stats{
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.stats span{
+  border:2px solid #4a5568;
+  border-radius:3px;
+  background:#111827;
+  color:#f8f0cf;
+  box-shadow:2px 2px 0 #02040a;
+}
+
+/* Battle arena */
+.battle-stage{
+  min-height:255px;
+  border:3px solid #465267;
+  border-radius:4px;
+  background:
+    radial-gradient(ellipse at 50% 100%,rgba(126,141,162,.16) 0 27%,transparent 28%),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 64px,
+      rgba(130,145,168,.045) 65px 68px
+    ),
+    linear-gradient(#090e1a 0 62%,#161d2a 62% 100%);
+  box-shadow:
+    inset 0 0 32px rgba(0,0,0,.65),
+    3px 3px 0 #02040a;
+}
+
+.battle-stage::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(118deg,transparent 0 13%,rgba(112,125,147,.07) 14% 15%,transparent 16% 100%),
+    linear-gradient(62deg,transparent 0 78%,rgba(112,125,147,.06) 79% 80%,transparent 81%);
+}
+
+.fighter-title{
+  color:#f8f0d8;
+  text-shadow:2px 2px #02040a;
+}
+
+.enemy-title{
+  color:#f0d5d6;
+}
+
+.enemy-role{
+  color:#9da7ba;
+}
+
+.hp-track,
+.xp-track,
+.focus-track{
+  border:2px solid #697386;
+  border-radius:2px;
+  background:#050914;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);
+}
+
+.hp-track{
+  height:18px;
+}
+
+.hero-fill{
+  background:linear-gradient(90deg,#25633f,#5ba66f);
+}
+
+.enemy-fill{
+  background:linear-gradient(90deg,#762f3b,#c5515a);
+}
+
+.xp-fill{
+  border-radius:0;
+  background:linear-gradient(90deg,#6345a8,#9b7be2);
+}
+
+.focus-fill{
+  background:linear-gradient(90deg,#8b5cf6,#c084fc);
+}
+
+.item-status{
+  border:2px solid #6d5b94;
+  border-radius:3px;
+  background:#171128;
+  color:#d8c9f8;
+}
+
+.character-sprite{
+  filter:drop-shadow(4px 7px 0 rgba(0,0,0,.38));
+}
+
+/* Intent card becomes the "enemy command box" */
+.intent-column{
+  z-index:3;
+}
+
+.battle-message{
+  color:#c5cddd;
+  text-shadow:1px 1px #02040a;
+}
+
+.intent-card{
+  border:3px solid #697386;
+  border-radius:4px;
+  background:#101624;
+  color:#f6f1df;
+  box-shadow:3px 3px 0 #02040a;
+}
+
+.intent-card.danger{
+  border-color:#b93d46;
+  background:#1b1017;
+  box-shadow:3px 3px 0 #02040a;
+}
+
+.intent-title{
+  color:#aeb6c5;
+}
+
+.intent-name{
+  color:#f9f2dc;
+  text-transform:uppercase;
+}
+
+.intent-card.danger .intent-name,
+.intent-card.danger .intent-damage{
+  color:#ff737b;
+}
+
+/* Action cards */
+.skills{
+  padding:3px 0 0;
+}
+
+.skill-grid{
+  gap:9px;
+}
+
+.skill{
+  min-height:76px;
+  border:3px solid #566176;
+  border-radius:4px;
+  background:#0e1524;
+  color:#f4eedc;
+  box-shadow:3px 3px 0 #02040a;
+  transition:
+    transform .08s ease,
+    border-color .12s ease,
+    background .12s ease;
+}
+
+.skill:hover:not(:disabled){
+  transform:translate(-1px,-1px);
+  border-color:#8d99ae;
+}
+
+.skill.active{
+  border-color:#829cf0;
+  background:#18254a;
+  box-shadow:
+    3px 3px 0 #02040a,
+    inset 0 0 0 1px rgba(196,210,255,.12);
+}
+
+.skill.locked,
+.skill.needs-focus{
+  background:#0a0f19;
+  color:#727c8f;
+  border-color:#3a4352;
+}
+
+.skill small{
+  color:#9da7b8;
+}
+
+/* Knight identity bar */
+.class-tactics{
+  border-color:#4f5d75;
+  background:#0d1421;
+}
+
+.class-tactics strong{
+  color:#fff0c4;
+}
+
+.counter-status{
+  border:2px solid #566176;
+  border-radius:3px;
+  background:#111827;
+  color:#9ca6b7;
+}
+
+.counter-status.ready{
+  border-color:#d39b35;
+  background:#251909;
+  color:#ffd67a;
+  box-shadow:2px 2px 0 #02040a;
+}
+
+/* Inventory */
+.battle-inventory{
+  background:#0b1020;
+}
+
+.inventory-item{
+  border:2px solid #505c70;
+  border-radius:4px;
+  background:#101725;
+  color:#f4eedc;
+  box-shadow:2px 2px 0 #02040a;
+}
+
+.inventory-item:hover:not(:disabled){
+  border-color:#8996ac;
+}
+
+.inventory-item.armed{
+  border-color:#9b7be2;
+  background:#1c1731;
+  box-shadow:
+    3px 3px 0 #02040a,
+    inset 0 0 0 1px rgba(192,132,252,.15);
+}
+
+.inventory-item small{
+  color:#9ca6b8;
+}
+
+.inventory-count{
+  border:1px solid #566176;
+  border-radius:2px;
+  background:#060b14;
+  color:#e6dfca;
+}
+
+.inventory-message{
+  color:#c7cfdd;
+}
+
+/* Problem / question area */
+.question-side{
+  padding:10px 8px;
+}
+
+.problem{
+  color:#fff7df;
+  text-shadow:2px 2px 0 #02040a;
+}
+
+.effect{
+  min-width:90px;
+  padding:7px 9px;
+  border:2px solid #46536a;
+  background:#0c1320;
+  box-shadow:2px 2px 0 #02040a;
+}
+
+.effect b{
+  color:#f2d28b;
+}
+
+.answer-row label{
+  color:#f4edd7;
+}
+
+.answer-row input,
+.time-answer-fields input,
+.equation-number{
+  border:3px solid #657087 !important;
+  border-radius:4px !important;
+  background:#f3eedc !important;
+  color:#111827 !important;
+  box-shadow:3px 3px 0 #02040a;
+}
+
+.answer-row input:focus,
+.time-answer-fields input:focus,
+.equation-number:focus{
+  outline:3px solid #7290df;
+  outline-offset:2px;
+}
+
+.feedback{
+  color:#e9dfc5;
+}
+
+.hint{
+  border:2px solid #665c40;
+  border-radius:4px;
+  background:#1e190d;
+  color:#f6dda1;
+}
+
+/* Buttons */
+.primary,
+.secondary,
+.tool,
+.block-add,
+.merchant-buy{
+  border-radius:3px;
+  border-width:2px;
+  box-shadow:3px 3px 0 #02040a;
+  text-transform:uppercase;
+  letter-spacing:.025em;
+}
+
+.primary{
+  border-color:#8398d8;
+  background:#3d5ca9;
+  color:#fff9e9;
+}
+
+.primary:hover:not(:disabled){
+  background:#4b69ba;
+}
+
+.secondary,
+.tool,
+.block-add{
+  border-color:#59657a;
+  background:#101725;
+  color:#ece5d4;
+}
+
+.secondary:hover:not(:disabled),
+.tool:hover:not(:disabled),
+.block-add:hover:not(:disabled){
+  border-color:#8793a8;
+  background:#182235;
+}
+
+.tool.active{
+  border-color:#8398d8;
+  background:#172a55;
+}
+
+.tool.danger,
+.danger{
+  color:#ff8a8f;
+}
+
+/* Math tool panel */
+.workspace-side .workspace{
+  border-color:#536075;
+  background:#0e1524;
+}
+
+.workspace-head h2,
+.coin-tray-section h3{
+  color:#f7efd8;
+}
+
+.board,
+.coin-tray-zone{
+  border:3px solid #4c586c;
+  border-radius:4px;
+  background:
+    linear-gradient(rgba(101,112,134,.12) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(101,112,134,.12) 1px,transparent 1px),
+    #09101c;
+  background-size:24px 24px;
+  box-shadow:inset 0 0 22px rgba(0,0,0,.35);
+}
+
+.empty{
+  color:#929caf;
+}
+
+.math-block{
+  border-color:#c7ced855;
+  box-shadow:2px 2px 0 rgba(0,0,0,.32);
+}
+
+.coin-tray-section,
+.equation-builder-workspace{
+  color:#e9e3d2;
+}
+
+.equation-op{
+  border:2px solid #59667b !important;
+  border-radius:3px !important;
+  background:#101725 !important;
+  color:#ece6d5 !important;
+  box-shadow:2px 2px 0 #02040a;
+}
+
+.equation-op.active{
+  border-color:#8198df !important;
+  background:#20396f !important;
+}
+
+.equation-builder-note{
+  color:#9fa9bb !important;
+}
+
+/* Coin areas */
+.coin-workspace{
+  color:#f3ecd9;
+}
+
+.coin-tray-section p{
+  color:#a5adbd;
+}
+
+.given-away-section{
+  border-top-color:#3f4b60 !important;
+}
+
+/* Modals: same visual language as the campfire */
+.modal-overlay,
+.tutorial-overlay{
+  background:rgba(2,5,12,.88);
+  backdrop-filter:blur(3px);
+}
+
+.modal-card,
+.tutorial-card{
+  border:4px solid #7a8495;
+  border-radius:5px;
+  background:#090e19;
+  color:#f3eddb;
+  box-shadow:
+    6px 6px 0 #02040a,
+    inset 0 0 0 2px #171f2d;
+}
+
+.modal-card h2,
+.modal-card h3,
+.tutorial-card h2{
+  color:#fff5d8;
+  text-shadow:2px 2px #02040a;
+}
+
+.modal-card > p,
+.tutorial-card p{
+  color:#bac1ce;
+}
+
+.result-icon,
+.tutorial-icon{
+  filter:drop-shadow(3px 4px 0 rgba(0,0,0,.45));
+}
+
+.reward-pill{
+  border:2px solid #556176;
+  border-radius:3px;
+  background:#111827;
+  color:#eee6d1;
+  box-shadow:2px 2px 0 #02040a;
+}
+
+.unlock-card,
+.crystal-award,
+.battle-xp-panel,
+.level-reward,
+.story-copy{
+  border:2px solid #556176;
+  border-radius:4px;
+  background:#101725;
+  color:#eee8d8;
+}
+
+.unlock-card p,
+.story-copy p,
+.level-reward small{
+  color:#aeb7c7;
+}
+
+.crystal-award{
+  border-color:#75619d;
+  background:#171228;
+}
+
+.battle-xp-track{
+  border:2px solid #59657a;
+  border-radius:2px;
+  background:#050914;
+}
+
+.battle-xp-fill{
+  border-radius:0;
+}
+
+.warning{
+  border:3px solid #b83d45;
+  border-radius:4px;
+  background:#1b1015;
+  color:#ff747c;
+  box-shadow:3px 3px 0 #02040a;
+}
+
+/* Practice / map cards */
+.world-card,
+.map-world-card{
+  border:3px solid #4d596d !important;
+  border-radius:4px !important;
+  background:#101725 !important;
+  color:#eee7d5 !important;
+  box-shadow:3px 3px 0 #02040a;
+}
+
+.world-card:hover:not(:disabled),
+.map-world-card:hover:not(:disabled){
+  border-color:#8996aa !important;
+  background:#172033 !important;
+}
+
+.world-card small,
+.map-world-card small,
+.world-card-number{
+  color:#9fa8b9 !important;
+}
+
+.map-world-card.completed{
+  border-color:#447a5a !important;
+  background:#0b2016 !important;
+}
+
+/* Merchant */
+.merchant-modal{
+  background:#090e19;
+}
+
+.merchant-wallet{
+  border:3px solid #98752c;
+  border-radius:4px;
+  background:#251b08;
+  color:#f8dea0;
+  box-shadow:3px 3px 0 #02040a;
+}
+
+.merchant-item{
+  border:3px solid #505c70;
+  border-radius:4px;
+  background:#101725;
+  color:#eee8d7;
+  box-shadow:3px 3px 0 #02040a;
+}
+
+.merchant-item.purchased{
+  background:#0d151d;
+}
+
+.merchant-item p{
+  color:#aab3c2;
+}
+
+.merchant-buy{
+  border-color:#67758c;
+  background:#172650;
+  color:#e8eeff;
+}
+
+.merchant-buy:disabled{
+  background:#0b1019;
+  color:#657084;
+}
+
+.merchant-message{
+  color:#d5c9aa;
+}
+
+/* Damage / effects */
+.damage-pop{
+  color:#ff6974;
+  text-shadow:
+    2px 2px #02040a,
+    -1px -1px #02040a;
+}
+
+/* Keep the campfire screen itself consistent with its existing theme */
+.campfire-home-shell{
+  box-shadow:
+    6px 6px 0 #02040a,
+    0 18px 70px rgba(0,0,0,.55);
+}
+
+/* Responsive polish */
+@media(max-width:900px){
+  .game-shell{
+    width:min(100% - 12px,1120px);
+  }
+}
+
+@media(max-width:700px){
+  .battle-panel,
+  .problem-panel,
+  .battle-inventory{
+    border-width:2px;
+  }
+
+  .battle-stage{
+    border-width:2px;
+  }
+
+  .skill,
+  .inventory-item{
+    border-width:2px;
+  }
+}
