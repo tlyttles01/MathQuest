@@ -714,20 +714,20 @@ const skillInfo = {
 
     $("adventureHomeTitle").textContent =
       playMode === "practice"
-        ? "Return to Adventure"
-        : "The Crystal Quest";
+        ? "RETURN TO ADVENTURE"
+        : "SELECT YOUR HERO";
 
     $("continueAdventureBtn")
       .textContent =
         playMode === "practice"
           ? "Return to Adventure"
           : hasSave
-            ? `Continue: ${
+            ? `CONTINUE: ${
                 MathQuest.Combat.worlds[
                   progress.resumeWorldIndex
-                ].name
+                ].name.toUpperCase()
               }`
-            : "Continue Adventure";
+            : "CONTINUE ADVENTURE";
 
     $("homeStatusText")
       .textContent =
@@ -2989,20 +2989,6 @@ const skillInfo = {
     });
   }
 
-  function openCampfire() {
-    if (locked) {
-      return;
-    }
-
-    $("campfirePanel")
-      .classList.remove("hidden");
-  }
-
-  function closeCampfire() {
-    $("campfirePanel")
-      .classList.add("hidden");
-  }
-
   function init() {
     MathQuest.BlockWorkspace.init();
 
@@ -3239,14 +3225,33 @@ $("beginJourneyBtn")
     $("worldSelectBtn").addEventListener("click", openWorldSelect);
     $("closeWorldSelectBtn").addEventListener("click", closeWorldSelect);
 
-    $("campfireBtn").addEventListener(
+    $("campfirePracticeBtn").addEventListener(
       "click",
-      openCampfire
+      () => {
+        $("adventureHomePanel").classList.add("hidden");
+        openWorldSelect();
+      }
     );
 
-    $("closeCampfireBtn").addEventListener(
+    $("campfireMapBtn").addEventListener(
       "click",
-      closeCampfire
+      () => {
+        $("campfireMapSection").classList.toggle("hidden");
+      }
+    );
+
+    $("closeCampfireMapBtn").addEventListener(
+      "click",
+      () => $("campfireMapSection").classList.add("hidden")
+    );
+
+    $("knightHeroSlot").addEventListener(
+      "click",
+      () => {
+        $("knightTipBox").classList.remove("tip-pulse");
+        void $("knightTipBox").offsetWidth;
+        $("knightTipBox").classList.add("tip-pulse");
+      }
     );
 
     renderWorldSelect();

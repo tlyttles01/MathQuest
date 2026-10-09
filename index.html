@@ -4,17 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=41">
+  <link rel="stylesheet" href="css/game.css?v=42">
 </head>
 <body>
 <main class="game-shell">
   <section class="battle-panel">
     <header class="topbar">
-      <div><div class="build-row"><span id="buildVersion" class="build-version">v41</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
+      <div><div class="build-row"><span id="buildVersion" class="build-version">v42</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
       <div class="stats">
         <button id="adventureMapBtn" class="secondary compact-control" type="button">🧭 Adventure Map</button>
         <button id="worldSelectBtn" class="secondary compact-control" type="button">🎯 Practice Mode</button>
-        <button id="campfireBtn" class="secondary compact-control" type="button">🔥 Campfire</button>
         <span>⭐ <b id="score">0</b></span>
         <span title="Skill Stars">🌟 <b id="skillStars">0</b></span>
         <span>🔥 <b id="streak">0</b></span>
@@ -262,42 +261,91 @@
 
 
 
-<div id="adventureHomePanel" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="adventureHomeTitle">
-  <div class="modal-card adventure-home-modal">
-    <div class="home-brand">
-      <div class="result-icon">⚔️</div>
+<div id="adventureHomePanel" class="modal-overlay campfire-home-overlay" role="dialog" aria-modal="true" aria-labelledby="adventureHomeTitle">
+  <div class="campfire-home-shell">
+    <div class="campfire-title-plaque">
+      <div class="eyebrow">MATH QUEST</div>
+      <h2 id="adventureHomeTitle">SELECT YOUR HERO</h2>
+    </div>
+
+    <div class="campfire-stage">
+      <div class="campfire-trees" aria-hidden="true"></div>
+      <div class="campfire-moon" aria-hidden="true"></div>
+
+      <button id="knightHeroSlot" class="hero-pedestal knight-pedestal selected" type="button" aria-describedby="knightTipBox">
+        <span class="hero-slot-badge">SELECTED</span>
+        <img src="characterImages/knight.png?v=42" alt="Knight">
+        <strong>KNIGHT</strong>
+      </button>
+
+      <div class="hero-pedestal coming-slot slot-two" aria-label="Coming soon hero slot">
+        <span class="hero-silhouette">?</span>
+        <strong>COMING SOON</strong>
+      </div>
+
+      <div class="hero-pedestal coming-slot slot-three" aria-label="Coming soon hero slot">
+        <span class="hero-silhouette">?</span>
+        <strong>COMING SOON</strong>
+      </div>
+
+      <div class="hero-pedestal coming-slot slot-four" aria-label="Coming soon hero slot">
+        <span class="hero-silhouette">?</span>
+        <strong>COMING SOON</strong>
+      </div>
+
+      <div class="campfire-center" aria-hidden="true">
+        <div class="campfire-glow"></div>
+        <div class="campfire-emoji">🔥</div>
+      </div>
+    </div>
+
+    <div id="knightTipBox" class="hero-tip-box">
+      <div class="hero-tip-title">
+        <span>🛡️</span>
+        <div>
+          <div class="eyebrow">WHAT MAKES THE KNIGHT DIFFERENT?</div>
+          <strong>Defend. Read the attack. Counter.</strong>
+        </div>
+      </div>
+      <p>
+        The Knight is a defensive fighter. <b>Guard</b> dangerous attacks to block all damage and ready a
+        <b>Counter</b>. Your next Sword Slash then hits harder. <b>Shield Bash</b> lets you attack while softening the next hit.
+      </p>
+      <div class="hero-tip-tags">
+        <span>⚔️ Slash builds Focus</span>
+        <span>🛡️ Guard big attacks</span>
+        <span>💥 Counter for bonus damage</span>
+      </div>
+    </div>
+
+    <div class="campfire-progress-strip">
       <div>
-        <div class="eyebrow">MATH QUEST</div>
-        <h2 id="adventureHomeTitle">The Crystal Quest</h2>
-        <p id="homeStatusText">Recover the five learning crystals and restore the kingdom.</p>
+        <span class="eyebrow">CRYSTAL QUEST</span>
+        <strong id="homeStatusText">Recover the five learning crystals and restore the kingdom.</strong>
       </div>
+      <div class="campfire-crystal-count"><span id="homeCrystalCount">0 / 5 crystals</span></div>
+      <div id="homeCrystalRow" class="crystal-row compact-crystals"></div>
     </div>
 
-    <div class="home-progress-card">
-      <div class="home-progress-top">
-        <strong>Your Adventure</strong>
-        <span id="homeCrystalCount">0 / 5 crystals</span>
-      </div>
-      <div id="homeCrystalRow" class="crystal-row"></div>
+    <div class="campfire-home-actions">
+      <button id="continueAdventureBtn" class="primary campfire-start" type="button">CONTINUE ADVENTURE</button>
+      <button id="startAdventureBtn" class="secondary campfire-secondary" type="button">START NEW ADVENTURE</button>
+      <button id="campfireMapBtn" class="secondary campfire-secondary" type="button">🗺️ WORLD MAP</button>
+      <button id="campfirePracticeBtn" class="secondary campfire-secondary" type="button">🎯 PRACTICE</button>
     </div>
 
-    <div class="home-actions">
-      <button id="continueAdventureBtn" class="primary modal-primary" type="button">Continue Adventure</button>
-      <button id="startAdventureBtn" class="secondary modal-secondary" type="button">Start New Adventure</button>
-    </div>
-
-    <div class="home-map-section">
+    <div id="campfireMapSection" class="campfire-map-section hidden">
       <div class="home-map-heading">
         <div>
           <div class="eyebrow">WORLD MAP</div>
           <h3>Choose an unlocked world</h3>
         </div>
-        <span class="muted">Bosses unlock the road ahead.</span>
+        <button id="closeCampfireMapBtn" class="secondary compact-control" type="button">Close Map</button>
       </div>
       <div id="adventureMapGrid" class="adventure-map-grid"></div>
     </div>
 
-    <div class="save-note">Progress is saved automatically on this device.</div>
+    <div class="save-note campfire-save-note">Progress saves automatically on this device.</div>
   </div>
 </div>
 
@@ -344,71 +392,6 @@
 
 
 
-<div id="campfirePanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="campfireTitle">
-  <div class="modal-card campfire-modal">
-    <div class="campfire-hero">
-      <div class="campfire-flame" aria-hidden="true">🔥</div>
-      <div>
-        <div class="eyebrow">PARTY CAMP</div>
-        <h2 id="campfireTitle">Campfire</h2>
-        <p>Rest by the fire and see the heroes who can join the adventure.</p>
-      </div>
-    </div>
-
-    <div class="campfire-scene" aria-hidden="true">
-      <div class="campfire-ground"></div>
-      <div class="campfire-fire">🔥</div>
-    </div>
-
-    <div class="character-slot-grid">
-      <article class="character-slot available">
-        <div class="character-slot-art">
-          <img src="characterImages/knight.png?v=41" alt="Knight">
-        </div>
-        <div class="character-slot-copy">
-          <div class="character-status ready">CURRENT HERO</div>
-          <h3>Knight</h3>
-          <p>Defensive fighter who blocks dangerous attacks and turns perfect Guards into Counters.</p>
-          <div class="character-tags">
-            <span>🛡️ Defense</span>
-            <span>⚔️ Counter</span>
-          </div>
-        </div>
-      </article>
-
-      <article class="character-slot coming-soon">
-        <div class="character-slot-art mystery">?</div>
-        <div class="character-slot-copy">
-          <div class="character-status">COMING SOON</div>
-          <h3>Hero Slot 2</h3>
-          <p>A new hero with a different way to use math in battle.</p>
-        </div>
-      </article>
-
-      <article class="character-slot coming-soon">
-        <div class="character-slot-art mystery">?</div>
-        <div class="character-slot-copy">
-          <div class="character-status">COMING SOON</div>
-          <h3>Hero Slot 3</h3>
-          <p>A future class will bring a new combat style to the party.</p>
-        </div>
-      </article>
-
-      <article class="character-slot coming-soon">
-        <div class="character-slot-art mystery">?</div>
-        <div class="character-slot-copy">
-          <div class="character-status">COMING SOON</div>
-          <h3>Hero Slot 4</h3>
-          <p>Another hero is still training somewhere in the kingdom.</p>
-        </div>
-      </article>
-    </div>
-
-    <button id="closeCampfireBtn" class="primary modal-primary" type="button">
-      Return to Adventure
-    </button>
-  </div>
-</div>
 
 <div id="merchantPanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="merchantTitle">
   <div class="modal-card merchant-modal">
@@ -573,11 +556,11 @@
   </div>
 </div>
 
-<script src="js/heroes.js?v=41"></script>
-<script src="js/math.js?v=41"></script>
-<script src="js/blocks.js?v=41"></script>
-<script src="js/combat.js?v=41"></script>
-<script src="js/animations.js?v=41"></script>
-<script src="js/game.js?v=41"></script>
+<script src="js/heroes.js?v=42"></script>
+<script src="js/math.js?v=42"></script>
+<script src="js/blocks.js?v=42"></script>
+<script src="js/combat.js?v=42"></script>
+<script src="js/animations.js?v=42"></script>
+<script src="js/game.js?v=42"></script>
 </body>
 </html>

@@ -497,3 +497,10 @@ The goal is to give Knight defense/counterplay room to matter while keeping the 
 - Knight is shown as the current playable hero with his defensive/counter identity.
 - Added three additional character slots marked Coming Soon.
 - The Campfire is presentation-only for now; future classes can plug into these slots later.
+
+
+## v42 Campfire welcome screen
+- Campfire is now the main welcome/home screen.
+- Hero-select layout follows the supplied mockup: Knight, central fire, and three Coming Soon silhouettes.
+- Knight message box explains his identity: defense, dangerous-attack Guards, Counters, and Shield Bash.
+- Continue, New Adventure, World Map, and Practice are accessible from the campfire.
