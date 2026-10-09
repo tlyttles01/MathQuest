@@ -298,3 +298,39 @@ The 21 supplied monster sprites for Living Library, The Vault, and Clocktower no
 - Includes Draw, Erase, and Clear controls.
 - Scratch work is never graded; it is only a solving aid.
 - Word problems are explicitly constrained to the question column and wrap responsively.
+
+
+## v28 Living Library equation builder
+
+The drawing scratch pad has been removed.
+
+Living Library now uses a structured equation builder:
+
+`___  [ + / - ]  ___  =  ___`
+
+Students can:
+- enter the first number from the story
+- choose addition or subtraction
+- enter the second number
+- solve the result
+
+The result field automatically syncs to the normal answer field so the player does not need to type the answer twice.
+
+
+## v29 adventure progression
+
+Added the first full progression layer:
+
+- Automatic local save data using browser localStorage
+- Continue Adventure
+- Start New Adventure
+- Adventure Map
+- Locked/unlocked world progression
+- Five-crystal collection tracker
+- Crystal reward after each world boss
+- Completed-world status on the map
+- Resume world/battle saved automatically
+- Knight level, XP, max HP, score, and Power Strike unlock saved
+- Practice mode remains available separately and can still jump to any world
+
+Save data is device/browser-local for now. A future account/cloud-save system can replace the storage layer without changing the progression UI.

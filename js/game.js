@@ -11,9 +11,27 @@ window.MathQuest = window.MathQuest || {};
   let guardTutorialSeen = false;
   let battleXpAnimating = false;
   let coinTrayState = [];
-  let scratchMode = "draw";
-  let scratchDrawing = false;
-  let scratchLastPoint = null;
+  let equationOperator = "+";
+
+  const SAVE_KEY =
+    "mathQuestSaveV1";
+
+  const crystalInfo = [
+    {name:"Forest Crystal", icon:"🌿"},
+    {name:"Earth Crystal", icon:"🪨"},
+    {name:"Story Crystal", icon:"📖"},
+    {name:"Coin Crystal", icon:"🪙"},
+    {name:"Time Crystal", icon:"⏳"}
+  ];
+
+  let progress = {
+    unlockedWorlds: 1,
+    completedWorlds: [],
+    crystals: [],
+    resumeWorldIndex: 0,
+    resumeBattleIndex: 0,
+    hasStarted: false
+  };
 const skillInfo = {
     slash: {
       label: "⚔️ SWORD SLASH",
@@ -33,6 +51,504 @@ const skillInfo = {
     Number.isInteger(value)
       ? String(value)
       : value.toFixed(1);
+
+
+  function normalizeProgress(raw = {}) {
+    const completed =
+      Array.isArray(raw.completedWorlds)
+        ? raw.completedWorlds
+            .map(Number)
+            .filter(index =>
+              Number.isInteger(index) &&
+              index >= 0 &&
+              index < MathQuest.Combat.worlds.length
+            )
+        : [];
+
+    const crystals =
+      Array.isArray(raw.crystals)
+        ? raw.crystals
+            .map(Number)
+            .filter(index =>
+              Number.isInteger(index) &&
+              index >= 0 &&
+              index < MathQuest.Combat.worlds.length
+            )
+        : [];
+
+    const unlockedFromCompletion =
+      completed.length
+        ? Math.min(
+            MathQuest.Combat.worlds.length,
+            Math.max(...completed) + 2
+          )
+        : 1;
+
+    return {
+      unlockedWorlds:
+        Math.min(
+          MathQuest.Combat.worlds.length,
+          Math.max(
+            1,
+            Number(raw.unlockedWorlds) || 1,
+            unlockedFromCompletion
+          )
+        ),
+
+      completedWorlds:
+        [...new Set(completed)],
+
+      crystals:
+        [...new Set(crystals)],
+
+      resumeWorldIndex:
+        Math.min(
+          MathQuest.Combat.worlds.length - 1,
+          Math.max(0, Number(raw.resumeWorldIndex) || 0)
+        ),
+
+      resumeBattleIndex:
+        Math.max(0, Number(raw.resumeBattleIndex) || 0),
+
+      hasStarted:
+        Boolean(raw.hasStarted)
+    };
+  }
+
+  function loadSave() {
+    try {
+      const raw =
+        localStorage.getItem(SAVE_KEY);
+
+      if (!raw) {
+        return null;
+      }
+
+      const saved =
+        JSON.parse(raw);
+
+      progress =
+        normalizeProgress(
+          saved.progress || {}
+        );
+
+      return saved;
+    }
+    catch (error) {
+      console.warn(
+        "Math Quest save could not be loaded.",
+        error
+      );
+
+      return null;
+    }
+  }
+
+  function saveGame(resumeWorldIndex, resumeBattleIndex) {
+    const state =
+      MathQuest.Combat.state;
+
+    if (
+      Number.isInteger(resumeWorldIndex)
+    ) {
+      progress.resumeWorldIndex =
+        resumeWorldIndex;
+    }
+
+    if (
+      Number.isInteger(resumeBattleIndex)
+    ) {
+      progress.resumeBattleIndex =
+        resumeBattleIndex;
+    }
+
+    progress.hasStarted = true;
+
+    const save = {
+      version: 1,
+      savedAt:
+        new Date().toISOString(),
+
+      hero: {
+        heroId: state.heroId,
+        level: state.level,
+        xp: state.xp,
+        xpToNext: state.xpToNext,
+        heroMaxHp: state.heroMaxHp,
+        score: state.score,
+        powerStrikeUnlocked:
+          state.powerStrikeUnlocked,
+
+        worldIndex:
+          progress.resumeWorldIndex,
+
+        battleIndex:
+          progress.resumeBattleIndex
+      },
+
+      progress
+    };
+
+    try {
+      localStorage.setItem(
+        SAVE_KEY,
+        JSON.stringify(save)
+      );
+    }
+    catch (error) {
+      console.warn(
+        "Math Quest save could not be written.",
+        error
+      );
+    }
+
+    renderAdventureHome();
+  }
+
+  function clearSave() {
+    try {
+      localStorage.removeItem(
+        SAVE_KEY
+      );
+    }
+    catch (error) {
+      console.warn(
+        "Math Quest save could not be cleared.",
+        error
+      );
+    }
+
+    progress =
+      normalizeProgress({});
+  }
+
+  function markWorldComplete(worldIndex) {
+    if (
+      !progress.completedWorlds.includes(
+        worldIndex
+      )
+    ) {
+      progress.completedWorlds.push(
+        worldIndex
+      );
+    }
+
+    if (
+      !progress.crystals.includes(
+        worldIndex
+      )
+    ) {
+      progress.crystals.push(
+        worldIndex
+      );
+    }
+
+    progress.unlockedWorlds =
+      Math.min(
+        MathQuest.Combat.worlds.length,
+        Math.max(
+          progress.unlockedWorlds,
+          worldIndex + 2
+        )
+      );
+
+    const nextWorld =
+      Math.min(
+        MathQuest.Combat.worlds.length - 1,
+        worldIndex + 1
+      );
+
+    progress.resumeWorldIndex =
+      nextWorld;
+
+    progress.resumeBattleIndex =
+      worldIndex <
+        MathQuest.Combat.worlds.length - 1
+        ? 0
+        : MathQuest.Combat.worlds[
+            worldIndex
+          ].battles.length - 1;
+  }
+
+  function renderCrystalRow() {
+    const row =
+      $("homeCrystalRow");
+
+    row.innerHTML = "";
+
+    crystalInfo.forEach(
+      (crystal, index) => {
+        const earned =
+          progress.crystals.includes(
+            index
+          );
+
+        const item =
+          document.createElement(
+            "div"
+          );
+
+        item.className =
+          `crystal-slot ${
+            earned
+              ? "earned"
+              : "locked"
+          }`;
+
+        item.innerHTML =
+          `
+          <span class="crystal-slot-icon">
+            ${earned
+              ? crystal.icon
+              : "◇"}
+          </span>
+          <small>${crystal.name}</small>
+          `;
+
+        row.appendChild(item);
+      }
+    );
+
+    $("homeCrystalCount")
+      .textContent =
+        `${progress.crystals.length} / ${crystalInfo.length} crystals`;
+  }
+
+  function startAdventureAt(
+    worldIndex,
+    battleIndex = 0
+  ) {
+    const safeWorld =
+      Math.min(
+        progress.unlockedWorlds - 1,
+        Math.max(0, worldIndex)
+      );
+
+    MathQuest.Combat.selectWorld(
+      safeWorld
+    );
+
+    MathQuest.Combat.state.battleIndex =
+      Math.min(
+        MathQuest.Combat.currentWorld()
+          .battles.length - 1,
+        Math.max(0, battleIndex)
+      );
+
+    MathQuest.Combat.resetBattle();
+
+    battleComplete = false;
+    locked = false;
+    selectedSkill = "slash";
+
+    document
+      .querySelectorAll(".skill")
+      .forEach(button => {
+        button.classList.toggle(
+          "active",
+          button.dataset.skill ===
+            "slash"
+        );
+      });
+
+    $("adventureHomePanel")
+      .classList.add("hidden");
+
+    $("storyIntroPanel")
+      .classList.add("hidden");
+
+    $("victoryPanel")
+      .classList.add("hidden");
+
+    $("chapterCompletePanel")
+      .classList.add("hidden");
+
+    $("battleMessage").textContent =
+      "YOUR TURN";
+
+    updateBattleIdentity();
+    updateHud();
+    newProblem();
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+  function renderAdventureMap() {
+    const grid =
+      $("adventureMapGrid");
+
+    grid.innerHTML = "";
+
+    MathQuest.Combat.worlds.forEach(
+      (world, index) => {
+        const unlocked =
+          index <
+          progress.unlockedWorlds;
+
+        const completed =
+          progress.completedWorlds
+            .includes(index);
+
+        const button =
+          document.createElement(
+            "button"
+          );
+
+        button.type = "button";
+
+        button.className =
+          `map-world-card ${
+            completed
+              ? "completed"
+              : unlocked
+                ? "unlocked"
+                : "locked"
+          }`;
+
+        button.disabled =
+          !unlocked;
+
+        button.innerHTML =
+          `
+          <span class="map-world-number">
+            WORLD ${index + 1}
+          </span>
+
+          <span class="map-world-icon">
+            ${
+              completed
+                ? crystalInfo[index].icon
+                : unlocked
+                  ? world.bossIcon
+                  : "🔒"
+            }
+          </span>
+
+          <strong>${world.name}</strong>
+
+          <small>
+            ${
+              completed
+                ? `${crystalInfo[index].name} recovered`
+                : unlocked
+                  ? world.description
+                  : "Defeat the previous boss to unlock"
+            }
+          </small>
+
+          <span class="map-world-status">
+            ${
+              completed
+                ? "✓ Complete"
+                : unlocked
+                  ? "Enter World"
+                  : "Locked"
+            }
+          </span>
+          `;
+
+        if (unlocked) {
+          button.addEventListener(
+            "click",
+            () => {
+              progress.resumeWorldIndex =
+                index;
+
+              progress.resumeBattleIndex =
+                0;
+
+              saveGame(
+                index,
+                0
+              );
+
+              startAdventureAt(
+                index,
+                0
+              );
+            }
+          );
+        }
+
+        grid.appendChild(button);
+      }
+    );
+  }
+
+  function renderAdventureHome() {
+    renderCrystalRow();
+    renderAdventureMap();
+
+    const hasSave =
+      progress.hasStarted;
+
+    $("continueAdventureBtn")
+      .disabled =
+        !hasSave;
+
+    $("continueAdventureBtn")
+      .textContent =
+        hasSave
+          ? `Continue: ${
+              MathQuest.Combat.worlds[
+                progress.resumeWorldIndex
+              ].name
+            }`
+          : "Continue Adventure";
+
+    $("homeStatusText")
+      .textContent =
+        progress.crystals.length ===
+        crystalInfo.length
+          ? "All five crystals have been recovered!"
+          : progress.crystals.length > 0
+            ? `You have recovered ${progress.crystals.length} of the 5 learning crystals.`
+            : "Recover the five learning crystals and restore the kingdom.";
+  }
+
+  function openAdventureHome() {
+    renderAdventureHome();
+
+    $("adventureHomePanel")
+      .classList.remove("hidden");
+  }
+
+  function continueAdventure() {
+    if (!progress.hasStarted) {
+      return;
+    }
+
+    startAdventureAt(
+      progress.resumeWorldIndex,
+      progress.resumeBattleIndex
+    );
+  }
+
+  function newAdventure() {
+    clearSave();
+
+    MathQuest.Combat.beginGame();
+
+    progress.hasStarted =
+      true;
+
+    saveGame(0, 0);
+
+    renderAdventureHome();
+
+    $("adventureHomePanel")
+      .classList.add("hidden");
+
+    $("storyIntroPanel")
+      .classList.remove("hidden");
+
+    updateBattleIdentity();
+    updateHud();
+    newProblem();
+  }
 
   function updateHud() {
     const state = MathQuest.Combat.state;
@@ -611,128 +1127,52 @@ const skillInfo = {
   }
 
 
-  function resizeScratchCanvas() {
-    const canvas = $("scratchCanvas");
-    if (!canvas) {
-      return;
-    }
+  function setEquationOperator(operator) {
+    equationOperator = operator === "-" ? "-" : "+";
 
-    const rect = canvas.getBoundingClientRect();
-    const ratio = window.devicePixelRatio || 1;
+    $("equationPlus").classList.toggle(
+      "active",
+      equationOperator === "+"
+    );
+
+    $("equationMinus").classList.toggle(
+      "active",
+      equationOperator === "-"
+    );
+
+    $("equationPlus").setAttribute(
+      "aria-pressed",
+      equationOperator === "+" ? "true" : "false"
+    );
+
+    $("equationMinus").setAttribute(
+      "aria-pressed",
+      equationOperator === "-" ? "true" : "false"
+    );
+  }
+
+  function clearEquationBuilder() {
+    $("equationLeft").value = "";
+    $("equationRight").value = "";
+    $("equationResult").value = "";
+    setEquationOperator("+");
 
     if (
-      canvas.width === Math.round(rect.width * ratio) &&
-      canvas.height === Math.round(rect.height * ratio)
+      MathQuest.Combat.currentWorld().id === "library"
+    ) {
+      $("answerInput").value = "";
+    }
+  }
+
+  function syncEquationResult() {
+    if (
+      MathQuest.Combat.currentWorld().id !== "library"
     ) {
       return;
     }
 
-    const old = document.createElement("canvas");
-    old.width = canvas.width;
-    old.height = canvas.height;
-
-    if (canvas.width && canvas.height) {
-      old.getContext("2d").drawImage(canvas, 0, 0);
-    }
-
-    canvas.width = Math.max(1, Math.round(rect.width * ratio));
-    canvas.height = Math.max(1, Math.round(rect.height * ratio));
-
-    const ctx = canvas.getContext("2d");
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    if (old.width && old.height) {
-      ctx.drawImage(
-        old,
-        0,
-        0,
-        old.width,
-        old.height,
-        0,
-        0,
-        rect.width,
-        rect.height
-      );
-    }
-  }
-
-  function scratchPoint(event) {
-    const canvas = $("scratchCanvas");
-    const rect = canvas.getBoundingClientRect();
-
-    return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top
-    };
-  }
-
-  function beginScratch(event) {
-    scratchDrawing = true;
-    scratchLastPoint = scratchPoint(event);
-
-    if (event.pointerId !== undefined) {
-      $("scratchCanvas").setPointerCapture(event.pointerId);
-    }
-  }
-
-  function moveScratch(event) {
-    if (!scratchDrawing || !scratchLastPoint) {
-      return;
-    }
-
-    const canvas = $("scratchCanvas");
-    const ctx = canvas.getContext("2d");
-    const next = scratchPoint(event);
-
-    ctx.save();
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    if (scratchMode === "erase") {
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.lineWidth = 22;
-    }
-    else {
-      ctx.globalCompositeOperation = "source-over";
-      ctx.strokeStyle = "#24324a";
-      ctx.lineWidth = 4;
-    }
-
-    ctx.beginPath();
-    ctx.moveTo(scratchLastPoint.x, scratchLastPoint.y);
-    ctx.lineTo(next.x, next.y);
-    ctx.stroke();
-    ctx.restore();
-
-    scratchLastPoint = next;
-    event.preventDefault();
-  }
-
-  function endScratch() {
-    scratchDrawing = false;
-    scratchLastPoint = null;
-  }
-
-  function setScratchMode(mode) {
-    scratchMode = mode;
-
-    $("scratchPen").classList.toggle(
-      "active",
-      mode === "draw"
-    );
-
-    $("scratchErase").classList.toggle(
-      "active",
-      mode === "erase"
-    );
-  }
-
-  function clearScratchPad() {
-    const canvas = $("scratchCanvas");
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    $("answerInput").value =
+      $("equationResult").value;
   }
 
   function updateWorkspace(problem) {
@@ -741,13 +1181,13 @@ const skillInfo = {
     const workspace = $("workspaceSide");
     const blocks = $("blockWorkspaceTools");
     const coins = $("coinWorkspaceTools");
-    const scratch = $("scratchpadTools");
+    const equationBuilder = $("equationBuilderTools");
 
     layout.classList.remove("single-column-learning");
     workspace.classList.remove("hidden");
     blocks.classList.add("hidden");
     coins.classList.add("hidden");
-    scratch.classList.add("hidden");
+    equationBuilder.classList.add("hidden");
 
     if (world.id === "woods" || world.id === "mines") {
       $("workspaceTitle").textContent = "Block Workspace";
@@ -758,15 +1198,11 @@ const skillInfo = {
     }
 
     if (world.id === "library") {
-      $("workspaceTitle").textContent = "Scratch Pad";
-      $("toolHelp").textContent = "Draw a picture, write an equation, or make tally marks to help solve the story.";
-      scratch.classList.remove("hidden");
+      $("workspaceTitle").textContent = "Build the Problem";
+      $("toolHelp").textContent = "Turn the story into a math sentence before you answer.";
+      equationBuilder.classList.remove("hidden");
       coinTrayState = [];
-
-      requestAnimationFrame(() => {
-        resizeScratchCanvas();
-      });
-
+      clearEquationBuilder();
       return;
     }
 
@@ -1202,6 +1638,11 @@ const skillInfo = {
         ? "Finish World"
         : "Next Battle";
 
+    saveGame(
+      MathQuest.Combat.state.worldIndex,
+      MathQuest.Combat.state.battleIndex
+    );
+
     battleXpAnimating =
       false;
   }
@@ -1285,6 +1726,11 @@ const skillInfo = {
     $("battleMessage").textContent =
       "YOUR TURN";
 
+    saveGame(
+      MathQuest.Combat.state.worldIndex,
+      MathQuest.Combat.state.battleIndex
+    );
+
     updateBattleIdentity();
     updateHud();
     newProblem();
@@ -1305,8 +1751,30 @@ const skillInfo = {
       MathQuest.Combat.unlockPowerStrike();
     }
 
+    const completedWorldIndex =
+      MathQuest.Combat.state.worldIndex;
+
+    markWorldComplete(
+      completedWorldIndex
+    );
+
+    saveGame(
+      progress.resumeWorldIndex,
+      progress.resumeBattleIndex
+    );
+
     $("chapterCompleteIcon").textContent =
       world.bossIcon;
+
+    $("crystalAwardGem").textContent =
+      crystalInfo[
+        completedWorldIndex
+      ].icon;
+
+    $("crystalAwardName").textContent =
+      crystalInfo[
+        completedWorldIndex
+      ].name;
 
     $("chapterCompleteTitle").textContent =
       world.completionTitle;
@@ -1379,6 +1847,11 @@ const skillInfo = {
     $("battleMessage").textContent =
       "YOUR TURN";
 
+    saveGame(
+      MathQuest.Combat.state.worldIndex,
+      0
+    );
+
     updateBattleIdentity();
     updateHud();
     newProblem();
@@ -1410,6 +1883,11 @@ const skillInfo = {
 
     $("battleMessage").textContent =
       "YOUR TURN";
+
+    saveGame(
+      MathQuest.Combat.state.worldIndex,
+      0
+    );
 
     updateBattleIdentity();
     updateHud();
@@ -1504,8 +1982,26 @@ const skillInfo = {
 
     MathQuest.Combat.beginGame();
 
+    const saved =
+      loadSave();
+
+    if (
+      saved &&
+      saved.hero &&
+      progress.hasStarted
+    ) {
+      MathQuest.Combat.applySavedState({
+        ...saved.hero,
+        worldIndex:
+          progress.resumeWorldIndex,
+        battleIndex:
+          progress.resumeBattleIndex
+      });
+    }
+
     updateBattleIdentity();
     updateHud();
+    renderAdventureHome();
 
     document
       .querySelectorAll(".skill")
@@ -1583,44 +2079,24 @@ const skillInfo = {
           }
         }
       );
-    $("scratchPen").addEventListener(
+    $("equationPlus").addEventListener(
       "click",
-      () => setScratchMode("draw")
+      () => setEquationOperator("+")
     );
 
-    $("scratchErase").addEventListener(
+    $("equationMinus").addEventListener(
       "click",
-      () => setScratchMode("erase")
+      () => setEquationOperator("-")
     );
 
-    $("scratchClear").addEventListener(
+    $("equationClear").addEventListener(
       "click",
-      clearScratchPad
+      clearEquationBuilder
     );
 
-    $("scratchCanvas").addEventListener(
-      "pointerdown",
-      beginScratch
-    );
-
-    $("scratchCanvas").addEventListener(
-      "pointermove",
-      moveScratch
-    );
-
-    $("scratchCanvas").addEventListener(
-      "pointerup",
-      endScratch
-    );
-
-    $("scratchCanvas").addEventListener(
-      "pointercancel",
-      endScratch
-    );
-
-    window.addEventListener(
-      "resize",
-      resizeScratchCanvas
+    $("equationResult").addEventListener(
+      "input",
+      syncEquationResult
     );
 
 $("answerForm")
@@ -1665,9 +2141,29 @@ $("beginJourneyBtn")
           $("storyIntroPanel")
             .classList.add("hidden");
 
-          $("answerInput").focus();
+          saveGame(0, 0);
+
+          startAdventureAt(
+            0,
+            0
+          );
         }
       );
+
+    $("adventureMapBtn").addEventListener(
+      "click",
+      openAdventureHome
+    );
+
+    $("continueAdventureBtn").addEventListener(
+      "click",
+      continueAdventure
+    );
+
+    $("startAdventureBtn").addEventListener(
+      "click",
+      newAdventure
+    );
 
     $("worldSelectBtn").addEventListener("click", openWorldSelect);
     $("closeWorldSelectBtn").addEventListener("click", closeWorldSelect);

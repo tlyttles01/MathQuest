@@ -4,14 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=27">
+  <link rel="stylesheet" href="css/game.css?v=29">
 </head>
 <body>
 <main class="game-shell">
   <section class="battle-panel">
     <header class="topbar">
       <div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
-      <div class="stats"><button id="worldSelectBtn" class="secondary compact-control" type="button">🗺️ Choose World</button><span>⭐ <b id="score">0</b></span><span>🔥 <b id="streak">0</b></span></div>
+      <div class="stats">
+        <button id="adventureMapBtn" class="secondary compact-control" type="button">🧭 Adventure Map</button>
+        <button id="worldSelectBtn" class="secondary compact-control" type="button">🎯 Practice</button>
+        <span>⭐ <b id="score">0</b></span>
+        <span>🔥 <b id="streak">0</b></span>
+      </div>
     </header>
 
     <div class="battle-stage">
@@ -158,12 +163,30 @@
             </div>
           </div>
 
-          <div id="scratchpadTools" class="scratchpad-workspace hidden">
-            <div class="scratchpad-toolbar" role="group" aria-label="Scratch pad tools">
-              <button id="scratchPen" class="tool active" type="button">✏️ Draw</button>
-              <button id="scratchErase" class="tool" type="button">🧽 Erase</button>
-              <button id="scratchClear" class="tool danger" type="button">Clear</button>
+          <div id="equationBuilderTools" class="equation-builder-workspace hidden">
+            <div class="equation-builder">
+              <input id="equationLeft" class="equation-number" inputmode="numeric" autocomplete="off" aria-label="First number" placeholder="___">
+
+              <div class="equation-operator-picker" role="group" aria-label="Choose an operation">
+                <button id="equationPlus" class="equation-op active" type="button" aria-pressed="true">+</button>
+                <button id="equationMinus" class="equation-op" type="button" aria-pressed="false">−</button>
+              </div>
+
+              <input id="equationRight" class="equation-number" inputmode="numeric" autocomplete="off" aria-label="Second number" placeholder="___">
+
+              <span class="equation-equals">=</span>
+
+              <input id="equationResult" class="equation-number equation-result" inputmode="numeric" autocomplete="off" aria-label="Answer" placeholder="___">
             </div>
+
+            <div class="equation-builder-actions">
+              <button id="equationClear" class="tool danger" type="button">Clear</button>
+            </div>
+
+            <p class="equation-builder-note">
+              Build the math sentence from the story. Choose + or −, then solve it.
+            </p>
+          </div>
 
             <div class="scratchpad-paper">
               <canvas id="scratchCanvas" aria-label="Scratch pad for working out the word problem"></canvas>
@@ -179,7 +202,47 @@
 </main>
 
 
-<div id="storyIntroPanel" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="storyIntroTitle">
+
+<div id="adventureHomePanel" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="adventureHomeTitle">
+  <div class="modal-card adventure-home-modal">
+    <div class="home-brand">
+      <div class="result-icon">⚔️</div>
+      <div>
+        <div class="eyebrow">MATH QUEST</div>
+        <h2 id="adventureHomeTitle">The Crystal Quest</h2>
+        <p id="homeStatusText">Recover the five learning crystals and restore the kingdom.</p>
+      </div>
+    </div>
+
+    <div class="home-progress-card">
+      <div class="home-progress-top">
+        <strong>Your Adventure</strong>
+        <span id="homeCrystalCount">0 / 5 crystals</span>
+      </div>
+      <div id="homeCrystalRow" class="crystal-row"></div>
+    </div>
+
+    <div class="home-actions">
+      <button id="continueAdventureBtn" class="primary modal-primary" type="button">Continue Adventure</button>
+      <button id="startAdventureBtn" class="secondary modal-secondary" type="button">Start New Adventure</button>
+    </div>
+
+    <div class="home-map-section">
+      <div class="home-map-heading">
+        <div>
+          <div class="eyebrow">WORLD MAP</div>
+          <h3>Choose an unlocked world</h3>
+        </div>
+        <span class="muted">Bosses unlock the road ahead.</span>
+      </div>
+      <div id="adventureMapGrid" class="adventure-map-grid"></div>
+    </div>
+
+    <div class="save-note">Progress is saved automatically on this device.</div>
+  </div>
+</div>
+
+<div id="storyIntroPanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="storyIntroTitle">
   <div class="modal-card story-modal">
     <div class="result-icon">🏰</div>
     <div class="eyebrow">MATH QUEST</div>
@@ -287,11 +350,11 @@
   </div>
 </div>
 
-<script src="js/heroes.js?v=27"></script>
-<script src="js/math.js?v=27"></script>
-<script src="js/blocks.js?v=27"></script>
-<script src="js/combat.js?v=27"></script>
-<script src="js/animations.js?v=27"></script>
-<script src="js/game.js?v=27"></script>
+<script src="js/heroes.js?v=29"></script>
+<script src="js/math.js?v=29"></script>
+<script src="js/blocks.js?v=29"></script>
+<script src="js/combat.js?v=29"></script>
+<script src="js/animations.js?v=29"></script>
+<script src="js/game.js?v=29"></script>
 </body>
 </html>

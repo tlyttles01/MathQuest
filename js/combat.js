@@ -173,6 +173,61 @@ MathQuest.Combat = (() => {
     resetBattle();
   }
 
+
+  function applySavedState(saved) {
+    const hero =
+      MathQuest.Heroes.get(state.heroId);
+
+    state.heroId =
+      saved.heroId || "knight";
+
+    state.level =
+      Math.max(1, Number(saved.level) || 1);
+
+    state.xp =
+      Math.max(0, Number(saved.xp) || 0);
+
+    state.xpToNext =
+      Math.max(
+        100,
+        Number(saved.xpToNext) ||
+        (100 + (state.level - 1) * 25)
+      );
+
+    state.heroMaxHp =
+      Math.max(
+        hero.startingMaxHp,
+        Number(saved.heroMaxHp) ||
+        (hero.startingMaxHp + (state.level - 1) * 2)
+      );
+
+    state.heroHp =
+      state.heroMaxHp;
+
+    state.score =
+      Math.max(0, Number(saved.score) || 0);
+
+    state.streak = 0;
+
+    state.worldIndex =
+      Math.min(
+        worlds.length - 1,
+        Math.max(0, Number(saved.worldIndex) || 0)
+      );
+
+    state.battleIndex =
+      Math.min(
+        currentWorld().battles.length - 1,
+        Math.max(0, Number(saved.battleIndex) || 0)
+      );
+
+    state.powerStrikeUnlocked =
+      Boolean(saved.powerStrikeUnlocked) ||
+      state.worldIndex > 0;
+
+    resetBattle();
+  }
+
   function restartCurrentWorld() {
     state.heroHp = state.heroMaxHp;
     state.streak = 0;
@@ -377,6 +432,7 @@ MathQuest.Combat = (() => {
     currentIntent,
 
     beginGame,
+    applySavedState,
     selectWorld,
     beginNextWorld,
     restartCurrentWorld,
