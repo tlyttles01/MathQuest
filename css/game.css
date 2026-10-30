@@ -2917,3 +2917,359 @@ input{
     font-size:1.9rem;
   }
 }
+
+
+/* v46: physical-looking dice + Knight Shield Die */
+.game-die{
+  width:104px;
+  min-height:118px;
+  grid-template-rows:1fr auto auto;
+  background:#141923;
+  border-color:#5e6879;
+  box-shadow:4px 4px 0 #02040a;
+}
+
+.die-face{
+  position:relative;
+  width:72px;
+  height:72px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr);
+  padding:8px;
+  border:3px solid #d1c8ad;
+  border-radius:12px;
+  background:linear-gradient(145deg,#fffdf3,#e6dfc8);
+  box-shadow:
+    inset -5px -5px 0 rgba(0,0,0,.08),
+    inset 4px 4px 0 rgba(255,255,255,.75),
+    3px 4px 0 rgba(0,0,0,.42);
+}
+
+.die-pip{
+  width:10px;
+  height:10px;
+  place-self:center;
+  border-radius:50%;
+  background:transparent;
+}
+
+.die-pip.on{
+  background:#111827;
+}
+
+.die-type{
+  color:#aeb7c8;
+  font-size:.67rem;
+  font-weight:1000;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.die-sr{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
+.game-die.selected .die-face{
+  border-color:#e9b949;
+  background:linear-gradient(145deg,#fffbe3,#f4dda2);
+}
+
+.game-die.assigned-attack .die-face{border-color:#ef646d}
+.game-die.assigned-heal .die-face{border-color:#5cc77a}
+.game-die.assigned-shield .die-face{border-color:#6e91e7}
+
+.knight-shield-die{
+  min-width:130px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  padding:9px 10px;
+  border:3px solid #6e91e7;
+  border-radius:6px;
+  background:#0d1a31;
+  box-shadow:4px 4px 0 #02040a;
+}
+
+.knight-shield-die .die-face{
+  width:62px;
+  height:62px;
+  border-color:#79a0ff;
+  background:linear-gradient(145deg,#eaf2ff,#b9caef);
+}
+
+.knight-shield-die .die-pip.on{
+  background:#183d7a;
+}
+
+.knight-shield-die small{
+  max-width:120px;
+  color:#c7d8ff;
+  font-size:.68rem;
+  font-weight:900;
+  line-height:1.25;
+  text-align:center;
+}
+
+.shield-die-label{
+  color:#dbe7ff;
+  font-size:.7rem;
+  font-weight:1000;
+  letter-spacing:.05em;
+}
+
+.shield-die-face{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+@media(max-width:520px){
+  .game-die{
+    width:82px;
+    min-height:100px;
+  }
+
+  .die-face{
+    width:58px;
+    height:58px;
+    padding:6px;
+  }
+
+  .die-pip{
+    width:8px;
+    height:8px;
+  }
+
+  .knight-shield-die{
+    min-width:108px;
+  }
+
+  .knight-shield-die .die-face{
+    width:54px;
+    height:54px;
+  }
+}
+
+
+/* v47: class-specific dice workspaces */
+.dice-tray{
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(230px,.85fr);
+  gap:14px;
+  align-items:stretch;
+  margin:20px 0 14px;
+}
+
+.dice-zone{
+  min-width:0;
+  padding:13px;
+  border:3px solid #536075;
+  border-radius:5px;
+  background:#0b1220;
+  box-shadow:4px 4px 0 #02040a;
+}
+
+.dice-zone-secondary{
+  background:#0d1524;
+}
+
+.dice-zone-heading{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  margin-bottom:12px;
+  text-align:left;
+}
+
+.dice-zone-heading strong{
+  color:#fff0c7;
+  font-size:.84rem;
+  letter-spacing:.06em;
+}
+
+.dice-zone-heading small{
+  color:#98a4b8;
+  font-size:.7rem;
+  line-height:1.3;
+}
+
+.dice-zone-dice{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:12px;
+}
+
+.class-mechanic-card{
+  min-height:132px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  padding:14px;
+  border:2px solid #4d5a70;
+  background:#111827;
+  text-align:center;
+}
+
+.class-mechanic-card .mechanic-icon{
+  font-size:2.4rem;
+}
+
+.class-mechanic-card strong{
+  color:#f6e4ae;
+}
+
+.class-mechanic-card span{
+  color:#aeb8c8;
+  font-size:.74rem;
+  line-height:1.35;
+}
+
+.shield-lowered{
+  border-color:#8e4d55;
+  background:#211015;
+}
+
+.shield-lowered strong{
+  color:#ff999f;
+}
+
+.shield-die-window{
+  min-height:132px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:15px;
+  padding:14px;
+  border:3px solid #668be1;
+  background:#0c1931;
+  box-shadow:inset 0 0 24px rgba(82,111,192,.14);
+}
+
+.shield-die-window .die-face{
+  width:72px;
+  height:72px;
+  border-color:#79a0ff;
+  background:linear-gradient(145deg,#eef4ff,#bcccef);
+}
+
+.shield-die-window .die-pip.on{
+  background:#173d7b;
+}
+
+.shield-die-window > div{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  text-align:left;
+}
+
+.shield-die-window strong{
+  color:#dce8ff;
+  font-size:1.08rem;
+}
+
+.shield-die-window span{
+  color:#9fb4df;
+  font-size:.72rem;
+}
+
+.risk-die{
+  border-color:#9d4a52;
+  background:#261116;
+}
+
+.risk-die .die-face{
+  border-color:#dd6d76;
+  background:linear-gradient(145deg,#fff0ed,#e7b9b8);
+}
+
+.die-risk-label{
+  padding:2px 5px;
+  border:1px solid #a55259;
+  background:#36151b;
+  color:#ffb1b6;
+  font-size:.58rem;
+  font-weight:1000;
+  letter-spacing:.08em;
+}
+
+.rogue-risk-card{
+  border-color:#7a5f35;
+  background:#1e180d;
+}
+
+.rogue-risk-card.busted{
+  border-color:#a4444b;
+  background:#261014;
+}
+
+.mage-formula-card{
+  border-color:#665b9e;
+  background:#16122a;
+}
+
+.cleric-allocation-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.cleric-allocation-grid > div{
+  min-height:112px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  border:2px solid #4c586d;
+  background:#111827;
+}
+
+.cleric-allocation-grid span{
+  font-size:1.7rem;
+}
+
+.cleric-allocation-grid strong{
+  color:#fff0c7;
+  font-size:1.35rem;
+}
+
+.cleric-allocation-grid small{
+  color:#9ea8ba;
+  font-size:.66rem;
+  text-transform:uppercase;
+}
+
+@media(max-width:760px){
+  .dice-tray{
+    grid-template-columns:1fr;
+  }
+
+  .dice-zone-secondary{
+    order:2;
+  }
+}
+
+@media(max-width:520px){
+  .shield-die-window{
+    flex-direction:column;
+  }
+
+  .shield-die-window > div{
+    text-align:center;
+  }
+}

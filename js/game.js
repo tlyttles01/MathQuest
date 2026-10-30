@@ -194,6 +194,36 @@ const skillInfo = {
       .filter(die => die.selected);
   }
 
+  function dieFaceMarkup(value, sides) {
+    const pipMap = {
+      1:[5],
+      2:[1,9],
+      3:[1,5,9],
+      4:[1,3,7,9],
+      5:[1,3,5,7,9],
+      6:[1,3,4,6,7,9]
+    };
+
+    const active =
+      new Set(
+        pipMap[
+          Math.max(
+            1,
+            Math.min(6, value)
+          )
+        ] || [5]
+      );
+
+    return `
+      <span class="die-face die-face-d${sides}" aria-hidden="true">
+        ${Array.from({length:9}, (_,i) =>
+          `<span class="die-pip slot-${i+1}${active.has(i+1) ? " on" : ""}"></span>`
+        ).join("")}
+      </span>
+      <span class="die-sr">${value} on a d${sides}</span>
+    `;
+  }
+
   function renderDicePanel() {
     if (!pendingDice) {
       return;
@@ -213,7 +243,83 @@ const skillInfo = {
         selectedSkill
       );
 
-    $("diceTray").innerHTML = "";
+    const tray =
+      $("diceTray");
+
+    tray.innerHTML = "";
+
+    tray.className =
+      `dice-tray dice-tray-${hero.id}`;
+
+    const primaryPanel =
+      document.createElement("section");
+
+    primaryPanel.className =
+      "dice-zone dice-zone-primary";
+
+    const primaryHeading =
+      document.createElement("div");
+
+    primaryHeading.className =
+      "dice-zone-heading";
+
+    const primaryTitle =
+      document.createElement("strong");
+
+    const primaryNote =
+      document.createElement("small");
+
+    if (hero.id === "knight") {
+      primaryTitle.textContent =
+        selectedSkill === "guard"
+          ? "🛡️ GUARD DICE"
+          : selectedSkill === "power"
+            ? "💥 POWER STRIKE DICE"
+            : "⚔️ ATTACK DICE";
+
+      primaryNote.textContent =
+        selectedSkill === "guard"
+          ? "Choose one d6 for dedicated block."
+          : selectedSkill === "power"
+            ? "Choose two d6. The Knight lowers the shield to swing harder."
+            : "Choose the d6 that powers your attack.";
+    }
+    else if (hero.id === "mage") {
+      primaryTitle.textContent =
+        "🔮 ARCANE DICE";
+
+      primaryNote.textContent =
+        "Choose two dice to build the spell.";
+    }
+    else if (hero.id === "rogue") {
+      primaryTitle.textContent =
+        "🗡️ SAFE ROLL";
+
+      primaryNote.textContent =
+        "Your first two dice are safe. Extra dice are the risk.";
+    }
+    else {
+      primaryTitle.textContent =
+        "✨ BLESSING DICE";
+
+      primaryNote.textContent =
+        "Tap each die to choose where its power goes.";
+    }
+
+    primaryHeading.append(
+      primaryTitle,
+      primaryNote
+    );
+
+    primaryPanel.appendChild(
+      primaryHeading
+    );
+
+    const primaryDice =
+      document.createElement("div");
+
+    primaryDice.className =
+      "dice-zone-dice";
 
     pendingDice.dice.forEach(
       (die,index) => {
@@ -223,6 +329,11 @@ const skillInfo = {
           );
 
         button.type = "button";
+
+        const rogueRisk =
+          hero.id === "rogue" &&
+          die.pushed;
+
         button.className =
           `game-die ${
             die.selected
@@ -232,11 +343,24 @@ const skillInfo = {
             die.assignment
               ? `assigned-${die.assignment}`
               : ""
+          } ${
+            rogueRisk
+              ? "risk-die"
+              : ""
           }`;
 
         button.innerHTML =
           `
-          <span class="die-value">${die.value}</span>
+          ${
+            rogueRisk
+              ? '<span class="die-risk-label">PUSH</span>'
+              : ""
+          }
+          ${dieFaceMarkup(
+            die.value,
+            die.sides
+          )}
+          <span class="die-type">d${die.sides}</span>
           ${
             die.assignment
               ? `<small>${die.assignment.toUpperCase()}</small>`
@@ -249,10 +373,155 @@ const skillInfo = {
           () => handleDieClick(index)
         );
 
-        $("diceTray").appendChild(
+        primaryDice.appendChild(
           button
         );
       }
+    );
+
+    primaryPanel.appendChild(
+      primaryDice
+    );
+
+    tray.appendChild(
+      primaryPanel
+    );
+
+    const secondaryPanel =
+      document.createElement("section");
+
+    secondaryPanel.className =
+      "dice-zone dice-zone-secondary";
+
+    if (hero.id === "knight") {
+      const heading =
+        document.createElement("div");
+
+      heading.className =
+        "dice-zone-heading";
+
+      heading.innerHTML =
+        `
+        <strong>🛡️ SHIELD DIE</strong>
+        <small>Armor is automatic on normal attacks.</small>
+        `;
+
+      secondaryPanel.appendChild(
+        heading
+      );
+
+      if (selectedSkill === "power") {
+        secondaryPanel.innerHTML +=
+          `
+          <div class="class-mechanic-card shield-lowered">
+            <div class="mechanic-icon">⚔️</div>
+            <strong>SHIELD LOWERED</strong>
+            <span>Power Strike gives up the d3 Shield Die for a stronger two-die attack.</span>
+          </div>
+          `;
+      }
+      else if (selectedSkill === "guard") {
+        secondaryPanel.innerHTML +=
+          `
+          <div class="class-mechanic-card">
+            <div class="mechanic-icon">🛡️</div>
+            <strong>FULL GUARD</strong>
+            <span>Guard uses your chosen d6 instead of the smaller Shield Die.</span>
+          </div>
+          `;
+      }
+      else {
+        secondaryPanel.innerHTML +=
+          `
+          <div class="shield-die-window">
+            ${dieFaceMarkup(
+              pendingDice.shieldDie,
+              3
+            )}
+            <div>
+              <strong>${pendingDice.shieldDie} BLOCK</strong>
+              <span>d3 · automatic this round</span>
+            </div>
+          </div>
+          `;
+      }
+    }
+    else if (hero.id === "mage") {
+      secondaryPanel.innerHTML =
+        `
+        <div class="dice-zone-heading">
+          <strong>📜 SPELL FORMULA</strong>
+          <small>Your selected pair changes meaning with the spell.</small>
+        </div>
+        <div class="class-mechanic-card mage-formula-card">
+          <div class="mechanic-icon">🔮</div>
+          <strong id="mageFormulaPreview">Choose two arcane dice</strong>
+          <span>Add, multiply, subtract, or split the same pair.</span>
+        </div>
+        `;
+    }
+    else if (hero.id === "rogue") {
+      const pushedDice =
+        pendingDice.dice.filter(
+          die => die.pushed
+        );
+
+      secondaryPanel.innerHTML =
+        `
+        <div class="dice-zone-heading">
+          <strong>🎲 PUSH YOUR LUCK</strong>
+          <small>Every extra die is optional. A pushed 1 busts the action.</small>
+        </div>
+        <div class="class-mechanic-card rogue-risk-card ${
+          pendingDice.busted
+            ? "busted"
+            : ""
+        }">
+          <div class="mechanic-icon">${
+            pendingDice.busted
+              ? "💥"
+              : "🎯"
+          }</div>
+          <strong>${
+            pendingDice.busted
+              ? "BUST!"
+              : `${pushedDice.length} RISK DICE ADDED`
+          }</strong>
+          <span>${
+            pendingDice.busted
+              ? "The enemy gets the turn."
+              : "Hold now, or add another d6."
+          }</span>
+        </div>
+        `;
+    }
+    else {
+      const totals =
+        {attack:0,heal:0,shield:0};
+
+      pendingDice.dice.forEach(
+        die => {
+          totals[die.assignment] +=
+            die.value;
+        }
+      );
+
+      secondaryPanel.innerHTML =
+        `
+        <div class="dice-zone-heading">
+          <strong>⚖️ ALLOCATION</strong>
+          <small>Every die has a job before the turn resolves.</small>
+        </div>
+        <div class="cleric-allocation-grid">
+          <div><span>⚔️</span><strong>${totals.attack}</strong><small>Attack</small></div>
+          <div><span>❤️</span><strong>${totals.heal}</strong><small>Heal</small></div>
+          <div><span>🛡️</span><strong>${totals.shield}</strong><small>Shield</small></div>
+        </div>
+        `;
+    }
+
+    tray.appendChild(
+      secondaryPanel
     );
 
     $("dicePushBtn")
@@ -307,6 +576,19 @@ const skillInfo = {
 
     $("diceMessage").textContent =
       pendingDice.message || "";
+
+    if (hero.id === "mage") {
+      const preview =
+        document.getElementById(
+          "mageFormulaPreview"
+        );
+
+      if (preview) {
+        preview.textContent =
+          $("diceMath").textContent ||
+          "Choose two arcane dice";
+      }
+    }
   }
 
   function getDiceInstruction(heroId, skill) {
@@ -445,11 +727,14 @@ const skillInfo = {
       );
 
     if (heroId === "knight") {
+      const passiveBlock =
+        pendingDice.shieldDie || 0;
+
       if (
         skill === "power" &&
         picked.length === 2
       ) {
-        return `${picked[0]} + ${picked[1]} = ${picked[0] + picked[1]} damage`;
+        return `${picked[0]} + ${picked[1]} = ${picked[0] + picked[1]} damage · Shield Die sacrificed`;
       }
 
       if (picked.length === 1) {
@@ -458,14 +743,14 @@ const skillInfo = {
         }
 
         if (skill === "shieldBash") {
-          return `${Math.ceil(picked[0] / 2)} damage + ${picked[0]} block`;
+          return `${Math.ceil(picked[0] / 2)} damage + ${picked[0] + passiveBlock} total block (${picked[0]} bash + ${passiveBlock} shield die)`;
         }
 
         return `${picked[0]} damage${
           MathQuest.Combat.state.counterReady
             ? " + 2 Counter"
             : ""
-        }`;
+        } · 🛡️ ${passiveBlock} auto-block`;
       }
     }
 
@@ -2879,11 +3164,22 @@ const skillInfo = {
       MathQuest.Combat.gainFocus(1);
     }
 
+    const hero =
+      currentHero();
+
     pendingDice = {
       dice:
         createDiceForHero(
-          currentHero().id
+          hero.id
         ),
+      shieldDie:
+        (
+          hero.id === "knight" &&
+          selectedSkill !== "guard" &&
+          selectedSkill !== "power"
+        )
+          ? rollDie(3)
+          : null,
       busted:false,
       message:
         earnedSkillStar
@@ -2966,13 +3262,16 @@ const skillInfo = {
       );
 
     if (hero.id === "knight") {
+      const shieldDie =
+        pendingDice.shieldDie || 0;
+
       if (selectedSkill === "power") {
         damage =
           picked[0] +
           picked[1];
 
         actionText =
-          `Power Strike: ${picked[0]} + ${picked[1]} = ${damage} damage.`;
+          `Power Strike: ${picked[0]} + ${picked[1]} = ${damage} damage. Shield lowered — no Shield Die this round.`;
       }
       else if (selectedSkill === "guard") {
         block = picked[0];
@@ -2981,28 +3280,34 @@ const skillInfo = {
           `Guard: ${block} block.`;
       }
       else if (selectedSkill === "shieldBash") {
-        block = picked[0];
+        block =
+          picked[0] +
+          shieldDie;
+
         damage =
           Math.ceil(
             picked[0] / 2
           );
 
         actionText =
-          `Shield Bash: ${damage} damage + ${block} block.`;
+          `Shield Bash: ${damage} damage + ${block} total block (${picked[0]} Bash + ${shieldDie} Shield Die).`;
       }
       else {
         damage =
           picked[0];
 
+        block +=
+          shieldDie;
+
         if (state.counterReady) {
           damage += 2;
           state.counterReady = false;
           actionText =
-            `Counter Slash: ${picked[0]} + 2 = ${damage} damage.`;
+            `Counter Slash: ${picked[0]} + 2 = ${damage} damage. Shield Die adds ${shieldDie} block.`;
         }
         else {
           actionText =
-            `Sword Slash: ${damage} damage.`;
+            `Sword Slash: ${damage} damage. Shield Die adds ${shieldDie} block.`;
         }
       }
     }

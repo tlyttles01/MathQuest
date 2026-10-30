@@ -581,3 +581,34 @@ Hints reduce the final dice effect by 25%. Correct math always earns a roll; onl
 All four heroes are selectable at the Campfire. Mage/Rogue/Cleric use emoji placeholder art until dedicated sprites are created.
 
 - The old Focus Potion is now an Energy Tonic and restores the active class resource (Focus, Mana, Edge, or Spirit).
+
+
+## v46 Dice visuals + Knight Shield Die
+
+- Dice now render as actual pip-faced dice rather than number cards.
+- Knight offensive actions automatically roll a separate d3 Shield Die.
+- The Shield Die gives 1–3 automatic block every offensive round.
+- Sword Slash: chosen d6 damage + d3 auto-block.
+- Power Strike: chosen two d6 damage + d3 auto-block.
+- Shield Bash: chosen d6 block + d3 Shield Die block, while still dealing half the chosen d6 as damage.
+- Guard remains the Knight's dedicated defense action: roll 3d6 and choose one d6 for block. It does not add the d3 Shield Die.
+- Perfectly blocking a dangerous attack still readies Counter.
+
+
+## v47 Class-specific dice presentation
+
+- Knight Power Strike no longer rolls or receives the d3 Shield Die.
+- This creates a deliberate offense/defense dilemma: Power Strike hits harder but leaves the Knight exposed.
+- Knight dice phase is split into two clear windows:
+  - Attack / Guard Dice
+  - Shield Die / Shield state
+- Sword Slash and Shield Bash still get the automatic d3 Shield Die.
+- Guard uses the normal d6 pool as the dedicated defensive action.
+- Power Strike explicitly shows `SHIELD LOWERED` instead of a Shield Die.
+
+Other classes now get their own visually distinct second panel:
+- Mage: Arcane Dice + Spell Formula
+- Rogue: Safe Roll + Push Your Luck; pushed dice are visibly marked as risk dice
+- Cleric: Blessing Dice + live Attack/Heal/Shield allocation totals
+
+The goal is for the dice UI itself to explain each class without requiring a long tutorial.

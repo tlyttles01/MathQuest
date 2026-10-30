@@ -11,14 +11,14 @@ MathQuest.Heroes = (() => {
       unlocked:true,
       resourceName:"Focus",
       resourceIcon:"⚡",
-      diceLabel:"Roll 3d6 · choose your die",
-      description:"A tactical defender. Roll 3d6, choose the right die, and turn perfect Guards into Counters.",
+      diceLabel:"Attack: 3d6 + automatic d3 Shield Die",
+      description:"A defensive fighter with armor on most attacks. Sword Slash and Shield Bash get an automatic d3 Shield Die, Guard uses a full d6 for defense, and Power Strike sacrifices the shield to swing harder.",
       identity:"Choose. Defend. Counter.",
       skills:{
-        slash:{name:"Sword Slash",icon:"⚔️",normal:"Choose 1 die for damage.",power:false},
-        power:{name:"Power Strike",icon:"💥",normal:"Choose 2 dice and add them.",power:true},
-        guard:{name:"Guard",icon:"🛡️",normal:"Choose 1 die for block.",power:false},
-        shieldBash:{name:"Shield Bash",icon:"🛡️⚔️",normal:"Choose 1 die: block it and deal half.",power:false}
+        slash:{name:"Sword Slash",icon:"⚔️",normal:"Choose 1d6 for damage · d3 Shield Die auto-blocks.",power:false},
+        power:{name:"Power Strike",icon:"💥",normal:"Choose 2d6 and add them · no Shield Die this round.",power:true},
+        guard:{name:"Guard",icon:"🛡️",normal:"Roll 3d6 and choose 1 die for stronger block.",power:false},
+        shieldBash:{name:"Shield Bash",icon:"🛡️⚔️",normal:"Choose 1d6: block it and deal half · add d3 Shield Die.",power:false}
       }
     },
     mage: {
