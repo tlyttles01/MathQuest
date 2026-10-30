@@ -4176,3 +4176,301 @@ body[data-hero="cleric"]{--class-accent:#b69a64}
   .slot-three{right:2%;top:60px}
   .slot-four{right:50%;transform:translateX(50%);top:275px;bottom:auto}
 }
+
+
+/* ==========================================================
+   v51: E-PAPER HEROES + TRUE CAMPFIRE PARTY COMPOSITION
+   ========================================================== */
+
+/* Keep e-paper heroes readable against the colorful world art. */
+.character-sprite,
+.campfire-hero-art{
+  object-fit:contain !important;
+  object-position:center bottom !important;
+  image-rendering:pixelated;
+}
+
+.fighter:not(.enemy) .character-sprite{
+  filter:
+    drop-shadow(1px 0 0 rgba(247,243,224,.92))
+    drop-shadow(-1px 0 0 rgba(247,243,224,.92))
+    drop-shadow(0 1px 0 rgba(247,243,224,.92))
+    drop-shadow(0 -1px 0 rgba(247,243,224,.92))
+    drop-shadow(0 9px 4px rgba(0,0,0,.5));
+}
+
+/* The four heroes now occupy one physical scene around the fire. */
+.campfire-stage{
+  min-height:570px !important;
+  overflow:hidden;
+  background-position:center center !important;
+}
+
+.campfire-stage .hero-pedestal{
+  position:absolute !important;
+  width:190px !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  color:inherit;
+  z-index:3;
+  transform:none !important;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+}
+
+.campfire-stage .campfire-hero-art{
+  display:block;
+  width:180px !important;
+  height:220px !important;
+  margin:0 auto -2px !important;
+  flex:0 0 220px;
+  filter:
+    drop-shadow(1px 0 0 rgba(247,243,224,.96))
+    drop-shadow(-1px 0 0 rgba(247,243,224,.96))
+    drop-shadow(0 1px 0 rgba(247,243,224,.96))
+    drop-shadow(0 -1px 0 rgba(247,243,224,.96))
+    drop-shadow(0 11px 5px rgba(0,0,0,.52));
+  transition:transform .16s ease,filter .16s ease;
+}
+
+.campfire-stage .hero-pedestal:hover .campfire-hero-art{
+  transform:translateY(-4px);
+}
+
+/* Lower pair */
+.campfire-stage .knight-pedestal{
+  left:8% !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:28px !important;
+}
+
+.campfire-stage .slot-four{
+  right:8% !important;
+  left:auto !important;
+  top:auto !important;
+  bottom:28px !important;
+}
+
+/* Upper pair */
+.campfire-stage .slot-two{
+  left:28% !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:205px !important;
+}
+
+.campfire-stage .slot-three{
+  right:28% !important;
+  left:auto !important;
+  top:auto !important;
+  bottom:205px !important;
+}
+
+/* Nameplates follow the character instead of driving placement. */
+.campfire-stage .scene-class-label{
+  position:relative;
+  z-index:5;
+  width:170px;
+  min-width:170px !important;
+  margin-top:0;
+  padding:7px 10px 8px;
+  border:2px solid #77859a;
+  background:rgba(5,10,18,.94);
+  color:#f5f1df;
+  box-shadow:3px 3px 0 #02040a;
+}
+
+/* Selection reads as a spot on the ground, not a floating sticker. */
+.campfire-stage .hero-slot-badge{
+  display:none !important;
+}
+
+.campfire-stage .hero-pedestal::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:31px;
+  width:132px;
+  height:24px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(
+    ellipse at center,
+    rgba(239,198,95,.0) 0 42%,
+    rgba(239,198,95,.0) 43%
+  );
+  opacity:0;
+  transition:opacity .16s ease;
+  z-index:0;
+  pointer-events:none;
+}
+
+.campfire-stage .hero-pedestal.selected::before{
+  opacity:1;
+  background:radial-gradient(
+    ellipse at center,
+    rgba(244,207,105,.42) 0 35%,
+    rgba(217,169,77,.18) 36% 58%,
+    transparent 70%
+  );
+}
+
+.campfire-stage .hero-pedestal.selected .scene-class-label{
+  border-color:#e5bd62;
+  color:#fff4d1;
+  box-shadow:
+    0 0 0 1px rgba(229,189,98,.26),
+    3px 3px 0 #02040a;
+}
+
+.campfire-stage .hero-pedestal.selected .campfire-hero-art{
+  filter:
+    drop-shadow(1px 0 0 rgba(255,250,227,1))
+    drop-shadow(-1px 0 0 rgba(255,250,227,1))
+    drop-shadow(0 1px 0 rgba(255,250,227,1))
+    drop-shadow(0 -1px 0 rgba(255,250,227,1))
+    drop-shadow(0 0 8px rgba(238,194,87,.28))
+    drop-shadow(0 11px 5px rgba(0,0,0,.52));
+}
+
+/* Fix the Shield Die distortion: its visual box is always square. */
+.shield-die-window .die-face{
+  box-sizing:border-box !important;
+  width:72px !important;
+  min-width:72px !important;
+  max-width:72px !important;
+  height:72px !important;
+  min-height:72px !important;
+  max-height:72px !important;
+  aspect-ratio:1 / 1 !important;
+  flex:0 0 72px !important;
+  align-self:center;
+}
+
+.shield-die-window{
+  align-items:center;
+}
+
+@media(max-width:920px){
+  .campfire-stage{
+    min-height:560px !important;
+  }
+
+  .campfire-stage .hero-pedestal{
+    width:172px !important;
+  }
+
+  .campfire-stage .campfire-hero-art{
+    width:165px !important;
+    height:205px !important;
+    flex-basis:205px;
+  }
+
+  .campfire-stage .knight-pedestal{left:4% !important}
+  .campfire-stage .slot-four{right:4% !important}
+  .campfire-stage .slot-two{left:27% !important;bottom:205px !important}
+  .campfire-stage .slot-three{right:27% !important;bottom:205px !important}
+
+  .campfire-stage .scene-class-label{
+    width:154px;
+    min-width:154px !important;
+  }
+}
+
+@media(max-width:700px){
+  .campfire-stage{
+    min-height:690px !important;
+  }
+
+  .campfire-stage .hero-pedestal{
+    width:155px !important;
+  }
+
+  .campfire-stage .campfire-hero-art{
+    width:148px !important;
+    height:185px !important;
+    flex-basis:185px;
+  }
+
+  .campfire-stage .knight-pedestal{
+    left:4% !important;
+    bottom:28px !important;
+  }
+
+  .campfire-stage .slot-four{
+    right:4% !important;
+    bottom:28px !important;
+  }
+
+  .campfire-stage .slot-two{
+    left:9% !important;
+    bottom:330px !important;
+  }
+
+  .campfire-stage .slot-three{
+    right:9% !important;
+    bottom:330px !important;
+  }
+
+  .campfire-stage .scene-class-label{
+    width:140px;
+    min-width:140px !important;
+    font-size:.72rem;
+  }
+}
+
+@media(max-width:520px){
+  .campfire-stage{
+    min-height:760px !important;
+  }
+
+  .campfire-stage .hero-pedestal{
+    width:138px !important;
+  }
+
+  .campfire-stage .campfire-hero-art{
+    width:132px !important;
+    height:166px !important;
+    flex-basis:166px;
+  }
+
+  .campfire-stage .knight-pedestal{
+    left:1% !important;
+    bottom:24px !important;
+  }
+
+  .campfire-stage .slot-four{
+    right:1% !important;
+    bottom:24px !important;
+  }
+
+  .campfire-stage .slot-two{
+    left:1% !important;
+    bottom:390px !important;
+  }
+
+  .campfire-stage .slot-three{
+    right:1% !important;
+    bottom:390px !important;
+  }
+
+  .campfire-stage .scene-class-label{
+    width:128px;
+    min-width:128px !important;
+  }
+
+  .shield-die-window .die-face{
+    width:62px !important;
+    min-width:62px !important;
+    max-width:62px !important;
+    height:62px !important;
+    min-height:62px !important;
+    max-height:62px !important;
+    flex-basis:62px !important;
+  }
+}

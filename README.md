@@ -646,3 +646,21 @@ The goal is for the dice UI itself to explain each class without requiring a lon
 - Cleaned all 35 generated enemy illustrations to remove mirrored labels/card backgrounds and standardized them for battle use.
 - Battle scenes now change environment and foreground automatically by world.
 - Reworked the battle presentation and core UI toward the dark 16/32-bit JRPG art direction.
+
+
+## v51 Campfire composition + e-paper hero pass
+
+- Integrated the complete Batch 1 monochrome/e-paper idle sprite set for Knight, Mage, Rogue, and Cleric.
+- Preserved the v50 color hero art under `assets/heroes-color-v50/` for rollback/reference.
+- Rebuilt the Campfire composition around a shared physical ground plane:
+  - Knight lower-left
+  - Mage upper-left
+  - Rogue upper-right
+  - Cleric lower-right
+- All four characters use identical sprite boxes and bottom alignment so their feet read as standing around the fire.
+- Character nameplates are secondary and follow the characters rather than determining their positions.
+- Removed the floating SELECTED badge from the Campfire; selection is now shown with a subtle warm ground glow and highlighted nameplate.
+- Added a subtle off-white outline to monochrome heroes so they remain readable over colorful environments.
+- The same e-paper hero sprites are now used in battle.
+- Fixed the Knight Shield Die distortion by enforcing an explicit square aspect ratio and fixed flex basis.
+- Enemy e-paper Batch 1 art is intentionally not partially integrated yet; the game keeps one consistent enemy set until the full enemy pack is available.
