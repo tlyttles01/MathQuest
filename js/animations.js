@@ -21,7 +21,11 @@ MathQuest.Animations = (() => {
   }
 
   async function playerAttack(kind, damage) {
-    const hero = document.getElementById("heroSprite");
+    const heroImage = document.getElementById("heroSprite");
+    const hero =
+      heroImage.classList.contains("hidden")
+        ? document.getElementById("heroSpriteWrap")
+        : heroImage;
     const enemy = document.getElementById("enemySprite");
     const effect = document.getElementById(kind === "power" ? "powerEffect" : "slashEffect");
 
@@ -42,7 +46,11 @@ MathQuest.Animations = (() => {
 
   async function enemyAttack(damage, blocked) {
     const enemy = document.getElementById("enemySprite");
-    const hero = document.getElementById("heroSprite");
+    const heroImage = document.getElementById("heroSprite");
+    const hero =
+      heroImage.classList.contains("hidden")
+        ? document.getElementById("heroSpriteWrap")
+        : heroImage;
     const shield = document.getElementById("shieldFlash");
 
     restartClass(enemy, "enemy-lunge");

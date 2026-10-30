@@ -37,29 +37,566 @@ window.MathQuest = window.MathQuest || {};
     powerTutorialSeen: false
   };
 const skillInfo = {
-    slash: {
-      label: "⚔️ SWORD SLASH",
-      effect: "3 damage · gain 1 Focus"
-    },
-    power: {
-      label: "💥 POWER STRIKE",
-      effect: "6 damage · costs 2 Focus"
-    },
-    guard: {
-      label: "🛡️ GUARD",
-      effect: "Block incoming attack · gain 1 Focus"
-    },
-    shieldBash: {
-      label: "🛡️⚔️ SHIELD BASH",
-      effect: "2 damage · reduce incoming damage by 2 · gain 1 Focus"
-    }
+    slash:{label:"⚔️ BASIC SKILL",effect:"Roll dice after solving"},
+    power:{label:"💥 POWER SKILL",effect:"Harder question · stronger dice rule"},
+    guard:{label:"🛡️ DEFENSE",effect:"Roll dice for defense"},
+    shieldBash:{label:"✨ TACTIC",effect:"Use your class tactic"}
   };
+
+  let pendingDice = null;
+
 
   const formatNumber = value =>
     Number.isInteger(value)
       ? String(value)
       : value.toFixed(1);
 
+
+  function currentHero() {
+    return MathQuest.Combat.currentHero();
+  }
+
+  function selectHero(heroId) {
+    const hero =
+      MathQuest.Combat.setHero(heroId);
+
+    document
+      .querySelectorAll(".hero-choice")
+      .forEach(button => {
+        const selected =
+          button.dataset.heroId === hero.id;
+
+        button.classList.toggle(
+          "selected",
+          selected
+        );
+
+        const badge =
+          button.querySelector(
+            ".hero-slot-badge"
+          );
+
+        if (selected && !badge) {
+          const newBadge =
+            document.createElement("span");
+          newBadge.className =
+            "hero-slot-badge";
+          newBadge.textContent =
+            "SELECTED";
+          button.prepend(newBadge);
+        }
+        else if (!selected && badge) {
+          badge.remove();
+        }
+      });
+
+    $("heroTipIcon").textContent =
+      hero.emoji;
+
+    $("heroTipEyebrow").textContent =
+      `WHAT MAKES THE ${hero.name.toUpperCase()} DIFFERENT?`;
+
+    $("heroTipIdentity").textContent =
+      hero.identity;
+
+    $("heroTipDescription").textContent =
+      hero.description;
+
+    $("heroTipDice").textContent =
+      `🎲 ${hero.diceLabel}`;
+
+    $("heroTipResource").textContent =
+      `${hero.resourceIcon} ${hero.resourceName} powers rerolls`;
+
+    $("heroTipPower").textContent =
+      `💥 Power skill costs 2 ${hero.resourceName}`;
+
+    updateHud();
+    updateSkillAvailability();
+
+    if (progress.hasStarted) {
+      saveGame(
+        MathQuest.Combat.state.worldIndex,
+        MathQuest.Combat.state.battleIndex
+      );
+    }
+
+    return hero;
+  }
+
+  function rollDie(sides) {
+    return (
+      Math.floor(
+        Math.random() * sides
+      ) + 1
+    );
+  }
+
+  function createDiceForHero(heroId) {
+    if (heroId === "mage") {
+      return Array.from(
+        {length:4},
+        () => ({
+          value:rollDie(4),
+          sides:4,
+          selected:false
+        })
+      );
+    }
+
+    if (heroId === "cleric") {
+      return Array.from(
+        {length:3},
+        (_, index) => ({
+          value:rollDie(4),
+          sides:4,
+          selected:false,
+          assignment:[
+            "attack",
+            "heal",
+            "shield"
+          ][index]
+        })
+      );
+    }
+
+    if (heroId === "rogue") {
+      return Array.from(
+        {length:2},
+        () => ({
+          value:rollDie(6),
+          sides:6,
+          selected:false
+        })
+      );
+    }
+
+    return Array.from(
+      {length:3},
+      () => ({
+        value:rollDie(6),
+        sides:6,
+        selected:false
+      })
+    );
+  }
+
+  function selectedDice() {
+    if (!pendingDice) {
+      return [];
+    }
+
+    return pendingDice.dice
+      .map((die,index) => ({
+        ...die,
+        index
+      }))
+      .filter(die => die.selected);
+  }
+
+  function renderDicePanel() {
+    if (!pendingDice) {
+      return;
+    }
+
+    const hero =
+      currentHero();
+
+    $("diceTitle").textContent =
+      `${hero.name} · ${
+        hero.skills[selectedSkill].name
+      }`;
+
+    $("diceInstruction").textContent =
+      getDiceInstruction(
+        hero.id,
+        selectedSkill
+      );
+
+    $("diceTray").innerHTML = "";
+
+    pendingDice.dice.forEach(
+      (die,index) => {
+        const button =
+          document.createElement(
+            "button"
+          );
+
+        button.type = "button";
+        button.className =
+          `game-die ${
+            die.selected
+              ? "selected"
+              : ""
+          } ${
+            die.assignment
+              ? `assigned-${die.assignment}`
+              : ""
+          }`;
+
+        button.innerHTML =
+          `
+          <span class="die-value">${die.value}</span>
+          ${
+            die.assignment
+              ? `<small>${die.assignment.toUpperCase()}</small>`
+              : ""
+          }
+          `;
+
+        button.addEventListener(
+          "click",
+          () => handleDieClick(index)
+        );
+
+        $("diceTray").appendChild(
+          button
+        );
+      }
+    );
+
+    $("dicePushBtn")
+      .classList.toggle(
+        "hidden",
+        hero.id !== "rogue"
+      );
+
+    $("diceRerollBtn")
+      .classList.toggle(
+        "hidden",
+        hero.id === "rogue" ||
+        hero.id === "cleric"
+      );
+
+    $("clericAssignmentHelp")
+      .classList.toggle(
+        "hidden",
+        hero.id !== "cleric"
+      );
+
+    const selected =
+      selectedDice();
+
+    $("diceRerollBtn").disabled =
+      selected.length !== 1 ||
+      MathQuest.Combat.state.focus < 1;
+
+    $("dicePushBtn").disabled =
+      pendingDice.busted ||
+      pendingDice.dice.length >= 4;
+
+    $("diceResolveBtn").disabled =
+      !canResolveDice(
+        hero.id,
+        selectedSkill
+      );
+
+    $("diceResolveBtn").textContent =
+      hero.id === "rogue" &&
+      !pendingDice.busted
+        ? "Hold & Resolve"
+        : pendingDice.busted
+          ? "Bust — Enemy Turn"
+          : "Resolve Action";
+
+    $("diceMath").textContent =
+      describeDiceOutcome(
+        hero.id,
+        selectedSkill
+      );
+
+    $("diceMessage").textContent =
+      pendingDice.message || "";
+  }
+
+  function getDiceInstruction(heroId, skill) {
+    if (heroId === "knight") {
+      return skill === "power"
+        ? "Choose TWO dice. Add them for Power Strike damage."
+        : skill === "guard"
+          ? "Choose ONE die. Its value becomes your block."
+          : skill === "shieldBash"
+            ? "Choose ONE die. Block its value and deal half as damage."
+            : "Choose ONE die. Its value becomes Sword Slash damage.";
+    }
+
+    if (heroId === "mage") {
+      return skill === "power"
+        ? "Choose TWO dice. Multiply them for Fireball damage."
+        : skill === "guard"
+          ? "Choose TWO dice. Their difference + 2 becomes Barrier block."
+          : skill === "shieldBash"
+            ? "Choose TWO dice. High die blocks; low die deals damage."
+            : "Choose TWO dice. Add them for Arcane Bolt damage.";
+    }
+
+    if (heroId === "rogue") {
+      return "You can HOLD now, or Push Your Luck for another d6. Rolling a 1 on a pushed die busts the action.";
+    }
+
+    return "Assign every die to Attack, Heal, or Shield. Tap a die to cycle its assignment.";
+  }
+
+  function handleDieClick(index) {
+    if (!pendingDice) {
+      return;
+    }
+
+    const hero =
+      currentHero();
+
+    if (hero.id === "cleric") {
+      const order =
+        ["attack","heal","shield"];
+
+      const die =
+        pendingDice.dice[index];
+
+      const current =
+        order.indexOf(
+          die.assignment
+        );
+
+      die.assignment =
+        order[
+          (current + 1) %
+          order.length
+        ];
+
+      renderDicePanel();
+      return;
+    }
+
+    if (hero.id === "rogue") {
+      return;
+    }
+
+    const die =
+      pendingDice.dice[index];
+
+    const limit =
+      selectedSkill === "power" ||
+      hero.id === "mage"
+        ? 2
+        : 1;
+
+    if (!die.selected) {
+      const selected =
+        selectedDice();
+
+      if (selected.length >= limit) {
+        pendingDice.dice.forEach(
+          item => {
+            item.selected = false;
+          }
+        );
+      }
+    }
+
+    die.selected =
+      !die.selected;
+
+    renderDicePanel();
+  }
+
+  function canResolveDice(heroId, skill) {
+    if (!pendingDice) {
+      return false;
+    }
+
+    if (pendingDice.busted) {
+      return true;
+    }
+
+    if (heroId === "rogue") {
+      return true;
+    }
+
+    if (heroId === "cleric") {
+      return pendingDice.dice.every(
+        die => Boolean(die.assignment)
+      );
+    }
+
+    const count =
+      selectedDice().length;
+
+    if (heroId === "mage") {
+      return count === 2;
+    }
+
+    return skill === "power"
+      ? count === 2
+      : count === 1;
+  }
+
+  function describeDiceOutcome(heroId, skill) {
+    if (!pendingDice) {
+      return "";
+    }
+
+    if (pendingDice.busted) {
+      return "💥 BUST! The pushed die was a 1.";
+    }
+
+    const picked =
+      selectedDice().map(
+        die => die.value
+      );
+
+    if (heroId === "knight") {
+      if (
+        skill === "power" &&
+        picked.length === 2
+      ) {
+        return `${picked[0]} + ${picked[1]} = ${picked[0] + picked[1]} damage`;
+      }
+
+      if (picked.length === 1) {
+        if (skill === "guard") {
+          return `${picked[0]} block`;
+        }
+
+        if (skill === "shieldBash") {
+          return `${Math.ceil(picked[0] / 2)} damage + ${picked[0]} block`;
+        }
+
+        return `${picked[0]} damage${
+          MathQuest.Combat.state.counterReady
+            ? " + 2 Counter"
+            : ""
+        }`;
+      }
+    }
+
+    if (
+      heroId === "mage" &&
+      picked.length === 2
+    ) {
+      const high =
+        Math.max(...picked);
+      const low =
+        Math.min(...picked);
+
+      if (skill === "power") {
+        return `${picked[0]} × ${picked[1]} = ${picked[0] * picked[1]} damage`;
+      }
+
+      if (skill === "guard") {
+        return `${high} − ${low} + 2 = ${high - low + 2} block`;
+      }
+
+      if (skill === "shieldBash") {
+        return `${low} damage + ${high} block`;
+      }
+
+      return `${picked[0]} + ${picked[1]} = ${picked[0] + picked[1]} damage`;
+    }
+
+    if (heroId === "rogue") {
+      const total =
+        pendingDice.dice.reduce(
+          (sum,die) =>
+            sum + die.value,
+          0
+        );
+
+      return `${pendingDice.dice.map(d => d.value).join(" + ")} = ${total}${
+        skill === "power"
+          ? " (+3 Backstab)"
+          : ""
+      }`;
+    }
+
+    if (heroId === "cleric") {
+      const totals =
+        {attack:0,heal:0,shield:0};
+
+      pendingDice.dice.forEach(
+        die => {
+          totals[die.assignment] +=
+            die.value;
+        }
+      );
+
+      return `⚔️ ${totals.attack}   ❤️ ${totals.heal}   🛡️ ${totals.shield}`;
+    }
+
+    return "Choose your dice.";
+  }
+
+  function rerollSelectedDie() {
+    if (
+      !pendingDice ||
+      MathQuest.Combat.state.focus < 1
+    ) {
+      return;
+    }
+
+    const selected =
+      selectedDice();
+
+    if (selected.length !== 1) {
+      pendingDice.message =
+        "Select exactly one die to reroll.";
+      renderDicePanel();
+      return;
+    }
+
+    MathQuest.Combat.spendFocus(1);
+
+    const die =
+      pendingDice.dice[
+        selected[0].index
+      ];
+
+    die.value =
+      rollDie(die.sides);
+
+    die.selected =
+      false;
+
+    pendingDice.message =
+      "Rerolled! Choose your dice again.";
+
+    updateHud();
+    renderDicePanel();
+  }
+
+  function roguePush() {
+    if (
+      !pendingDice ||
+      currentHero().id !== "rogue" ||
+      pendingDice.dice.length >= 4 ||
+      pendingDice.busted
+    ) {
+      return;
+    }
+
+    const value =
+      rollDie(6);
+
+    pendingDice.dice.push({
+      value,
+      sides:6,
+      selected:false,
+      pushed:true
+    });
+
+    if (value === 1) {
+      pendingDice.busted =
+        true;
+
+      pendingDice.message =
+        "You pushed too far and rolled a 1!";
+    }
+    else {
+      pendingDice.message =
+        `You pushed and rolled ${value}. Hold or risk another die.`;
+    }
+
+    renderDicePanel();
+  }
 
   function captureCombatSnapshot() {
     const state =
@@ -795,7 +1332,7 @@ const skillInfo = {
     },
     focus: {
       cost: 1,
-      label: "Focus Potion"
+      label: "Energy Tonic"
     },
     counter: {
       cost: 2,
@@ -837,6 +1374,16 @@ const skillInfo = {
 
     $("merchantStars").textContent =
       state.skillStars;
+
+    const energyCard =
+      document.querySelector(
+        '[data-item="focus"]'
+      );
+
+    if (energyCard) {
+      energyCard.querySelector("p").textContent =
+        `Keep it and gain 2 ${currentHero().resourceName} whenever you choose.`;
+    }
 
     document
       .querySelectorAll("[data-item]")
@@ -956,7 +1503,7 @@ const skillInfo = {
     else if (itemId === "focus") {
       state.focusPotions++;
       $("merchantMessage").textContent =
-        "⚡ Focus Potion added to your items. Save it for when you need Focus.";
+        `⚡ Energy Tonic added to your items. Save it for when you need ${currentHero().resourceName}.`;
     }
     else if (itemId === "counter") {
       state.counterShields++;
@@ -1027,13 +1574,18 @@ const skillInfo = {
 
     $("useCounterShieldBtn").querySelector("small").textContent =
       state.counterShieldArmed
-        ? "ARMED — next correct Sword Slash also blocks"
-        : "Arm it, then Slash + Guard together";
+        ? "ARMED — next damaging skill also blocks"
+        : "Arm it, then use a damaging skill";
 
     $("useSecondChanceBtn").querySelector("small").textContent =
       state.secondChanceArmed
         ? "ARMED — your next wrong answer is protected"
         : "Arm it before a tough question";
+
+    $("useFocusPotionBtn")
+      .querySelector("small")
+      .textContent =
+        `Gain 2 ${currentHero().resourceName}`;
   }
 
   function useBattleItem(itemId) {
@@ -1055,7 +1607,7 @@ const skillInfo = {
     }
     else if (itemId === "focus" && state.focusPotions > 0) {
       if (state.focus >= state.maxFocus) {
-        $("inventoryMessage").textContent = "Your Focus is already full.";
+        $("inventoryMessage").textContent = `${currentHero().resourceName} is already full.`;
         return;
       }
 
@@ -1063,7 +1615,7 @@ const skillInfo = {
       state.focusPotions--;
       state.focus = Math.min(state.maxFocus, state.focus + 2);
       $("inventoryMessage").textContent =
-        `⚡ Focus Potion restored ${state.focus - before} Focus.`;
+        `⚡ Energy Tonic restored ${state.focus - before} ${currentHero().resourceName}.`;
     }
     else if (
       itemId === "counter" &&
@@ -1098,11 +1650,38 @@ const skillInfo = {
     $("heroName").textContent =
       hero.name;
 
-    $("heroSprite").src =
-      hero.image;
+    const heroWrap =
+      $("heroSpriteWrap");
 
-    $("heroSprite").alt =
-      hero.name;
+    if (hero.image) {
+      $("heroSprite").src =
+        hero.image;
+
+      $("heroSprite").alt =
+        hero.name;
+
+      $("heroSprite").classList.remove(
+        "hidden"
+      );
+
+      heroWrap.removeAttribute(
+        "data-hero-emoji"
+      );
+    }
+    else {
+      $("heroSprite").classList.add(
+        "hidden"
+      );
+
+      heroWrap.dataset.heroEmoji =
+        hero.emoji;
+    }
+
+    $("heroResourceIcon").textContent =
+      hero.resourceIcon;
+
+    $("heroResourceName").textContent =
+      hero.resourceName;
 
     $("heroHp").textContent =
       formatNumber(state.heroHp);
@@ -1170,14 +1749,51 @@ const skillInfo = {
       `${(state.focus / state.maxFocus) * 100}%`;
 
     $("counterStatus").textContent =
-      state.counterReady
-        ? "⚔️ COUNTER READY — next Sword Slash +2 damage"
-        : "Counter not ready";
+      hero.id === "knight"
+        ? (
+            state.counterReady
+              ? "⚔️ COUNTER READY — next Sword Slash +2 damage"
+              : "Counter not ready"
+          )
+        : hero.diceLabel;
 
     $("counterStatus").classList.toggle(
       "ready",
+      hero.id === "knight" &&
       state.counterReady
     );
+
+    const tacticCopy = {
+      knight:{
+        icon:"🛡️",
+        title:"Knight Tactic: Counter",
+        text:"Fully block a dangerous attack to ready Counter. Your next Sword Slash gets +2 damage."
+      },
+      mage:{
+        icon:"🔮",
+        title:"Mage Tactic: Combine",
+        text:"Choose two dice. Different spells add, multiply, subtract, or split those same dice."
+      },
+      rogue:{
+        icon:"🎲",
+        title:"Rogue Tactic: Push Your Luck",
+        text:"Hold a safe roll or push for another d6. A 1 on a pushed die busts the action."
+      },
+      cleric:{
+        icon:"✨",
+        title:"Cleric Tactic: Allocate",
+        text:"Assign every die to Attack, Heal, or Shield. Your selected skill boosts one part of the allocation."
+      }
+    }[hero.id];
+
+    $("classTacticsIcon").textContent =
+      tacticCopy.icon;
+
+    $("classTacticsTitle").textContent =
+      tacticCopy.title;
+
+    $("classTacticsText").textContent =
+      tacticCopy.text;
 
     $("enemyHpBar").style.width =
       `${(state.enemyHp / state.enemyMaxHp) * 100}%`;
@@ -1210,7 +1826,7 @@ const skillInfo = {
 
     if (selectedSkill === "guard") {
       $("effectLabel").textContent =
-        `Block ${intent.damage} damage`;
+        currentHero().skills.guard.normal;
     }
 
     if (
@@ -1224,6 +1840,17 @@ const skillInfo = {
       $("guardTutorialDamage").textContent =
         intent.damage;
 
+      const hero =
+        currentHero();
+
+      $("guardTutorialTitle").textContent =
+        hero.skills.guard.name;
+
+      $("guardTutorialCopy").textContent =
+        hero.id === "knight"
+          ? "Solve Guard, then choose enough block to stop the hit. Fully blocking a dangerous attack readies Counter."
+          : `Solve ${hero.skills.guard.name}, then use your dice to make enough block to stop the hit.`;
+
       $("tutorialOverlay")
         .classList.remove("hidden");
     }
@@ -1236,118 +1863,109 @@ const skillInfo = {
     const world =
       MathQuest.Combat.currentWorld();
 
-    const battle =
-      MathQuest.Combat.currentBattle();
+    const hero =
+      currentHero();
 
     const guardUnlocked =
       world.id !== "woods" ||
       state.battleIndex >= 2;
 
-    $("guardSkill").disabled =
-      !guardUnlocked;
-
-    $("guardSkill").classList.toggle(
-      "locked",
-      !guardUnlocked
-    );
-
-    $("guardSkill")
-      .querySelector("b")
-      .textContent =
-        guardUnlocked
-          ? "🛡️ Guard"
-          : "🛡️ Guard 🔒";
-
-    $("guardSkill")
-      .querySelector("small")
-      .textContent =
-        guardUnlocked
-          ? "Normal question · block attack · +1 Focus"
-          : "Unlocks at Battle 3";
-
-    const slashHint =
-      document.querySelector(
-        '[data-skill="slash"] small'
-      );
-
-    if (slashHint) {
-      slashHint.textContent =
-        state.counterReady
-          ? "Normal question · 5 damage with Counter · +1 Focus"
-          : "Normal question · 3 damage · +1 Focus";
-    }
-
     const powerUnlocked =
       state.powerStrikeUnlocked;
 
-    const hasPowerFocus =
+    const hasPowerResource =
       state.focus >= 2;
 
-    $("powerSkill").disabled =
-      !powerUnlocked ||
-      !hasPowerFocus;
-
-    $("powerSkill").classList.toggle(
-      "locked",
-      !powerUnlocked
-    );
-
-    $("powerSkill").classList.toggle(
-      "needs-focus",
-      powerUnlocked &&
-      !hasPowerFocus
-    );
-
-    $("powerSkill")
-      .querySelector("b")
-      .textContent =
-        !powerUnlocked
-          ? "💥 Power Strike 🔒"
-          : hasPowerFocus
-            ? "💥 Power Strike"
-            : "💥 Power Strike ⚡";
-
-    $("powerSkill")
-      .querySelector("small")
-      .textContent =
-        !powerUnlocked
-          ? "Defeat the Goblin King to unlock"
-          : hasPowerFocus
-            ? "Harder question · 6 damage · costs 2 Focus"
-            : `Need 2 Focus · you have ${state.focus}`;
-
-    const shieldBashUnlocked =
+    const tacticUnlocked =
       state.powerStrikeUnlocked ||
       world.id !== "woods";
 
-    $("shieldBashSkill").disabled =
-      !shieldBashUnlocked;
+    const configs = [
+      {
+        key:"slash",
+        button:
+          document.querySelector(
+            '[data-skill="slash"]'
+          ),
+        unlocked:true
+      },
+      {
+        key:"power",
+        button:$("powerSkill"),
+        unlocked:
+          powerUnlocked &&
+          hasPowerResource
+      },
+      {
+        key:"guard",
+        button:$("guardSkill"),
+        unlocked:guardUnlocked
+      },
+      {
+        key:"shieldBash",
+        button:$("shieldBashSkill"),
+        unlocked:tacticUnlocked
+      }
+    ];
 
-    $("shieldBashSkill").classList.toggle(
-      "locked",
-      !shieldBashUnlocked
-    );
+    configs.forEach(config => {
+      const skill =
+        hero.skills[config.key];
 
-    $("shieldBashSkill")
-      .querySelector("b")
-      .textContent =
-        shieldBashUnlocked
-          ? "🛡️⚔️ Shield Bash"
-          : "🛡️⚔️ Shield Bash 🔒";
+      config.button.disabled =
+        !config.unlocked;
 
-    $("shieldBashSkill")
-      .querySelector("small")
-      .textContent =
-        shieldBashUnlocked
-          ? "Normal question · 2 damage · reduce next hit by 2 · +1 Focus"
-          : "Unlocks after Whispering Woods";
+      config.button.classList.toggle(
+        "locked",
+        !config.unlocked
+      );
 
-    if (
-      selectedSkill === "shieldBash" &&
-      !shieldBashUnlocked
-    ) {
-      selectedSkill = "slash";
-    }
+      config.button
+        .querySelector("b")
+        .textContent =
+          `${skill.icon} ${skill.name}${
+            config.unlocked
+              ? ""
+              : " 🔒"
+          }`;
+
+      let detail =
+        skill.normal;
+
+      if (
+        config.key === "power" &&
+        !powerUnlocked
+      ) {
+        detail =
+          "Defeat the Goblin King to unlock";
+      }
+      else if (
+        config.key === "power" &&
+        !hasPowerResource
+      ) {
+        detail =
+          `Need 2 ${hero.resourceName} · you have ${state.focus}`;
+      }
+      else if (
+        config.key === "guard" &&
+        !guardUnlocked
+      ) {
+        detail =
+          "Unlocks at Battle 3";
+      }
+      else if (
+        config.key === "shieldBash" &&
+        !tacticUnlocked
+      ) {
+        detail =
+          "Unlocks after Whispering Woods";
+      }
+
+      config.button
+        .querySelector("small")
+        .textContent =
+          detail;
+    });
 
     if (
       selectedSkill === "guard" &&
@@ -1360,8 +1978,15 @@ const skillInfo = {
       selectedSkill === "power" &&
       (
         !powerUnlocked ||
-        !hasPowerFocus
+        !hasPowerResource
       )
+    ) {
+      selectedSkill = "slash";
+    }
+
+    if (
+      selectedSkill === "shieldBash" &&
+      !tacticUnlocked
     ) {
       selectedSkill = "slash";
     }
@@ -1480,6 +2105,17 @@ const skillInfo = {
     ) {
       pendingPowerTutorialSelection =
         true;
+
+      const hero =
+        currentHero();
+
+      $("powerTutorialTitle").textContent =
+        hero.skills.power.name;
+
+      $("powerTutorialOverlay")
+        .querySelector(".eyebrow")
+        .textContent =
+          `${hero.name.toUpperCase()} POWER SKILL`;
 
       $("powerTutorialOverlay")
         .classList.remove("hidden");
@@ -2074,8 +2710,14 @@ const skillInfo = {
         skill: selectedSkill
       });
 
+    const hero =
+      currentHero();
+
+    const selectedHeroSkill =
+      hero.skills[selectedSkill];
+
     $("skillName").textContent =
-      skillInfo[selectedSkill].label;
+      `${selectedHeroSkill.icon} ${selectedHeroSkill.name.toUpperCase()}`;
 
     $("problem").textContent =
       currentProblem.prompt;
@@ -2128,9 +2770,7 @@ const skillInfo = {
       .classList.add("hidden");
 
     $("effectLabel").textContent =
-      selectedSkill === "guard"
-        ? `Block ${MathQuest.Combat.currentIntent().damage} damage`
-        : skillInfo[selectedSkill].effect;
+      selectedHeroSkill.normal;
 
     MathQuest.BlockWorkspace.clear();
     MathQuest.BlockWorkspace.setMode("cross");
@@ -2154,20 +2794,8 @@ const skillInfo = {
     $("hintBox")
       .classList.remove("hidden");
 
-    if (selectedSkill === "slash") {
-      $("effectLabel").textContent =
-        "1.5 damage (hint)";
-    }
-
-    if (selectedSkill === "power") {
-      $("effectLabel").textContent =
-        "3 damage (hint)";
-    }
-
-    if (selectedSkill === "guard") {
-      $("effectLabel").textContent =
-        "Guard (hint used)";
-    }
+    $("effectLabel").textContent =
+      "Hint used · dice result will be reduced by 25%";
   }
 
   async function enemyTurn() {
@@ -2216,7 +2844,7 @@ const skillInfo = {
         "REST TIME";
 
       $("feedback").textContent +=
-        " The Knight needs a rest. Try this battle again!";
+        ` ${currentHero().name} needs a rest. Try this battle again!`;
 
       MathQuest.Combat.state.heroHp =
         MathQuest.Combat.state.heroMaxHp;
@@ -2247,116 +2875,60 @@ const skillInfo = {
     const earnedSkillStar =
       awardSkillStarMilestone();
 
-    /*
-      Sword Slash and Guard build Focus.
-      Power Strike spends 2 Focus inside Combat.useSkill().
-    */
-    if (
-      selectedSkill === "slash" ||
-      selectedSkill === "guard" ||
-      selectedSkill === "shieldBash"
-    ) {
+    if (selectedSkill !== "power") {
       MathQuest.Combat.gainFocus(1);
     }
 
-    const state =
-      MathQuest.Combat.state;
-
-    let counterShieldUsed =
-      false;
-
-    if (
-      selectedSkill === "slash" &&
-      state.counterShieldArmed &&
-      state.counterShields > 0
-    ) {
-      state.counterShields--;
-      state.counterShieldArmed = false;
-      state.guardActive = true;
-      counterShieldUsed = true;
-    }
-
-    const effect =
-      MathQuest.Combat.useSkill(
-        selectedSkill,
-        hinted
-      );
-
-    const skillFeedback =
-      selectedSkill === "power"
-        ? `✅ Correct! +${reward.points} score. Power Strike used 2 Focus.`
-        : selectedSkill === "shieldBash"
-          ? `✅ Correct! +${reward.points} score. Shield Bash braces for 2 damage. +1 Focus.`
-          : selectedSkill === "guard"
-            ? `✅ Correct! +${reward.points} score. Guard is up. +1 Focus.`
-            : effect.counterUsed
-              ? `✅ Correct! +${reward.points} score. COUNTER! Sword Slash deals +2 damage. +1 Focus.`
-              : `✅ Correct! +${reward.points} score. +1 Focus.`;
+    pendingDice = {
+      dice:
+        createDiceForHero(
+          currentHero().id
+        ),
+      busted:false,
+      message:
+        earnedSkillStar
+          ? `✅ Correct! +${reward.points} score. 🌟 Skill Star earned!`
+          : `✅ Correct! +${reward.points} score. Now use your dice.`
+    };
 
     $("feedback").textContent =
-      skillFeedback +
-      (
-        earnedSkillStar
-          ? " 🌟 Skill Star earned!"
-          : ""
-      ) +
-      (
-        counterShieldUsed
-          ? " 🛡️ Counter Shield activated!"
-          : ""
-      );
+      pendingDice.message;
 
     updateHud();
     updateSkillAvailability();
 
-    saveGame(
-      MathQuest.Combat.state.worldIndex,
-      MathQuest.Combat.state.battleIndex
-    );
+    $("dicePanel")
+      .classList.remove("hidden");
 
-    if (effect.kind === "guard") {
-      $("battleMessage").textContent =
-        "GUARD!";
+    renderDicePanel();
+  }
 
-      await MathQuest.Animations.guardUp();
-    }
-    else if (effect.kind === "damage") {
-      $("battleMessage").textContent =
-        selectedSkill === "power"
-          ? "POWER STRIKE!"
-          : selectedSkill === "shieldBash"
-            ? "SHIELD BASH!"
-            : effect.counterUsed
-              ? "COUNTER SLASH!"
-              : "SWORD SLASH!";
-
-      await MathQuest.Animations.playerAttack(
-        selectedSkill,
-        effect.value
-      );
-
-      updateHud();
-      updateSkillAvailability();
-
-      if (
-        MathQuest.Combat.state.enemyHp <= 0
-      ) {
-        showVictory();
-        return;
-      }
-    }
-    else if (effect.kind === "no-focus") {
-      $("feedback").textContent =
-        "You need 2 Focus to use Power Strike.";
-
-      selectedSkill = "slash";
-      updateSkillAvailability();
-      locked = false;
-      newProblem();
+  async function resolveDiceAction() {
+    if (
+      !pendingDice ||
+      !canResolveDice(
+        currentHero().id,
+        selectedSkill
+      )
+    ) {
       return;
     }
 
-    const continueTurn = async () => {
+    const hero =
+      currentHero();
+
+    const state =
+      MathQuest.Combat.state;
+
+    if (pendingDice.busted) {
+      $("dicePanel")
+        .classList.add("hidden");
+
+      pendingDice = null;
+
+      $("feedback").textContent =
+        "💥 Bust! You chose to push your luck, so the enemy gets the turn.";
+
       if (!await enemyTurn()) {
         return;
       }
@@ -2368,9 +2940,308 @@ const skillInfo = {
         newProblem,
         450
       );
-    };
 
-    await continueTurn();
+      return;
+    }
+
+    if (
+      selectedSkill === "power" &&
+      !MathQuest.Combat.spendFocus(2)
+    ) {
+      pendingDice.message =
+        `You need 2 ${hero.resourceName}.`;
+
+      renderDicePanel();
+      return;
+    }
+
+    let damage = 0;
+    let block = 0;
+    let heal = 0;
+    let actionText = "";
+
+    const picked =
+      selectedDice().map(
+        die => die.value
+      );
+
+    if (hero.id === "knight") {
+      if (selectedSkill === "power") {
+        damage =
+          picked[0] +
+          picked[1];
+
+        actionText =
+          `Power Strike: ${picked[0]} + ${picked[1]} = ${damage} damage.`;
+      }
+      else if (selectedSkill === "guard") {
+        block = picked[0];
+
+        actionText =
+          `Guard: ${block} block.`;
+      }
+      else if (selectedSkill === "shieldBash") {
+        block = picked[0];
+        damage =
+          Math.ceil(
+            picked[0] / 2
+          );
+
+        actionText =
+          `Shield Bash: ${damage} damage + ${block} block.`;
+      }
+      else {
+        damage =
+          picked[0];
+
+        if (state.counterReady) {
+          damage += 2;
+          state.counterReady = false;
+          actionText =
+            `Counter Slash: ${picked[0]} + 2 = ${damage} damage.`;
+        }
+        else {
+          actionText =
+            `Sword Slash: ${damage} damage.`;
+        }
+      }
+    }
+    else if (hero.id === "mage") {
+      const high =
+        Math.max(...picked);
+      const low =
+        Math.min(...picked);
+
+      if (selectedSkill === "power") {
+        damage =
+          picked[0] *
+          picked[1];
+
+        actionText =
+          `Fireball: ${picked[0]} × ${picked[1]} = ${damage} damage.`;
+      }
+      else if (selectedSkill === "guard") {
+        block =
+          high - low + 2;
+
+        actionText =
+          `Ice Barrier: ${high} − ${low} + 2 = ${block} block.`;
+      }
+      else if (selectedSkill === "shieldBash") {
+        damage = low;
+        block = high;
+
+        actionText =
+          `Spellweave: ${damage} damage + ${block} block.`;
+      }
+      else {
+        damage =
+          picked[0] +
+          picked[1];
+
+        actionText =
+          `Arcane Bolt: ${picked[0]} + ${picked[1]} = ${damage} damage.`;
+      }
+    }
+    else if (hero.id === "rogue") {
+      const values =
+        pendingDice.dice.map(
+          die => die.value
+        );
+
+      const total =
+        values.reduce(
+          (sum,value) =>
+            sum + value,
+          0
+        );
+
+      const high =
+        Math.max(...values);
+
+      const low =
+        Math.min(...values);
+
+      if (selectedSkill === "power") {
+        damage =
+          total + 3;
+
+        actionText =
+          `Backstab: ${total} + 3 = ${damage} damage.`;
+      }
+      else if (selectedSkill === "guard") {
+        block =
+          high + 2;
+
+        actionText =
+          `Dodge: ${high} + 2 = ${block} block.`;
+      }
+      else if (selectedSkill === "shieldBash") {
+        damage = high;
+        block = low;
+
+        actionText =
+          `Feint: ${damage} damage + ${block} block.`;
+      }
+      else {
+        damage = total;
+
+        actionText =
+          `Quick Strike: ${values.join(" + ")} = ${damage} damage.`;
+      }
+    }
+    else if (hero.id === "cleric") {
+      const totals =
+        {attack:0,heal:0,shield:0};
+
+      pendingDice.dice.forEach(
+        die => {
+          totals[die.assignment] +=
+            die.value;
+        }
+      );
+
+      damage =
+        totals.attack;
+      heal =
+        totals.heal;
+      block =
+        totals.shield;
+
+      if (selectedSkill === "power") {
+        damage += 3;
+      }
+      else if (selectedSkill === "guard") {
+        block += 2;
+      }
+      else if (selectedSkill === "shieldBash") {
+        heal += 2;
+      }
+      else {
+        damage += 1;
+      }
+
+      actionText =
+        `Cleric allocation: ⚔️ ${damage} · ❤️ ${heal} · 🛡️ ${block}.`;
+    }
+
+    if (hinted) {
+      damage =
+        Math.floor(
+          damage * 0.75
+        );
+
+      block =
+        Math.floor(
+          block * 0.75
+        );
+
+      heal =
+        Math.floor(
+          heal * 0.75
+        );
+
+      actionText +=
+        " Hint penalty applied.";
+    }
+
+    let counterShieldUsed =
+      false;
+
+    if (
+      damage > 0 &&
+      state.counterShieldArmed &&
+      state.counterShields > 0
+    ) {
+      state.counterShields--;
+      state.counterShieldArmed =
+        false;
+      state.guardActive = true;
+      counterShieldUsed = true;
+    }
+
+    if (damage > 0) {
+      MathQuest.Combat.dealDamage(
+        damage
+      );
+    }
+
+    if (block > 0) {
+      MathQuest.Combat.addBlock(
+        block
+      );
+    }
+
+    if (heal > 0) {
+      const actualHeal =
+        MathQuest.Combat.healHero(
+          heal
+        );
+
+      if (actualHeal !== heal) {
+        actionText +=
+          ` Restored ${actualHeal} HP.`;
+      }
+    }
+
+    if (counterShieldUsed) {
+      actionText +=
+        " Counter Shield will block the enemy attack.";
+    }
+
+    $("feedback").textContent =
+      `🎲 ${actionText}`;
+
+    $("dicePanel")
+      .classList.add("hidden");
+
+    pendingDice = null;
+
+    updateHud();
+    updateSkillAvailability();
+
+    saveGame(
+      state.worldIndex,
+      state.battleIndex
+    );
+
+    if (damage > 0) {
+      $("battleMessage").textContent =
+        hero.skills[selectedSkill]
+          .name.toUpperCase();
+
+      await MathQuest.Animations.playerAttack(
+        selectedSkill === "power"
+          ? "power"
+          : "slash",
+        damage
+      );
+
+      updateHud();
+
+      if (state.enemyHp <= 0) {
+        showVictory();
+        return;
+      }
+    }
+    else if (block > 0) {
+      $("battleMessage").textContent =
+        "DEFENSE READY!";
+
+      await MathQuest.Animations.guardUp();
+    }
+
+    if (!await enemyTurn()) {
+      return;
+    }
+
+    $("battleMessage").textContent =
+      "YOUR TURN";
+
+    setTimeout(
+      newProblem,
+      450
+    );
   }
 
   async function handleWrong() {
@@ -3197,6 +4068,24 @@ $("answerForm")
     $("useCounterShieldBtn").addEventListener("click", () => useBattleItem("counter"));
     $("useSecondChanceBtn").addEventListener("click", () => useBattleItem("secondChance"));
 
+    $("diceRerollBtn")
+      .addEventListener(
+        "click",
+        rerollSelectedDie
+      );
+
+    $("dicePushBtn")
+      .addEventListener(
+        "click",
+        roguePush
+      );
+
+    $("diceResolveBtn")
+      .addEventListener(
+        "click",
+        resolveDiceAction
+      );
+
     $("nextBattleBtn")
       .addEventListener(
         "click",
@@ -3269,6 +4158,22 @@ $("beginJourneyBtn")
       newAdventure
     );
 
+    document
+      .querySelectorAll(".hero-choice")
+      .forEach(button => {
+        button.addEventListener(
+          "click",
+          () =>
+            selectHero(
+              button.dataset.heroId
+            )
+        );
+      });
+
+    selectHero(
+      MathQuest.Combat.state.heroId
+    );
+
     $("worldSelectBtn").addEventListener("click", openWorldSelect);
     $("closeWorldSelectBtn").addEventListener("click", closeWorldSelect);
 
@@ -3290,15 +4195,6 @@ $("beginJourneyBtn")
     $("closeCampfireMapBtn").addEventListener(
       "click",
       () => $("campfireMapSection").classList.add("hidden")
-    );
-
-    $("knightHeroSlot").addEventListener(
-      "click",
-      () => {
-        $("knightTipBox").classList.remove("tip-pulse");
-        void $("knightTipBox").offsetWidth;
-        $("knightTipBox").classList.add("tip-pulse");
-      }
     );
 
     renderWorldSelect();

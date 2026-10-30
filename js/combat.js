@@ -141,7 +141,8 @@ MathQuest.Combat = (() => {
     counterShieldArmed: false,
     secondChanceArmed: false,
     counterReady: false,
-    damageReduction: 0
+    damageReduction: 0,
+    blockPoints: 0
   };
 
   function resetWorldResources() {
@@ -155,6 +156,37 @@ MathQuest.Combat = (() => {
     state.secondChanceCharms = 0;
     state.counterShieldArmed = false;
     state.secondChanceArmed = false;
+  }
+
+  function setHero(heroId) {
+    const hero =
+      MathQuest.Heroes.get(heroId);
+
+    state.heroId =
+      hero.id;
+
+    state.heroMaxHp =
+      hero.startingMaxHp +
+      (state.level - 1) * 3;
+
+    state.heroHp =
+      Math.min(
+        state.heroHp,
+        state.heroMaxHp
+      );
+
+    if (state.heroHp <= 0) {
+      state.heroHp =
+        state.heroMaxHp;
+    }
+
+    state.focus =
+      Math.min(
+        state.maxFocus,
+        Math.max(1, state.focus)
+      );
+
+    return hero;
   }
 
   function currentHero() {
@@ -187,6 +219,7 @@ MathQuest.Combat = (() => {
     state.guardActive = false;
     state.counterReady = false;
     state.damageReduction = 0;
+    state.blockPoints = 0;
     state.focus = 1;
   }
 
@@ -215,11 +248,11 @@ MathQuest.Combat = (() => {
 
 
   function applySavedState(saved) {
-    const hero =
-      MathQuest.Heroes.get(state.heroId);
-
     state.heroId =
       saved.heroId || "knight";
+
+    const hero =
+      MathQuest.Heroes.get(state.heroId);
 
     state.level =
       Math.max(1, Number(saved.level) || 1);
@@ -566,14 +599,15 @@ MathQuest.Combat = (() => {
         state.counterReady = true;
       }
 
+      state.blockPoints = 0;
       state.turnNumber++;
 
       return {
-        blocked: true,
-        damage: 0,
+        blocked:true,
+        damage:0,
+        blockedAmount:intent.damage,
         intent,
-        counterReady:
-          state.counterReady
+        counterReady:state.counterReady
       };
     }
 
@@ -583,13 +617,35 @@ MathQuest.Combat = (() => {
         state.damageReduction
       );
 
+    const block =
+      Math.max(
+        0,
+        state.blockPoints
+      );
+
     state.damageReduction = 0;
+    state.blockPoints = 0;
+
+    const totalProtection =
+      reduction + block;
 
     const damage =
       Math.max(
         0,
-        intent.damage - reduction
+        intent.damage -
+        totalProtection
       );
+
+    const fullyBlocked =
+      damage === 0;
+
+    if (
+      fullyBlocked &&
+      intent.dangerous &&
+      state.heroId === "knight"
+    ) {
+      state.counterReady = true;
+    }
 
     state.heroHp =
       Math.max(
@@ -600,11 +656,55 @@ MathQuest.Combat = (() => {
     state.turnNumber++;
 
     return {
-      blocked: damage === 0,
+      blocked:fullyBlocked,
       damage,
-      reducedBy: reduction,
-      intent
+      blockedAmount:
+        Math.min(
+          intent.damage,
+          totalProtection
+        ),
+      reducedBy:reduction,
+      diceBlock:block,
+      intent,
+      counterReady:state.counterReady
     };
+  }
+
+  function dealDamage(amount) {
+    const damage =
+      Math.max(0, Number(amount) || 0);
+
+    state.enemyHp =
+      Math.max(
+        0,
+        state.enemyHp - damage
+      );
+
+    return damage;
+  }
+
+  function addBlock(amount) {
+    state.blockPoints =
+      Math.max(
+        state.blockPoints,
+        Math.max(0, Number(amount) || 0)
+      );
+
+    return state.blockPoints;
+  }
+
+  function healHero(amount) {
+    const before =
+      state.heroHp;
+
+    state.heroHp =
+      Math.min(
+        state.heroMaxHp,
+        state.heroHp +
+        Math.max(0, Number(amount) || 0)
+      );
+
+    return state.heroHp - before;
   }
 
   function unlockPowerStrike() {
@@ -636,6 +736,7 @@ MathQuest.Combat = (() => {
 
     beginGame,
     applySavedState,
+    setHero,
     selectWorld,
     beginNextWorld,
     restartCurrentWorld,
@@ -650,6 +751,9 @@ MathQuest.Combat = (() => {
 
     useSkill,
     enemyAttack,
+    dealDamage,
+    addBlock,
+    healHero,
 
     canUsePowerStrike,
     gainFocus,

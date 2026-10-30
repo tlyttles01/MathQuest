@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=44">
+  <link rel="stylesheet" href="css/game.css?v=45">
 </head>
 <body>
 <main class="game-shell">
   <section class="battle-panel">
     <header class="topbar">
-      <div><div class="build-row"><span id="buildVersion" class="build-version">v44</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
+      <div><div class="build-row"><span id="buildVersion" class="build-version">v45</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
       <div class="stats">
         <button id="adventureMapBtn" class="secondary compact-control" type="button">🧭 Adventure Map</button>
         <button id="worldSelectBtn" class="secondary compact-control" type="button">🎯 Practice Mode</button>
@@ -36,14 +36,14 @@
           <div id="heroXpBar" class="xp-fill"></div>
         </div>
         <div class="focus-row">
-          <span>⚡ Focus</span>
+          <span><span id="heroResourceIcon">⚡</span> <span id="heroResourceName">Focus</span></span>
           <strong><span id="heroFocus">1</span>/<span id="heroMaxFocus">3</span></strong>
         </div>
         <div class="focus-track" aria-label="Power Strike Focus">
           <div id="heroFocusBar" class="focus-fill"></div>
         </div>
         <div id="itemStatus" class="item-status hidden"></div>
-        <div class="sprite-wrap"><img id="heroSprite" class="sprite character-sprite" src="characterImages/knight.png" alt="Knight"><div id="heroDamagePop" class="damage-pop hidden"></div><div id="shieldFlash" class="shield-flash hidden">🛡️</div></div>
+        <div id="heroSpriteWrap" class="sprite-wrap"><img id="heroSprite" class="sprite character-sprite" src="characterImages/knight.png" alt="Knight"><div id="heroDamagePop" class="damage-pop hidden"></div><div id="shieldFlash" class="shield-flash hidden">🛡️</div></div>
       </div>
 
       <div class="intent-column">
@@ -71,17 +71,17 @@
   <section class="skills">
     <div class="eyebrow">CHOOSE AN ACTION</div>
     <div class="skill-grid">
-      <button class="skill active" data-skill="slash"><b>⚔️ Sword Slash</b><small>Normal question · 3 damage · +1 Focus</small></button>
-      <button id="powerSkill" class="skill locked" data-skill="power" disabled><b>💥 Power Strike 🔒</b><small>Harder question · 6 damage · costs 2 Focus</small></button>
-      <button id="guardSkill" class="skill locked" data-skill="guard" disabled><b>🛡️ Guard 🔒</b><small>Unlocks later</small></button>
-      <button id="shieldBashSkill" class="skill locked" data-skill="shieldBash" disabled><b>🛡️⚔️ Shield Bash 🔒</b><small>Unlocks after Whispering Woods</small></button>
+      <button class="skill active" data-skill="slash"><b>⚔️ Basic Skill</b><small>Solve, roll, then use your class dice.</small></button>
+      <button id="powerSkill" class="skill locked" data-skill="power" disabled><b>💥 Power Skill 🔒</b><small>Harder question · stronger dice rule.</small></button>
+      <button id="guardSkill" class="skill locked" data-skill="guard" disabled><b>🛡️ Defense 🔒</b><small>Unlocks later</small></button>
+      <button id="shieldBashSkill" class="skill locked" data-skill="shieldBash" disabled><b>✨ Tactic 🔒</b><small>Unlocks after Whispering Woods</small></button>
     </div>
     <div id="knightTactics" class="class-tactics">
       <div>
-        <span class="class-tactics-icon">🛡️</span>
-        <strong>Knight Tactic: Counter</strong>
+        <span id="classTacticsIcon" class="class-tactics-icon">🛡️</span>
+        <strong id="classTacticsTitle">Knight Tactic: Counter</strong>
       </div>
-      <p>Guard a <b>dangerous attack</b> to ready a Counter. Your next Sword Slash deals <b>+2 damage</b>.</p>
+      <p id="classTacticsText">Guard a <b>dangerous attack</b> to ready a Counter. Your next Sword Slash deals <b>+2 damage</b>.</p>
       <span id="counterStatus" class="counter-status">Counter not ready</span>
     </div>
   </section>
@@ -105,7 +105,7 @@
 
       <button id="useFocusPotionBtn" class="inventory-item hidden" type="button">
         <span class="inventory-icon">⚡</span>
-        <span><b>Focus Potion</b><small>Gain 2 Focus</small></span>
+        <span><b>Energy Tonic</b><small>Gain 2 class resource</small></span>
         <span id="focusPotionCount" class="inventory-count">×0</span>
       </button>
 
@@ -272,26 +272,26 @@
       <div class="campfire-trees" aria-hidden="true"></div>
       <div class="campfire-moon" aria-hidden="true"></div>
 
-      <button id="knightHeroSlot" class="hero-pedestal knight-pedestal selected" type="button" aria-describedby="knightTipBox">
+      <button class="hero-pedestal knight-pedestal hero-choice selected" data-hero-id="knight" type="button">
         <span class="hero-slot-badge">SELECTED</span>
-        <img src="characterImages/knight.png?v=44" alt="Knight">
+        <img src="characterImages/knight.png?v=45" alt="Knight">
         <strong>KNIGHT</strong>
       </button>
 
-      <div class="hero-pedestal coming-slot slot-two" aria-label="Coming soon hero slot">
-        <span class="hero-silhouette">?</span>
-        <strong>COMING SOON</strong>
-      </div>
+      <button class="hero-pedestal coming-slot slot-two hero-choice playable-class" data-hero-id="mage" type="button">
+        <span class="hero-emoji-avatar">🧙‍♀️</span>
+        <strong>MAGE</strong>
+      </button>
 
-      <div class="hero-pedestal coming-slot slot-three" aria-label="Coming soon hero slot">
-        <span class="hero-silhouette">?</span>
-        <strong>COMING SOON</strong>
-      </div>
+      <button class="hero-pedestal coming-slot slot-three hero-choice playable-class" data-hero-id="rogue" type="button">
+        <span class="hero-emoji-avatar">🥷</span>
+        <strong>ROGUE</strong>
+      </button>
 
-      <div class="hero-pedestal coming-slot slot-four" aria-label="Coming soon hero slot">
-        <span class="hero-silhouette">?</span>
-        <strong>COMING SOON</strong>
-      </div>
+      <button class="hero-pedestal coming-slot slot-four hero-choice playable-class" data-hero-id="cleric" type="button">
+        <span class="hero-emoji-avatar">✨</span>
+        <strong>CLERIC</strong>
+      </button>
 
       <div class="campfire-center" aria-hidden="true">
         <div class="campfire-glow"></div>
@@ -299,22 +299,21 @@
       </div>
     </div>
 
-    <div id="knightTipBox" class="hero-tip-box">
+    <div id="heroTipBox" class="hero-tip-box">
       <div class="hero-tip-title">
-        <span>🛡️</span>
+        <span id="heroTipIcon">🛡️</span>
         <div>
-          <div class="eyebrow">WHAT MAKES THE KNIGHT DIFFERENT?</div>
-          <strong>Defend. Read the attack. Counter.</strong>
+          <div id="heroTipEyebrow" class="eyebrow">WHAT MAKES THE KNIGHT DIFFERENT?</div>
+          <strong id="heroTipIdentity">Choose. Defend. Counter.</strong>
         </div>
       </div>
-      <p>
-        The Knight is a defensive fighter. <b>Guard</b> dangerous attacks to block all damage and ready a
-        <b>Counter</b>. Your next Sword Slash then hits harder. <b>Shield Bash</b> lets you attack while softening the next hit.
+      <p id="heroTipDescription">
+        Roll 3d6 and choose how to use the result. The Knight is the most reliable hero and can turn a perfect Guard into a Counter.
       </p>
       <div class="hero-tip-tags">
-        <span>⚔️ Slash builds Focus</span>
-        <span>🛡️ Guard big attacks</span>
-        <span>💥 Counter for bonus damage</span>
+        <span id="heroTipDice">🎲 Roll 3d6 · choose your die</span>
+        <span id="heroTipResource">⚡ Focus powers rerolls</span>
+        <span id="heroTipPower">💥 Power skills use 2 resource</span>
       </div>
     </div>
 
@@ -422,8 +421,8 @@
       <article class="merchant-item" data-item="focus">
         <div class="merchant-item-icon">⚡</div>
         <div class="merchant-item-copy">
-          <h3>Focus Potion</h3>
-          <p>Keep it and gain 2 Focus whenever you choose.</p>
+          <h3>Energy Tonic</h3>
+          <p>Keep it and gain 2 of your hero's class resource whenever you choose.</p>
         </div>
         <button class="merchant-buy" type="button" data-buy-item="focus">Buy · 🌟 1</button>
       </article>
@@ -432,7 +431,7 @@
         <div class="merchant-item-icon">🛡️</div>
         <div class="merchant-item-copy">
           <h3>Counter Shield</h3>
-          <p>Keep it. Arm it when you want a Sword Slash to also block.</p>
+          <p>Keep it. Arm it when you want your next damaging skill to also block the enemy attack.</p>
         </div>
         <button class="merchant-buy" type="button" data-buy-item="counter">Buy · 🌟🌟 2</button>
       </article>
@@ -452,6 +451,30 @@
     <button id="leaveMerchantBtn" class="primary modal-primary" type="button">
       Continue to Battle 5 →
     </button>
+  </div>
+</div>
+
+
+<div id="dicePanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="diceTitle">
+  <div class="modal-card dice-modal">
+    <div class="eyebrow">RUNE POWERED — NOW ROLL</div>
+    <h2 id="diceTitle">Knight Dice</h2>
+    <p id="diceInstruction">Choose how to use your roll.</p>
+
+    <div id="diceTray" class="dice-tray"></div>
+    <div id="diceMath" class="dice-math"></div>
+
+    <div id="clericAssignmentHelp" class="dice-assignment-help hidden">
+      Tap each die to cycle: ⚔️ Attack → ❤️ Heal → 🛡️ Shield
+    </div>
+
+    <div class="dice-actions">
+      <button id="diceRerollBtn" class="secondary" type="button">⚡ Reroll Selected · 1</button>
+      <button id="dicePushBtn" class="secondary hidden" type="button">🎲 Push Your Luck</button>
+      <button id="diceResolveBtn" class="primary" type="button">Resolve Action</button>
+    </div>
+
+    <div id="diceMessage" class="dice-message" aria-live="polite"></div>
   </div>
 </div>
 
@@ -527,17 +550,17 @@
     <div class="eyebrow">NEW SKILL</div>
     <h2 id="powerTutorialTitle">Power Strike</h2>
 
-    <p><b>Power Strike</b> hits twice as hard, but it takes preparation.</p>
+    <p>Your stronger skill uses the dice in a more powerful way, but it takes preparation.</p>
 
     <div class="power-tutorial-flow">
-      <div><strong>⚔️ Sword Slash</strong><span>Gain 1 Focus</span></div>
+      <div><strong>Normal Skill</strong><span>Build resource</span></div>
       <div class="power-tutorial-arrow">→</div>
       <div><strong>⚡ 2 Focus</strong><span>Ready!</span></div>
       <div class="power-tutorial-arrow">→</div>
-      <div><strong>💥 Power Strike</strong><span>6 damage</span></div>
+      <div><strong>Power Skill</strong><span>Use stronger dice rule</span></div>
     </div>
 
-    <p>Power Strike uses <b>2 Focus</b> and gives you a <b>harder question</b>. Use it when the extra damage is worth it.</p>
+    <p>The Power skill uses <b>2 class resource</b> and gives you a <b>harder question</b>. After solving it, your dice get a stronger rule.</p>
 
     <div class="tutorial-actions">
       <button id="powerTutorialTryBtn" class="primary" type="button">Try Power Strike</button>
@@ -551,16 +574,16 @@
     <div class="tutorial-icon">🛡️</div><div class="eyebrow">NEW SKILL</div><h2 id="guardTutorialTitle">Guard</h2>
     <p>Some enemies charge a <b>big attack</b>.</p>
     <div class="warning">🚨 <span id="guardTutorialAttackName">BIG ATTACK</span><br><b><span id="guardTutorialDamage">0</span> DAMAGE</b></div>
-    <p>Use <b>Guard</b> and answer correctly to block it. Blocking a dangerous attack also readies the Knight\'s <b>Counter</b>.</p>
+    <p id="guardTutorialCopy">Solve your defensive skill, then roll enough <b>block</b> to stop the hit.</p>
     <div class="tutorial-actions"><button id="tutorialTryBtn" class="primary" type="button">Got it!</button><button id="tutorialSkipBtn" class="secondary" type="button">Skip Tutorial</button></div>
   </div>
 </div>
 
-<script src="js/heroes.js?v=44"></script>
-<script src="js/math.js?v=44"></script>
-<script src="js/blocks.js?v=44"></script>
-<script src="js/combat.js?v=44"></script>
-<script src="js/animations.js?v=44"></script>
-<script src="js/game.js?v=44"></script>
+<script src="js/heroes.js?v=45"></script>
+<script src="js/math.js?v=45"></script>
+<script src="js/blocks.js?v=45"></script>
+<script src="js/combat.js?v=45"></script>
+<script src="js/animations.js?v=45"></script>
+<script src="js/game.js?v=45"></script>
 </body>
 </html>

@@ -527,3 +527,57 @@ The full game now uses the same dark pixel-RPG visual language as the Campfire w
 - The midpoint Campfire/merchant stop restores 10 HP, up to max HP.
 - Victory rewards show the HP recovery.
 - The Campfire message shows how much HP was restored.
+
+
+## v45 Dice combat + four class identities
+
+Math questions now unlock a tactical dice phase instead of dealing fixed damage immediately.
+
+### Universal flow
+1. Choose a skill.
+2. Solve the world's math question.
+3. Correct answer earns the dice phase.
+4. Roll and make the class-specific decision.
+5. Resolve damage / block / healing.
+6. Enemy acts if still alive.
+
+Hints reduce the final dice effect by 25%. Correct math always earns a roll; only the Rogue can deliberately risk losing an action by pushing too far.
+
+### Knight — Choose
+- Roll 3d6.
+- Sword Slash: choose one die for damage.
+- Guard: choose one die for block.
+- Shield Bash: block the die and deal half (rounded up).
+- Power Strike: choose two dice and add them.
+- Perfectly blocking a dangerous attack readies Counter (+2 to next Slash).
+- Spend 1 Focus to reroll one selected die.
+
+### Mage — Combine
+- Roll 4d4.
+- Arcane Bolt: add two selected dice.
+- Fireball: multiply two selected dice.
+- Ice Barrier: difference of two dice + 2 becomes block.
+- Spellweave: high die blocks, low die damages.
+- Spend 1 Mana to reroll one selected die.
+
+### Rogue — Push Your Luck
+- Start with 2d6.
+- Hold the total or push for up to two more d6.
+- If a pushed die rolls 1, the action busts and the enemy gets the turn.
+- Quick Strike uses total.
+- Backstab uses total + 3.
+- Dodge uses highest die + 2 as block.
+- Feint uses high die as damage and low die as block.
+
+### Cleric — Allocate
+- Roll 3d4.
+- Every die is assigned to Attack, Heal, or Shield.
+- Tap a die to cycle its assignment.
+- Smite adds +1 Attack.
+- Radiant Burst adds +3 Attack and costs 2 Spirit.
+- Sanctuary adds +2 Shield.
+- Blessing adds +2 Heal.
+
+All four heroes are selectable at the Campfire. Mage/Rogue/Cleric use emoji placeholder art until dedicated sprites are created.
+
+- The old Focus Potion is now an Energy Tonic and restores the active class resource (Focus, Mana, Edge, or Spirit).

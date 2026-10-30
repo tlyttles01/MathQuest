@@ -2782,3 +2782,138 @@ input{
     border-width:2px;
   }
 }
+
+
+/* v45: class dice combat */
+#heroSpriteWrap[data-hero-emoji]::before{
+  content:attr(data-hero-emoji);
+  display:block;
+  font-size:5.8rem;
+  line-height:1;
+  filter:drop-shadow(4px 7px 0 rgba(0,0,0,.38));
+}
+
+.hero-choice{
+  cursor:pointer;
+}
+
+.hero-choice.selected{
+  filter:brightness(1.15);
+}
+
+.playable-class{
+  opacity:1;
+}
+
+.hero-emoji-avatar{
+  display:grid;
+  place-items:center;
+  width:105px;
+  height:155px;
+  margin:0 auto 8px;
+  border:2px solid #475569;
+  border-radius:48% 48% 20% 20%;
+  background:#1b2433;
+  font-size:4rem;
+  box-shadow:inset 0 0 20px rgba(255,255,255,.035);
+}
+
+.dice-modal{
+  width:min(680px,100%);
+}
+
+.dice-tray{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:14px;
+  margin:20px 0 14px;
+}
+
+.game-die{
+  width:92px;
+  min-height:92px;
+  display:grid;
+  place-items:center;
+  gap:3px;
+  padding:8px;
+  border:4px solid #7b8496;
+  border-radius:9px;
+  background:#f3eedc;
+  color:#111827;
+  box-shadow:
+    5px 5px 0 #02040a,
+    inset 0 0 0 2px #d1c9ad;
+}
+
+.game-die:hover{
+  transform:translate(-1px,-1px);
+}
+
+.game-die.selected{
+  border-color:#f59e0b;
+  background:#fff7d6;
+  box-shadow:
+    5px 5px 0 #02040a,
+    0 0 0 3px rgba(245,158,11,.2);
+}
+
+.game-die .die-value{
+  font-size:2.4rem;
+  font-weight:1000;
+}
+
+.game-die small{
+  font-size:.62rem;
+  font-weight:1000;
+}
+
+.game-die.assigned-attack{
+  border-color:#ef646d;
+}
+
+.game-die.assigned-heal{
+  border-color:#5cc77a;
+}
+
+.game-die.assigned-shield{
+  border-color:#6e91e7;
+}
+
+.dice-math{
+  min-height:34px;
+  padding:9px 12px;
+  border:2px solid #46536a;
+  background:#0c1320;
+  color:#f6e6ae;
+  font-size:1rem;
+  font-weight:900;
+  text-align:center;
+}
+
+.dice-assignment-help,
+.dice-message{
+  margin-top:10px;
+  color:#b8c0cf;
+  font-size:.8rem;
+  font-weight:800;
+}
+
+.dice-actions{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:9px;
+  margin-top:16px;
+}
+
+@media(max-width:520px){
+  .game-die{
+    width:72px;
+    min-height:72px;
+  }
+
+  .game-die .die-value{
+    font-size:1.9rem;
+  }
+}
