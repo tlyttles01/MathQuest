@@ -3664,3 +3664,515 @@ input{
     min-width:165px;
   }
 }
+
+/* ==========================================================
+   v50: FULL ART-DIRECTION INTEGRATION
+   Illustrated world scenes + production hero/enemy sprites.
+   ========================================================== */
+
+:root{
+  --mq-gold:#d9a94d;
+  --mq-gold-soft:#f1d58a;
+  --mq-steel:#8493a9;
+  --mq-panel:#09101b;
+  --mq-panel-2:#0d1624;
+  --mq-ink:#03070d;
+}
+
+body{
+  background:
+    radial-gradient(circle at 50% -160px,rgba(61,85,132,.28),transparent 520px),
+    linear-gradient(#07101c,#03070d 70%);
+}
+
+.game-shell{
+  width:min(1180px,calc(100% - 18px));
+  margin:9px auto 34px;
+  gap:12px;
+}
+
+.battle-panel,
+.problem-panel,
+.battle-inventory,
+.skills{
+  position:relative;
+  background:linear-gradient(180deg,rgba(10,17,29,.98),rgba(7,12,21,.98));
+  border:2px solid #5f6d82;
+  box-shadow:
+    0 0 0 1px #141e2d inset,
+    4px 5px 0 rgba(0,0,0,.58);
+}
+
+.battle-panel::before,
+.problem-panel::before,
+.battle-inventory::before,
+.skills::before,
+.modal-card::before,
+.tutorial-card::before{
+  content:"";
+  position:absolute;
+  inset:5px;
+  pointer-events:none;
+  border:1px solid rgba(149,164,187,.18);
+}
+
+.topbar{
+  position:relative;
+  z-index:5;
+  padding-bottom:10px;
+  border-bottom:1px solid #334156;
+}
+
+#worldName{
+  color:var(--mq-gold-soft);
+  font-size:.88rem;
+}
+
+.build-version{
+  opacity:.7;
+}
+
+.stats span,
+.stats button{
+  background:rgba(5,10,18,.88)!important;
+  border-color:#4f6078!important;
+}
+
+/* Illustrated battle scene */
+.battle-stage{
+  --battle-bg:url("../assets/backgrounds/whispering-woods-battle.png");
+  --battle-fg:none;
+  position:relative;
+  isolation:isolate;
+  min-height:390px;
+  margin-top:12px;
+  padding:18px 20px 15px;
+  grid-template-columns:minmax(245px,1fr) minmax(190px,250px) minmax(245px,1fr);
+  align-items:end;
+  gap:14px;
+  border:3px solid #647389;
+  border-radius:3px;
+  overflow:hidden;
+  background-image:
+    linear-gradient(180deg,rgba(3,7,13,.08),rgba(3,7,13,.18)),
+    var(--battle-bg);
+  background-size:cover;
+  background-position:center;
+  box-shadow:
+    inset 0 -80px 85px rgba(0,0,0,.32),
+    4px 4px 0 #01040a;
+}
+
+.battle-stage::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at 20% 84%,rgba(0,0,0,.08),transparent 25%),
+    radial-gradient(ellipse at 80% 84%,rgba(0,0,0,.08),transparent 25%),
+    linear-gradient(90deg,rgba(3,6,12,.18),transparent 20%,transparent 80%,rgba(3,6,12,.18));
+}
+
+.battle-stage::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:4;
+  pointer-events:none;
+  background-image:var(--battle-fg);
+  background-size:cover;
+  background-position:center;
+}
+
+.fighter,
+.intent-column,
+.impact{
+  position:relative;
+  z-index:5;
+}
+
+.fighter{
+  align-self:stretch;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  min-height:340px;
+}
+
+.fighter-title,
+.hp-line,
+.xp-row,
+.focus-row,
+.enemy-role{
+  width:max-content;
+  max-width:100%;
+  padding-left:7px;
+  padding-right:7px;
+  background:rgba(5,9,16,.72);
+  text-shadow:1px 2px #02040a;
+}
+
+.enemy .fighter-title,
+.enemy .hp-line,
+.enemy .enemy-role{
+  margin-left:auto;
+}
+
+.hp-track,
+.xp-track,
+.focus-track{
+  background:#02060d;
+  border-color:#68778f;
+  border-radius:1px;
+}
+
+.sprite-wrap{
+  flex:1;
+  min-height:220px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:flex-start;
+  overflow:visible;
+}
+
+.enemy-wrap{
+  justify-content:flex-end;
+}
+
+.character-sprite{
+  height:250px;
+  max-width:330px;
+  width:auto;
+  object-fit:contain;
+  object-position:center bottom;
+  image-rendering:pixelated;
+  filter:
+    drop-shadow(0 14px 5px rgba(0,0,0,.42))
+    drop-shadow(0 0 1px rgba(230,238,255,.32));
+}
+
+.enemy .character-sprite{
+  height:238px;
+  max-width:310px;
+}
+
+body[data-world="woods"] .enemy .character-sprite,
+body[data-world="mines"] .enemy .character-sprite{
+  filter:drop-shadow(0 13px 5px rgba(0,0,0,.48));
+}
+
+.intent-column{
+  align-self:center;
+  justify-content:center;
+  padding:12px 0;
+}
+
+.battle-message{
+  width:max-content;
+  max-width:100%;
+  margin:0 auto 7px;
+  padding:5px 10px;
+  border:1px solid #56667e;
+  background:rgba(6,11,20,.9);
+  color:#d8e1ef;
+}
+
+.intent-card{
+  border:2px solid #697891;
+  border-radius:2px;
+  background:linear-gradient(180deg,rgba(9,16,27,.96),rgba(5,10,18,.96));
+  box-shadow:3px 4px 0 rgba(0,0,0,.58);
+}
+
+.intent-card.danger{
+  border-color:#bd4d57;
+  background:linear-gradient(180deg,rgba(38,13,18,.96),rgba(15,7,12,.96));
+}
+
+/* Skills now read like JRPG command plates. */
+.skills{
+  padding:12px 14px 14px;
+}
+
+.skill-grid{
+  gap:10px;
+}
+
+.skill{
+  position:relative;
+  min-height:82px;
+  padding:11px 12px 11px 15px;
+  border:2px solid #536279;
+  border-left:5px solid var(--class-accent,#7891c7);
+  border-radius:2px;
+  background:linear-gradient(180deg,#0f1929,#0a111d);
+  box-shadow:3px 3px 0 #02040a;
+}
+
+.skill.active{
+  border-color:var(--class-accent,#8da7e0);
+  border-left-color:var(--mq-gold);
+  background:linear-gradient(180deg,#16253e,#0d1727);
+  box-shadow:
+    0 0 0 1px rgba(217,169,77,.2) inset,
+    3px 3px 0 #02040a;
+}
+
+body[data-hero="knight"]{--class-accent:#6f8fb4}
+body[data-hero="mage"]{--class-accent:#846dc4}
+body[data-hero="rogue"]{--class-accent:#56866a}
+body[data-hero="cleric"]{--class-accent:#b69a64}
+
+.class-tactics{
+  border:2px solid #536279;
+  border-left:5px solid var(--class-accent,#7891c7);
+  border-radius:2px;
+  background:#0a121f;
+}
+
+/* Learning pane: readable parchment input inside fantasy framing. */
+.problem-panel{
+  overflow:hidden;
+}
+
+.question-side{
+  padding:12px 12px 10px;
+}
+
+.question-side .problem{
+  color:#fff5d7;
+  text-shadow:2px 3px #02040a;
+}
+
+.effect{
+  border:1px solid #536279!important;
+  border-left:4px solid var(--class-accent,#7891c7)!important;
+  background:#0a121e!important;
+}
+
+.answer-row input,
+.time-answer-fields input,
+.equation-number{
+  border-color:#a39877!important;
+  background:#f4edda!important;
+  color:#131722!important;
+  box-shadow:
+    inset 0 0 0 2px #d4cab1,
+    3px 3px 0 #02040a!important;
+}
+
+.workspace-side .workspace{
+  border:2px solid #46546a;
+  background:linear-gradient(180deg,#0c1523,#08101b);
+}
+
+.board,
+.coin-tray-zone{
+  background-color:#08111c;
+}
+
+/* Campfire character select */
+.campfire-home-overlay{
+  background:rgba(2,5,11,.94);
+}
+
+.campfire-home-shell{
+  width:min(1180px,100%);
+  padding:16px;
+  border:3px solid #7c899d;
+  border-radius:2px;
+  background:#070d17;
+}
+
+.campfire-title-plaque{
+  margin:0 auto -24px;
+  padding:11px 38px 13px;
+  border:3px solid #7c899d;
+  border-radius:2px;
+  background:linear-gradient(#0c1422,#070d17);
+}
+
+.campfire-title-plaque h2{
+  font-size:clamp(1.75rem,4vw,3rem);
+  color:#fff4d8;
+  text-shadow:3px 3px #02040a;
+}
+
+.campfire-stage{
+  position:relative;
+  min-height:570px;
+  border:2px solid #4d5b70;
+  border-radius:2px;
+  overflow:hidden;
+  background:
+    linear-gradient(180deg,rgba(4,8,15,.04),rgba(4,8,15,.16)),
+    url("../assets/backgrounds/campfire-character-select.png") center/cover no-repeat;
+  box-shadow:inset 0 -45px 70px rgba(0,0,0,.16);
+}
+
+.campfire-vignette{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 68%,rgba(255,175,75,.06),transparent 22%),
+    linear-gradient(90deg,rgba(2,5,10,.18),transparent 18%,transparent 82%,rgba(2,5,10,.18));
+}
+
+.hero-pedestal{
+  width:245px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#fff;
+}
+
+.campfire-hero-art{
+  display:block;
+  width:230px;
+  height:270px;
+  margin:0 auto -8px;
+  object-fit:contain;
+  object-position:center bottom;
+  image-rendering:pixelated;
+  filter:
+    drop-shadow(0 13px 5px rgba(0,0,0,.48))
+    saturate(.95);
+}
+
+.hero-pedestal:hover .campfire-hero-art,
+.hero-pedestal.selected .campfire-hero-art{
+  filter:
+    drop-shadow(0 13px 5px rgba(0,0,0,.5))
+    drop-shadow(0 0 8px rgba(255,198,98,.34))
+    brightness(1.08);
+}
+
+.scene-class-label{
+  min-width:170px;
+  padding:8px 16px;
+  border:3px solid #718097;
+  border-radius:1px;
+  background:linear-gradient(#0c1524,#070d17);
+}
+
+.hero-pedestal.selected .scene-class-label{
+  border-color:#d2a84f;
+  box-shadow:
+    0 0 0 1px #fff0b433 inset,
+    4px 4px 0 #02040a;
+}
+
+.hero-slot-badge{
+  top:-5px;
+  right:8px;
+  border:1px solid #d2a84f;
+  background:#2a1e08;
+  color:#ffe7a5;
+}
+
+.knight-pedestal{left:5%;bottom:20px}
+.slot-two{left:29%;top:58px}
+.slot-three{right:27%;top:72px}
+.slot-four{right:5%;bottom:16px}
+
+.hero-tip-box,
+.campfire-progress-strip,
+.campfire-map-section{
+  border:2px solid #4e5c72;
+  border-radius:2px;
+  background:linear-gradient(180deg,#0b1422,#08101b);
+}
+
+.campfire-home-actions{
+  gap:9px;
+}
+
+.campfire-home-actions button{
+  min-height:50px;
+  border-radius:2px;
+}
+
+/* Modal polish */
+.modal-card,
+.tutorial-card{
+  border:3px solid #748299;
+  border-radius:2px;
+  background:linear-gradient(180deg,#0b1422,#070d17);
+}
+
+.modal-card h2,
+.tutorial-card h2{
+  color:#fff3d5;
+}
+
+.world-card,
+.map-world-card,
+.merchant-item,
+.inventory-item,
+.reward-pill,
+.unlock-card,
+.crystal-award,
+.battle-xp-panel{
+  border-radius:2px!important;
+}
+
+/* Responsive scene composition */
+@media(max-width:920px){
+  .battle-stage{
+    min-height:350px;
+    grid-template-columns:minmax(205px,1fr) minmax(160px,205px) minmax(205px,1fr);
+    padding:14px 12px;
+  }
+  .character-sprite{height:218px;max-width:280px}
+  .enemy .character-sprite{height:210px;max-width:265px}
+  .campfire-stage{min-height:540px}
+  .campfire-hero-art{width:195px;height:235px}
+  .hero-pedestal{width:205px}
+  .knight-pedestal{left:1%}
+  .slot-two{left:27%}
+  .slot-three{right:26%}
+  .slot-four{right:1%}
+}
+
+@media(max-width:700px){
+  .battle-stage{
+    min-height:420px;
+    grid-template-columns:1fr 145px 1fr;
+    background-position:center;
+  }
+  .fighter{min-height:340px}
+  .character-sprite{height:190px;max-width:220px}
+  .enemy .character-sprite{height:184px;max-width:215px}
+  .intent-note{display:none}
+  .campfire-stage{min-height:650px}
+  .hero-pedestal{width:170px}
+  .campfire-hero-art{width:165px;height:205px}
+  .scene-class-label{min-width:130px;font-size:.75rem}
+  .knight-pedestal{left:2%;bottom:22px}
+  .slot-two{left:8%;top:70px}
+  .slot-three{right:8%;top:75px}
+  .slot-four{right:2%;bottom:22px}
+}
+
+@media(max-width:520px){
+  .game-shell{width:calc(100% - 8px)}
+  .battle-stage{
+    min-height:430px;
+    grid-template-columns:1fr 108px 1fr;
+    padding:10px 6px;
+  }
+  .fighter{min-height:365px}
+  .character-sprite{height:160px;max-width:175px}
+  .enemy .character-sprite{height:155px;max-width:170px}
+  .fighter-title,.hp-line,.xp-row,.focus-row,.enemy-role{font-size:.72rem}
+  .campfire-stage{min-height:690px;background-position:center}
+  .hero-pedestal{width:150px}
+  .campfire-hero-art{width:145px;height:180px}
+  .knight-pedestal{left:50%;transform:translateX(-50%);bottom:15px}
+  .slot-two{left:2%;top:60px}
+  .slot-three{right:2%;top:60px}
+  .slot-four{right:50%;transform:translateX(50%);top:275px;bottom:auto}
+}

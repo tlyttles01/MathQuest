@@ -60,6 +60,9 @@ const skillInfo = {
     const hero =
       MathQuest.Combat.setHero(heroId);
 
+    document.body.dataset.hero =
+      hero.id;
+
     document
       .querySelectorAll(".hero-choice")
       .forEach(button => {
@@ -1932,6 +1935,9 @@ const skillInfo = {
     const state = MathQuest.Combat.state;
     const hero = MathQuest.Combat.currentHero();
 
+    document.body.dataset.hero =
+      hero.id;
+
     $("heroName").textContent =
       hero.name;
 
@@ -2286,6 +2292,52 @@ const skillInfo = {
 
     const battle =
       MathQuest.Combat.currentBattle();
+
+    const battleStage =
+      $("battleStage");
+
+    const worldVisuals = {
+      woods:{
+        background:"assets/backgrounds/whispering-woods-battle.png",
+        foreground:"assets/foregrounds/woods-foreground.png"
+      },
+      mines:{
+        background:"assets/backgrounds/breakstone-mines-battle.png",
+        foreground:"assets/foregrounds/mines-foreground.png"
+      },
+      library:{
+        background:"assets/backgrounds/living-library-battle.png",
+        foreground:"assets/foregrounds/library-foreground.png"
+      },
+      vault:{
+        background:"assets/backgrounds/vault-battle.png",
+        foreground:"assets/foregrounds/vault-foreground.png"
+      },
+      clocktower:{
+        background:"assets/backgrounds/clocktower-battle.png",
+        foreground:"assets/foregrounds/clocktower-foreground.png"
+      }
+    };
+
+    const visual =
+      worldVisuals[world.id] ||
+      worldVisuals.woods;
+
+    battleStage.style.setProperty(
+      "--battle-bg",
+      `url("${visual.background}")`
+    );
+
+    battleStage.style.setProperty(
+      "--battle-fg",
+      `url("${visual.foreground}")`
+    );
+
+    battleStage.dataset.world =
+      world.id;
+
+    document.body.dataset.world =
+      world.id;
 
     $("worldName").textContent =
       playMode === "practice"

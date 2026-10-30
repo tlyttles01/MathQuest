@@ -5,7 +5,7 @@ MathQuest.Heroes = (() => {
     knight: {
       id:"knight",
       name:"Knight",
-      image:"characterImages/knight.png",
+      image:"assets/heroes/knight.png",
       emoji:"🛡️",
       startingMaxHp:30,
       unlocked:true,
@@ -24,7 +24,7 @@ MathQuest.Heroes = (() => {
     mage: {
       id:"mage",
       name:"Mage",
-      image:null,
+      image:"assets/heroes/mage.png",
       emoji:"🧙‍♀️",
       startingMaxHp:26,
       unlocked:true,
@@ -43,7 +43,7 @@ MathQuest.Heroes = (() => {
     rogue: {
       id:"rogue",
       name:"Rogue",
-      image:null,
+      image:"assets/heroes/rogue.png",
       emoji:"🥷",
       startingMaxHp:28,
       unlocked:true,
@@ -62,7 +62,7 @@ MathQuest.Heroes = (() => {
     cleric: {
       id:"cleric",
       name:"Cleric",
-      image:null,
+      image:"assets/heroes/cleric.png",
       emoji:"✨",
       startingMaxHp:29,
       unlocked:true,

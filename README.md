@@ -636,3 +636,13 @@ The goal is for the dice UI itself to explain each class without requiring a lon
 - Selected class gets a stronger plaque highlight and badge.
 - The four heroes are arranged around the fire rather than presented like menu cards.
 - All four remain playable; this is a visual redesign only.
+
+
+## v50 Art-direction integration
+
+- Integrated the approved Knight, Mage, Rogue, and Cleric production sprites.
+- Character select now stages the four real heroes directly in the illustrated campfire environment.
+- Integrated six illustrated world environments and five transparent foreground overlays.
+- Cleaned all 35 generated enemy illustrations to remove mirrored labels/card backgrounds and standardized them for battle use.
+- Battle scenes now change environment and foreground automatically by world.
+- Reworked the battle presentation and core UI toward the dark 16/32-bit JRPG art direction.
