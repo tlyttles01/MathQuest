@@ -3273,3 +3273,394 @@ input{
     text-align:center;
   }
 }
+
+
+/* v48: resilient question layout
+   The math question owns the full row. Effect is a compact status strip,
+   never a competing side column. */
+.problem-head{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:stretch !important;
+  justify-content:flex-start !important;
+  gap:10px !important;
+  min-width:0;
+}
+
+.problem-head > div:first-child{
+  width:100%;
+  min-width:0;
+}
+
+.question-side{
+  min-width:0;
+  overflow:visible;
+}
+
+.question-side .problem,
+.question-side .problem.equation-problem{
+  display:block;
+  width:100%;
+  max-width:100%;
+}
+
+.question-side .problem.equation-problem{
+  white-space:nowrap !important;
+  overflow-wrap:normal !important;
+  word-break:keep-all !important;
+  font-size:clamp(2.35rem,5vw,4rem) !important;
+  line-height:1.04 !important;
+  letter-spacing:-.035em;
+}
+
+.effect{
+  order:2;
+  width:100%;
+  min-width:0 !important;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:8px 10px !important;
+  text-align:left !important;
+  border-width:2px;
+}
+
+.effect span,
+.effect b{
+  display:block;
+}
+
+.effect span{
+  flex:0 0 auto;
+  font-size:.68rem !important;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.effect b{
+  min-width:0;
+  max-width:72%;
+  color:#f2d28b;
+  font-size:.82rem;
+  line-height:1.25;
+  text-align:right;
+  overflow-wrap:break-word;
+}
+
+/* Keep answers visually connected to the problem rather than the effect strip. */
+.question-side .answer-row{
+  margin-top:14px;
+}
+
+/* Extra protection on narrow panes and split learning layouts. */
+@media(max-width:900px){
+  .question-side .problem.equation-problem{
+    font-size:clamp(2.25rem,7vw,3.7rem) !important;
+  }
+}
+
+@media(max-width:700px){
+  .effect{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:4px;
+  }
+
+  .effect b{
+    max-width:100%;
+    text-align:left;
+  }
+
+  .question-side .problem.equation-problem{
+    font-size:clamp(2.2rem,11vw,3.5rem) !important;
+  }
+}
+
+
+/* v49: scene-based character select silhouettes */
+.campfire-stage{
+  min-height:430px;
+  background:
+    radial-gradient(circle at 50% 72%,rgba(245,158,11,.16),transparent 24%),
+    radial-gradient(circle at 50% 32%,rgba(71,85,105,.12),transparent 30%),
+    linear-gradient(#080b14 0 64%,#111827 64% 100%);
+}
+
+.hero-pedestal{
+  transition:
+    transform .16s ease,
+    filter .16s ease,
+    opacity .16s ease;
+}
+
+.hero-pedestal:hover{
+  transform:translateY(-3px);
+  filter:brightness(1.12);
+}
+
+.hero-pedestal.selected{
+  filter:brightness(1.18);
+}
+
+.hero-pedestal.selected .scene-class-label{
+  border-color:#d6dde9;
+  color:#fff8e7;
+  box-shadow:
+    0 0 0 2px #111827,
+    4px 4px 0 #02040a;
+}
+
+.scene-class-label{
+  display:block;
+  min-width:135px;
+  padding:7px 13px 8px;
+  border:3px solid #667085;
+  background:#090e18;
+  color:#e5e7eb;
+  font-size:.9rem;
+  font-weight:1000;
+  letter-spacing:.09em;
+  text-align:center;
+  text-shadow:2px 2px #02040a;
+  box-shadow:3px 3px 0 #02040a;
+}
+
+.knight-pedestal{
+  width:250px;
+}
+
+.knight-pedestal img{
+  width:205px;
+  height:225px;
+}
+
+.knight-label{
+  min-width:220px;
+  font-size:1.2rem;
+}
+
+.silhouette-choice{
+  opacity:1;
+  color:inherit;
+}
+
+.class-silhouette{
+  position:relative;
+  display:block;
+  width:125px;
+  height:190px;
+  margin:0 auto 9px;
+  filter:
+    drop-shadow(0 11px 0 rgba(0,0,0,.33))
+    drop-shadow(0 0 8px rgba(71,85,105,.18));
+}
+
+.class-silhouette > span{
+  position:absolute;
+  display:block;
+  background:#2d3543;
+  border:2px solid #394353;
+}
+
+.class-silhouette .silhouette-body{
+  left:29px;
+  bottom:9px;
+  width:68px;
+  height:112px;
+  border-radius:38% 38% 19% 19%;
+  transform-origin:center bottom;
+}
+
+.class-silhouette .silhouette-head{
+  left:43px;
+  top:38px;
+  width:40px;
+  height:44px;
+  border-radius:48% 48% 42% 42%;
+}
+
+.mage-silhouette .silhouette-hat{
+  left:26px;
+  top:2px;
+  width:72px;
+  height:48px;
+  clip-path:polygon(50% 0,92% 76%,65% 72%,100% 100%,0 100%,34% 72%,8% 76%);
+}
+
+.mage-silhouette .silhouette-staff{
+  right:6px;
+  bottom:4px;
+  width:8px;
+  height:160px;
+  border-radius:5px;
+  transform:rotate(8deg);
+}
+
+.mage-silhouette .silhouette-staff::before{
+  content:"";
+  position:absolute;
+  left:-10px;
+  top:-15px;
+  width:26px;
+  height:26px;
+  border:5px solid #394353;
+  border-radius:50%;
+  background:#2d3543;
+}
+
+.rogue-silhouette .silhouette-body{
+  left:24px;
+  width:78px;
+  height:105px;
+  border-radius:42% 42% 14% 14%;
+  transform:skewX(-4deg);
+}
+
+.rogue-silhouette .silhouette-head{
+  left:41px;
+  top:35px;
+  width:43px;
+  height:43px;
+}
+
+.rogue-silhouette .silhouette-hood{
+  left:31px;
+  top:22px;
+  width:64px;
+  height:65px;
+  border-radius:50% 50% 42% 42%;
+  clip-path:polygon(50% 0,94% 38%,82% 100%,18% 100%,6% 38%);
+}
+
+.rogue-silhouette .silhouette-blade{
+  width:8px;
+  height:82px;
+  border-radius:3px;
+  background:#353e4c;
+}
+
+.rogue-silhouette .silhouette-blade.one{
+  left:10px;
+  bottom:17px;
+  transform:rotate(42deg);
+}
+
+.rogue-silhouette .silhouette-blade.two{
+  right:9px;
+  bottom:18px;
+  transform:rotate(-38deg);
+}
+
+.cleric-silhouette .silhouette-body{
+  left:27px;
+  width:72px;
+  height:116px;
+  border-radius:35% 35% 24% 24%;
+}
+
+.cleric-silhouette .silhouette-head{
+  left:43px;
+  top:37px;
+  width:40px;
+  height:42px;
+}
+
+.cleric-silhouette .silhouette-mantle{
+  left:19px;
+  top:65px;
+  width:88px;
+  height:46px;
+  border-radius:46% 46% 22% 22%;
+}
+
+.cleric-silhouette .silhouette-staff{
+  right:4px;
+  bottom:4px;
+  width:8px;
+  height:155px;
+  border-radius:5px;
+  transform:rotate(-6deg);
+}
+
+.cleric-silhouette .silhouette-orb{
+  right:-5px;
+  top:8px;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  box-shadow:0 0 0 5px #202735;
+}
+
+/* Place the four heroes around the fire more like the reference */
+.knight-pedestal{
+  left:6%;
+  bottom:26px;
+}
+
+.slot-two{
+  left:35%;
+  top:78px;
+}
+
+.slot-three{
+  right:7%;
+  top:92px;
+}
+
+.slot-four{
+  right:25%;
+  bottom:12px;
+}
+
+.playable-class .hero-slot-badge{
+  top:-8px;
+  right:4px;
+}
+
+@media(max-width:760px){
+  .campfire-stage{
+    min-height:500px;
+  }
+
+  .knight-pedestal{
+    left:1%;
+    bottom:38px;
+  }
+
+  .slot-two{
+    left:39%;
+    top:68px;
+  }
+
+  .slot-three{
+    right:1%;
+    top:96px;
+  }
+
+  .slot-four{
+    right:20%;
+    bottom:16px;
+  }
+}
+
+@media(max-width:520px){
+  .campfire-stage{
+    min-height:570px;
+  }
+
+  .class-silhouette{
+    transform:scale(.84);
+    transform-origin:center bottom;
+    margin-bottom:-3px;
+  }
+
+  .scene-class-label{
+    min-width:112px;
+    font-size:.74rem;
+  }
+
+  .knight-label{
+    min-width:165px;
+  }
+}

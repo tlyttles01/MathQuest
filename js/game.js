@@ -2111,7 +2111,10 @@ const skillInfo = {
 
     if (selectedSkill === "guard") {
       $("effectLabel").textContent =
-        currentHero().skills.guard.normal;
+        getEffectSummary(
+          currentHero().id,
+          "guard"
+        );
     }
 
     if (
@@ -2974,6 +2977,40 @@ const skillInfo = {
     coinTrayState = [];
   }
 
+  function getEffectSummary(heroId, skill) {
+    const summaries = {
+      knight:{
+        slash:"1d6 damage + d3 block",
+        power:"2d6 damage · no shield",
+        guard:"1d6 block",
+        shieldBash:"½ d6 damage + d6+d3 block"
+      },
+      mage:{
+        slash:"Add 2d4 → damage",
+        power:"Multiply 2d4 → damage",
+        guard:"Difference +2 → block",
+        shieldBash:"Low die damage + high die block"
+      },
+      rogue:{
+        slash:"Dice total → damage",
+        power:"Dice total +3 → damage",
+        guard:"Highest die +2 → block",
+        shieldBash:"High die damage + low die block"
+      },
+      cleric:{
+        slash:"Attack total +1",
+        power:"Attack total +3",
+        guard:"Shield total +2",
+        shieldBash:"Heal total +2"
+      }
+    };
+
+    return (
+      summaries[heroId] &&
+      summaries[heroId][skill]
+    ) || "Roll dice after solving";
+  }
+
   function newProblem() {
     if (battleComplete) {
       return;
@@ -3055,7 +3092,10 @@ const skillInfo = {
       .classList.add("hidden");
 
     $("effectLabel").textContent =
-      selectedHeroSkill.normal;
+      getEffectSummary(
+        hero.id,
+        selectedSkill
+      );
 
     MathQuest.BlockWorkspace.clear();
     MathQuest.BlockWorkspace.setMode("cross");

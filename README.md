@@ -612,3 +612,27 @@ Other classes now get their own visually distinct second panel:
 - Cleric: Blessing Dice + live Attack/Heal/Shield allocation totals
 
 The goal is for the dice UI itself to explain each class without requiring a long tutorial.
+
+
+## v48 Question-layout hardening
+
+- Removed the old side-by-side Question/Effect competition that caused short equations to wrap.
+- The math question now owns the full question width.
+- Effect is a compact full-width status strip below the question.
+- Added concise class-specific effect summaries instead of long instructional sentences in the Effect box.
+- Equation prompts are forced to stay on one line with tighter responsive sizing.
+- Added extra narrow-layout protection for split learning/workspace screens.
+
+
+## v49 Campfire character-select redesign
+
+- Removed emoji character avatars from the Campfire.
+- Knight keeps the real pixel sprite.
+- Mage, Rogue, and Cleric now use large class-specific shadow silhouettes:
+  - Mage: pointed hat + staff
+  - Rogue: hood + crossed blades
+  - Cleric: mantle + staff/orb
+- Character names now appear as scene plaques, closer to a JRPG character-select screen.
+- Selected class gets a stronger plaque highlight and badge.
+- The four heroes are arranged around the fire rather than presented like menu cards.
+- All four remain playable; this is a visual redesign only.
