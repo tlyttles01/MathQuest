@@ -664,3 +664,14 @@ The goal is for the dice UI itself to explain each class without requiring a lon
 - The same e-paper hero sprites are now used in battle.
 - Fixed the Knight Shield Die distortion by enforcing an explicit square aspect ratio and fixed flex basis.
 - Enemy e-paper Batch 1 art is intentionally not partially integrated yet; the game keeps one consistent enemy set until the full enemy pack is available.
+
+
+## v52 Whispering Woods scene fix
+
+- Fixed battle background loading by resolving world art against `document.baseURI` and assigning the actual `background-image` directly to the battle stage.
+- Added `?v=52` cache busting to battle backgrounds, foregrounds, and enemy sprites.
+- Replaced Tiny Slime with the new monochrome/e-paper sprite from Batch 1.
+- Updated the initial HTML Tiny Slime reference so the old sprite cannot flash before JavaScript initializes.
+
+- Added an initial inline Whispering Woods background plus preload as a fail-safe before game initialization.
+- Replaced the legacy `characterImages/tiny-slime.png` too, so even stale/old Tiny Slime references display the new e-paper sprite.

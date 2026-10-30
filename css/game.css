@@ -3740,7 +3740,7 @@ body{
 
 /* Illustrated battle scene */
 .battle-stage{
-  --battle-bg:url("../assets/backgrounds/whispering-woods-battle.png");
+  --battle-bg:url("../assets/backgrounds/whispering-woods-battle.png?v=52");
   --battle-fg:none;
   position:relative;
   isolation:isolate;
@@ -4473,4 +4473,20 @@ body[data-hero="cleric"]{--class-accent:#b69a64}
     max-height:62px !important;
     flex-basis:62px !important;
   }
+}
+
+
+/* v52: battle scene load safeguard */
+#battleStage{
+  background-color:#07111d;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position:center center;
+}
+
+/* Keep e-paper enemies crisp and separated from the colorful world. */
+.enemy .character-sprite{
+  object-fit:contain;
+  object-position:center bottom;
+  image-rendering:pixelated;
 }

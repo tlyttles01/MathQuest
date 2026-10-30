@@ -2323,14 +2323,34 @@ const skillInfo = {
       worldVisuals[world.id] ||
       worldVisuals.woods;
 
+    const backgroundUrl =
+      new URL(
+        `${visual.background}?v=52`,
+        document.baseURI
+      ).href;
+
+    const foregroundUrl =
+      new URL(
+        `${visual.foreground}?v=52`,
+        document.baseURI
+      ).href;
+
+    /*
+      Set the actual battle background directly instead of relying only
+      on a custom-property URL. This prevents path-resolution/cache
+      failures from silently falling back to the dark panel.
+    */
+    battleStage.style.backgroundImage =
+      `linear-gradient(180deg,rgba(3,7,13,.08),rgba(3,7,13,.18)), url("${backgroundUrl}")`;
+
     battleStage.style.setProperty(
       "--battle-bg",
-      `url("${visual.background}")`
+      `url("${backgroundUrl}")`
     );
 
     battleStage.style.setProperty(
       "--battle-fg",
-      `url("${visual.foreground}")`
+      `url("${foregroundUrl}")`
     );
 
     battleStage.dataset.world =
@@ -2358,7 +2378,7 @@ const skillInfo = {
 
     if (battle.enemyImage) {
       $("enemySprite").src =
-        battle.enemyImage;
+        `${battle.enemyImage}?v=52`;
       $("enemySprite").alt =
         battle.enemyName;
       $("enemySprite").classList.remove(
