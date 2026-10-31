@@ -4801,4 +4801,589 @@ body[data-hero="cleric"]{--class-accent:#b69a64}
     grid-template-columns:1fr;
   }
 }
-\n\n/* ==========================================================\n   v55: DICE DECISION HUD\n   Keep health and incoming damage visible during dice choices.\n   ========================================================== */\n.dice-combat-hud{\n  display:grid;\n  grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr);\n  gap:10px;\n  align-items:stretch;\n  margin:14px 0 16px;\n}\n\n.dice-hud-combatant,\n.dice-hud-threat{\n  min-width:0;\n  padding:9px 10px;\n  border:2px solid #526075;\n  background:#0b1220;\n  box-shadow:2px 2px 0 #02040a;\n}\n\n.dice-hud-heading{\n  display:flex;\n  align-items:center;\n  justify-content:space-between;\n  gap:8px;\n  margin-bottom:7px;\n  color:#f5efdc;\n  font-size:.76rem;\n  font-weight:900;\n}\n\n.dice-hud-heading > span{\n  min-width:0;\n  overflow:hidden;\n  text-overflow:ellipsis;\n  white-space:nowrap;\n}\n\n.dice-hud-heading strong{\n  flex:0 0 auto;\n  color:#fff4d0;\n}\n\n.dice-hud-hp-track{\n  height:12px;\n  overflow:hidden;\n  border:2px solid #667085;\n  background:#050914;\n}\n\n.dice-hud-hp-fill{\n  height:100%;\n  transition:width .16s ease;\n}\n\n.dice-hud-hp-fill.hero{\n  background:linear-gradient(90deg,#2c7248,#65b77e);\n}\n\n.dice-hud-hp-fill.enemy{\n  background:linear-gradient(90deg,#7d2f3a,#cf5963);\n}\n\n.dice-hud-threat{\n  display:flex;\n  flex-direction:column;\n  align-items:center;\n  justify-content:center;\n  gap:2px;\n  text-align:center;\n}\n\n.dice-hud-threat > span{\n  color:#98a4b8;\n  font-size:.62rem;\n  font-weight:1000;\n  letter-spacing:.09em;\n}\n\n.dice-hud-threat strong{\n  color:#f7df9c;\n  font-size:.9rem;\n}\n\n.dice-hud-threat small{\n  color:#c1c8d4;\n  font-size:.65rem;\n  line-height:1.2;\n}\n\n.dice-hud-threat.danger{\n  border-color:#b9434c;\n  background:#1d1016;\n}\n\n.dice-hud-threat.danger > span,\n.dice-hud-threat.danger strong{\n  color:#ff8e95;\n}\n\n@media(max-width:620px){\n  .dice-combat-hud{\n    grid-template-columns:1fr 1fr;\n  }\n\n  .dice-hud-threat{\n    grid-column:1 / -1;\n    grid-row:2;\n    min-height:56px;\n  }\n}\n\n@media(max-width:420px){\n  .dice-hud-heading{\n    align-items:flex-start;\n    flex-direction:column;\n    gap:2px;\n  }\n}\n
+
+
+/* ==========================================================
+   v55: DICE DECISION HUD
+   Keep health and incoming damage visible during dice choices.
+   ========================================================== */
+.dice-combat-hud{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr);
+  gap:10px;
+  align-items:stretch;
+  margin:14px 0 16px;
+}
+
+.dice-hud-combatant,
+.dice-hud-threat{
+  min-width:0;
+  padding:9px 10px;
+  border:2px solid #526075;
+  background:#0b1220;
+  box-shadow:2px 2px 0 #02040a;
+}
+
+.dice-hud-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:7px;
+  color:#f5efdc;
+  font-size:.76rem;
+  font-weight:900;
+}
+
+.dice-hud-heading > span{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.dice-hud-heading strong{
+  flex:0 0 auto;
+  color:#fff4d0;
+}
+
+.dice-hud-hp-track{
+  height:12px;
+  overflow:hidden;
+  border:2px solid #667085;
+  background:#050914;
+}
+
+.dice-hud-hp-fill{
+  height:100%;
+  transition:width .16s ease;
+}
+
+.dice-hud-hp-fill.hero{
+  background:linear-gradient(90deg,#2c7248,#65b77e);
+}
+
+.dice-hud-hp-fill.enemy{
+  background:linear-gradient(90deg,#7d2f3a,#cf5963);
+}
+
+.dice-hud-threat{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  text-align:center;
+}
+
+.dice-hud-threat > span{
+  color:#98a4b8;
+  font-size:.62rem;
+  font-weight:1000;
+  letter-spacing:.09em;
+}
+
+.dice-hud-threat strong{
+  color:#f7df9c;
+  font-size:.9rem;
+}
+
+.dice-hud-threat small{
+  color:#c1c8d4;
+  font-size:.65rem;
+  line-height:1.2;
+}
+
+.dice-hud-threat.danger{
+  border-color:#b9434c;
+  background:#1d1016;
+}
+
+.dice-hud-threat.danger > span,
+.dice-hud-threat.danger strong{
+  color:#ff8e95;
+}
+
+@media(max-width:620px){
+  .dice-combat-hud{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .dice-hud-threat{
+    grid-column:1 / -1;
+    grid-row:2;
+    min-height:56px;
+  }
+}
+
+@media(max-width:420px){
+  .dice-hud-heading{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:2px;
+  }
+}
+
+
+/* ==========================================================
+   v57: WORLD LEARNING DEMOS
+   Class identity + world math mechanic onboarding.
+   ========================================================== */
+.demo-skip-option{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  margin:12px auto;
+  color:#aeb8c8;
+  font-size:.74rem;
+  font-weight:800;
+  text-align:left;
+}
+
+.demo-skip-option input{
+  width:18px;
+  height:18px;
+  flex:0 0 18px;
+  accent-color:#d6a94e;
+}
+
+.world-demo-modal{
+  width:min(920px,100%);
+  text-align:left;
+}
+
+.world-demo-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:14px;
+}
+
+.world-demo-head h2{
+  margin:3px 0 5px;
+  color:#fff3d5;
+  font-size:clamp(1.5rem,4vw,2.4rem);
+}
+
+.world-demo-head p{
+  margin:0!important;
+  color:#b9c2d0!important;
+  font-size:.85rem;
+}
+
+.world-demo-world-name{
+  display:block;
+  margin-top:3px;
+  color:#f0c866;
+  font-size:.76rem;
+  font-weight:1000;
+  letter-spacing:.08em;
+}
+
+.world-demo-brain{
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  width:72px;
+  height:72px;
+  border:2px solid #6b778b;
+  background:#101827;
+  font-size:2.2rem;
+  box-shadow:3px 3px 0 #02040a;
+}
+
+.world-demo-visual{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);
+  gap:10px;
+  align-items:stretch;
+}
+
+.world-demo-step{
+  min-width:0;
+  min-height:220px;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:16px 12px 13px;
+  border:2px solid #58667c;
+  background:#101725;
+  text-align:center;
+  box-shadow:3px 3px 0 #02040a;
+}
+
+.world-demo-step.featured{
+  border-color:#d6a94e;
+  background:#19190f;
+}
+
+.world-demo-step.result{
+  border-color:#5f9370;
+  background:#0d1a14;
+}
+
+.world-demo-step-number{
+  position:absolute;
+  left:8px;
+  top:8px;
+  width:25px;
+  height:25px;
+  display:grid;
+  place-items:center;
+  border:2px solid #69778c;
+  background:#080e18;
+  color:#f2d28b;
+  font-weight:1000;
+}
+
+.world-demo-step > strong{
+  color:#fff0c7;
+  font-size:.84rem;
+  letter-spacing:.05em;
+}
+
+.world-demo-step > small{
+  color:#aeb8c8;
+  font-size:.7rem;
+  line-height:1.3;
+}
+
+.world-demo-arrow{
+  display:grid;
+  place-items:center;
+  color:#d6a94e;
+  font-size:1.7rem;
+  font-weight:1000;
+}
+
+.world-demo-block-row{
+  min-height:90px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:5px;
+  flex-wrap:wrap;
+}
+
+.compact-blocks{
+  gap:3px;
+}
+
+.world-demo-ten{
+  position:relative;
+  width:25px;
+  height:90px;
+  display:grid;
+  grid-template-rows:repeat(10,1fr);
+  border:2px solid #5680d0;
+  background:#dbe8ff;
+}
+
+.world-demo-ten i{
+  border-bottom:1px solid rgba(28,62,120,.45);
+}
+
+.world-demo-ten b{
+  position:absolute;
+  left:50%;
+  bottom:-18px;
+  transform:translateX(-50%);
+  color:#a9bee8;
+  font-size:.6rem;
+}
+
+.world-demo-one{
+  position:relative;
+  width:27px;
+  height:27px;
+  display:grid;
+  place-items:center;
+  border:2px solid #cc9134;
+  background:#fae0a8;
+  color:#5d3b0d;
+  font-size:.67rem;
+  font-weight:1000;
+}
+
+.world-demo-one.crossed::after{
+  content:"";
+  position:absolute;
+  left:-4px;
+  top:11px;
+  width:34px;
+  height:3px;
+  background:#c53c45;
+  transform:rotate(-35deg);
+}
+
+.world-demo-answer{
+  padding:11px 13px;
+  border:2px solid #64748b;
+  background:#080e18;
+  color:#fff0c7;
+  font-size:1.05rem;
+  font-weight:1000;
+}
+
+.world-demo-trade{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+
+.world-demo-trade b{
+  color:#d6a94e;
+  font-size:1.5rem;
+}
+
+.world-demo-ten-ones{
+  padding:11px 8px;
+  border:2px dashed #cc9134;
+  background:#1c160a;
+  color:#f6d58f;
+  font-size:.7rem;
+  font-weight:1000;
+}
+
+.world-demo-story{
+  width:100%;
+  padding:11px 10px;
+  border:2px solid #685e46;
+  background:#efe3c5;
+  color:#2d2417;
+  font-size:.8rem;
+  line-height:1.45;
+  text-align:left;
+}
+
+.world-demo-story b{
+  color:#7a3c20;
+}
+
+.world-demo-equation-builder{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  flex-wrap:wrap;
+}
+
+.world-demo-equation-builder span{
+  min-width:42px;
+  padding:9px 10px;
+  border:2px solid #6b778b;
+  background:#f0ead8;
+  color:#131821;
+  font-size:1.15rem;
+  font-weight:1000;
+}
+
+.world-demo-equation-builder b{
+  color:#f3d280;
+  font-size:1.25rem;
+}
+
+.world-demo-coin-tray{
+  min-height:95px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  padding:8px;
+  border:2px solid #64748b;
+  background:#0a101b;
+}
+
+.world-demo-coin{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+}
+
+.world-demo-coin img{
+  width:62px;
+  height:62px;
+  object-fit:contain;
+  image-rendering:auto;
+}
+
+.world-demo-coin small{
+  color:#aeb8c8;
+  font-size:.58rem;
+  font-weight:900;
+}
+
+.world-demo-coin-move{
+  width:100%;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:8px;
+  align-items:center;
+}
+
+.world-demo-coin-move > div{
+  min-height:112px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  border:2px solid #536176;
+  background:#0b1220;
+}
+
+.world-demo-coin-move > div > span{
+  color:#9ea9b9;
+  font-size:.6rem;
+  font-weight:1000;
+}
+
+.world-demo-coin-move > b{
+  color:#d6a94e;
+  font-size:1.4rem;
+}
+
+.world-demo-clock{
+  position:relative;
+  width:125px;
+  height:125px;
+  border:5px solid #d6ceb4;
+  border-radius:50%;
+  background:#f2eedf;
+  box-shadow:3px 3px 0 #02040a;
+}
+
+.world-demo-clock > b{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:10px;
+  height:10px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:#111827;
+  z-index:4;
+}
+
+.demo-hour-hand,
+.demo-minute-hand{
+  position:absolute;
+  left:50%;
+  bottom:50%;
+  width:5px;
+  transform-origin:50% 100%;
+  border-radius:3px;
+  background:#111827;
+  z-index:3;
+}
+
+.demo-hour-hand{
+  height:35px;
+  transform:translateX(-50%) rotate(105deg);
+}
+
+.demo-minute-hand{
+  height:48px;
+  transform:translateX(-50%) rotate(180deg);
+  background:#405d97;
+}
+
+.demo-clock-mark{
+  position:absolute;
+  color:#111827;
+  font-size:.65rem;
+  font-weight:1000;
+}
+
+.mark-12{left:50%;top:5px;transform:translateX(-50%)}
+.mark-3{right:7px;top:50%;transform:translateY(-50%)}
+.mark-6{left:50%;bottom:5px;transform:translateX(-50%)}
+.mark-9{left:7px;top:50%;transform:translateY(-50%)}
+
+.world-demo-clock-key{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:12px;
+  border:2px solid #64748b;
+  background:#0b1220;
+  color:#fff0c7;
+  font-weight:1000;
+}
+
+.world-demo-clock-key span:first-child{
+  display:grid;
+  place-items:center;
+  width:42px;
+  height:42px;
+  border:3px solid #d6ceb4;
+  border-radius:50%;
+  background:#f2eedf;
+  color:#111827;
+}
+
+.world-demo-rule{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:13px 0 6px;
+  color:#c8d0df;
+  font-size:.72rem;
+  font-weight:1000;
+}
+
+.world-demo-rule b{
+  color:#d6a94e;
+  font-size:1.15rem;
+}
+
+.world-demo-start{
+  display:block;
+  min-width:250px;
+  margin:0 auto;
+}
+
+@media(max-width:780px){
+  .world-demo-visual{
+    grid-template-columns:1fr;
+  }
+
+  .world-demo-arrow{
+    min-height:20px;
+    transform:rotate(90deg);
+  }
+
+  .world-demo-step{
+    min-height:170px;
+  }
+}
+
+@media(max-width:430px){
+  .world-demo-modal{
+    padding:14px!important;
+  }
+
+  .world-demo-brain{
+    width:52px;
+    height:52px;
+    font-size:1.6rem;
+  }
+
+  .world-demo-head{
+    align-items:flex-start;
+  }
+
+  .world-demo-coin img{
+    width:50px;
+    height:50px;
+  }
+}

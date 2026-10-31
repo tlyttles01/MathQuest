@@ -705,3 +705,17 @@ The goal is for the dice UI itself to explain each class without requiring a lon
 - User-provided redesign JPGs were cleaned to true transparent PNGs and normalized to 512x512 without stretching.
 - All 35 combat image URLs are cache-busted to `?v=56`.
 - The v55 enemy folder is preserved under `assets/enemies-v55-backup/`.
+
+
+## v57 Education-first world mechanic demos
+
+- New adventures still show the selected class demo after the story.
+- Entering each world for the first time now opens a visual learning-mechanic demo before play begins.
+- Whispering Woods: build numbers with tens/ones and cross blocks out for subtraction.
+- Breakstone Mines: visually demonstrates regrouping by breaking one ten into ten ones.
+- Living Library: shows how story clues become an equation before solving.
+- The Vault: demonstrates recognizing real coin images and moving a requested amount to the friend tray.
+- Clocktower: demonstrates reading short/hour and long/minute hands before answering time questions.
+- Each demo uses three short visual steps instead of a wall of text.
+- Added `Skip class & world demos for this adventure` on the class screen and `Skip the rest of the learning demos` on world demos.
+- World demos show only once per world unless the adventure is restarted.

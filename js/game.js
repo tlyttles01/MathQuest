@@ -34,7 +34,9 @@ window.MathQuest = window.MathQuest || {};
     resumeWorldIndex: 0,
     resumeBattleIndex: 0,
     hasStarted: false,
-    powerTutorialSeen: false
+    powerTutorialSeen: false,
+    skipLearningDemos: false,
+    worldDemosSeen: []
   };
 const skillInfo = {
     slash:{label:"⚔️ BASIC SKILL",effect:"Roll dice after solving"},
@@ -973,7 +975,7 @@ const skillInfo = {
     $("classIntroHeroArt").src =
       hero.image.includes("?")
         ? hero.image
-        : `${hero.image}?v=56`;
+        : `${hero.image}?v=57`;
 
     $("classIntroHeroArt").alt =
       hero.name;
@@ -1107,8 +1109,297 @@ const skillInfo = {
     }
   }
 
+
+  function demoTen(label = "10") {
+    return `
+      <span class="world-demo-ten" aria-label="ten block">
+        ${Array.from({length:10}, () => "<i></i>").join("")}
+        <b>${label}</b>
+      </span>
+    `;
+  }
+
+  function demoOne(crossed = false) {
+    return `
+      <span class="world-demo-one ${crossed ? "crossed" : ""}" aria-label="one block">1</span>
+    `;
+  }
+
+  function demoCoin(image, name, extraClass = "") {
+    return `
+      <span class="world-demo-coin ${extraClass}">
+        <img src="coinImages/${image}?v=57" alt="${name}">
+        <small>${name}</small>
+      </span>
+    `;
+  }
+
+  function renderWorldDemo(worldIndex) {
+    const world =
+      MathQuest.Combat.worlds[worldIndex];
+
+    $("worldDemoName").textContent =
+      world.name.toUpperCase();
+
+    const visual =
+      $("worldDemoVisual");
+
+    if (world.id === "woods") {
+      $("worldDemoTitle").textContent =
+        "BUILD IT. CROSS IT OUT.";
+
+      $("worldDemoSubtitle").textContent =
+        "Blocks turn the numbers into something you can see.";
+
+      visual.innerHTML = `
+        <section class="world-demo-step">
+          <span class="world-demo-step-number">1</span>
+          <strong>BUILD 14</strong>
+          <div class="world-demo-block-row">
+            ${demoTen()}
+            ${demoOne()}${demoOne()}${demoOne()}${demoOne()}
+          </div>
+          <small>1 ten + 4 ones</small>
+        </section>
+
+        <div class="world-demo-arrow">→</div>
+
+        <section class="world-demo-step featured">
+          <span class="world-demo-step-number">2</span>
+          <strong>14 − 3</strong>
+          <div class="world-demo-block-row">
+            ${demoTen()}
+            ${demoOne(true)}${demoOne(true)}${demoOne(true)}${demoOne()}
+          </div>
+          <small>Tap 3 ones to cross them out.</small>
+        </section>
+
+        <div class="world-demo-arrow">→</div>
+
+        <section class="world-demo-step result">
+          <span class="world-demo-step-number">3</span>
+          <strong>11 LEFT</strong>
+          <div class="world-demo-answer">14 − 3 = 11</div>
+          <small>The blocks help you check your thinking.</small>
+        </section>
+      `;
+    }
+    else if (world.id === "mines") {
+      $("worldDemoTitle").textContent =
+        "BREAK A TEN WHEN YOU NEED ONES.";
+
+      $("worldDemoSubtitle").textContent =
+        "Regrouping is just trading 1 ten for 10 ones.";
+
+      visual.innerHTML = `
+        <section class="world-demo-step">
+          <span class="world-demo-step-number">1</span>
+          <strong>32 − 7</strong>
+          <div class="world-demo-block-row compact-blocks">
+            ${demoTen()}${demoTen()}${demoTen()}
+            ${demoOne()}${demoOne()}
+          </div>
+          <small>Only 2 ones — not enough to take away 7.</small>
+        </section>
+
+        <div class="world-demo-arrow">→</div>
+
+        <section class="world-demo-step featured">
+          <span class="world-demo-step-number">2</span>
+          <strong>BREAK 1 TEN</strong>
+          <div class="world-demo-trade">
+            ${demoTen("10")}
+            <b>→</b>
+            <span class="world-demo-ten-ones">10 ONES</span>
+          </div>
+          <small>Now you have 2 tens and 12 ones.</small>
+        </section>
+
+        <div class="world-demo-arrow">→</div>
+
+        <section class="world-demo-step result">
+          <span class="world-demo-step-number">3</span>
+          <strong>TAKE AWAY 7</strong>
+          <div class="world-demo-answer">32 − 7 = 25</div>
+          <small>Breaking a ten makes the subtraction possible.</small>
+        </section>
+      `;
+    }
+    else if (world.id === "library") {
+      $("worldDemoTitle").textContent =
+        "TURN THE STORY INTO MATH.";
+
+      $("worldDemoSubtitle").textContent =
+        "Find the numbers, choose the sign, then solve.";
+
+      visual.innerHTML = `
+        <section class="world-demo-step story-demo-card">
+          <span class="world-demo-step-number">1</span>
+          <strong>READ THE STORY</strong>
+          <div class="world-demo-story">
+            Maya has <b>8</b> books.<br>
+            She finds <b>5 more</b>.
+          </div>
+          <small>“More” is a clue that the amount grows.</small>
+        </section>
+
+        <div class="world-demo-arrow">→</div>
+
+        <section class="world-demo-step featured">
+          <span class="world-demo-step-number">2</span>
+          <strong>BUILD IT</strong>
+          <div class="world-demo-equation-builder">
+            <span>8</span><b>+</b><span>5</span><b>=</b><span>?</span>
+          </div>
+          <small>Put the story's numbers into the math sentence.</small>
+        </section>
+
+        <div class="world-demo-arrow">→</div>
+
+        <section class="world-demo-step result">
+          <span class="world-demo-step-number">3</span>
+          <strong>SOLVE</strong>
+          <div class="world-demo-answer">8 + 5 = 13</div>
+          <small>The equation should match what happened in the story.</small>
+        </section>
+      `;
+    }
+    else if (world.id === "vault") {
+      $("worldDemoTitle").textContent =
+        "MOVE THE COINS — DON'T GUESS THE TOTAL.";
+
+      $("worldDemoSubtitle").textContent =
+        "Look at each coin, then move only the amount the problem asks for.";
+
+      visual.innerHTML = `
+        <section class="world-demo-step coin-demo-wide">
+          <span class="world-demo-step-number">1</span>
+          <strong>YOU HAVE 35¢</strong>
+          <div class="world-demo-coin-tray">
+            ${demoCoin("quarter.png","Quarter")}
+            ${demoCoin("dime.png","Dime")}
+          </div>
+          <small>Recognize the coins by their pictures.</small>
+        </section>
+
+        <div class="world-demo-arrow">→</div>
+
+        <section class="world-demo-step featured coin-demo-wide">
+          <span class="world-demo-step-number">2</span>
+          <strong>GIVE AWAY 10¢</strong>
+          <div class="world-demo-coin-move">
+            <div><span>YOUR TRAY</span>${demoCoin("quarter.png","Quarter")}</div>
+            <b>→</b>
+            <div><span>FRIEND</span>${demoCoin("dime.png","Dime","moved")}</div>
+          </div>
+          <small>Tap a coin to move it. Tap again to put it back.</small>
+        </section>
+
+        <div class="world-demo-arrow">→</div>
+
+        <section class="world-demo-step result">
+          <span class="world-demo-step-number">3</span>
+          <strong>25¢ LEFT</strong>
+          <div class="world-demo-answer">35¢ − 10¢ = 25¢</div>
+          <small>No running total is shown — you do the coin thinking.</small>
+        </section>
+      `;
+    }
+    else {
+      $("worldDemoTitle").textContent =
+        "READ THE CLOCK FIRST.";
+
+      $("worldDemoSubtitle").textContent =
+        "The short hand tells the hour. The long hand tells the minutes.";
+
+      visual.innerHTML = `
+        <section class="world-demo-step clock-demo-wide">
+          <span class="world-demo-step-number">1</span>
+          <strong>LOOK AT THE HANDS</strong>
+          <div class="world-demo-clock" aria-label="clock showing 3:30">
+            <span class="demo-clock-mark mark-12">12</span>
+            <span class="demo-clock-mark mark-3">3</span>
+            <span class="demo-clock-mark mark-6">6</span>
+            <span class="demo-clock-mark mark-9">9</span>
+            <i class="demo-hour-hand"></i>
+            <i class="demo-minute-hand"></i>
+            <b></b>
+          </div>
+          <small>Short hand near 3. Long hand on 6.</small>
+        </section>
+
+        <div class="world-demo-arrow">→</div>
+
+        <section class="world-demo-step featured">
+          <span class="world-demo-step-number">2</span>
+          <strong>LONG HAND = MINUTES</strong>
+          <div class="world-demo-clock-key"><span>6</span><b>=</b><span>30 minutes</span></div>
+          <small>Each big number is 5 minutes.</small>
+        </section>
+
+        <div class="world-demo-arrow">→</div>
+
+        <section class="world-demo-step result">
+          <span class="world-demo-step-number">3</span>
+          <strong>3:30</strong>
+          <div class="world-demo-answer">Hour 3 · Minutes 30</div>
+          <small>Read the picture before doing any time math.</small>
+        </section>
+      `;
+    }
+  }
+
+  function shouldShowWorldDemo(worldIndex) {
+    return (
+      playMode === "adventure" &&
+      !progress.skipLearningDemos &&
+      !progress.worldDemosSeen.includes(worldIndex)
+    );
+  }
+
+  function showWorldDemo(worldIndex) {
+    if (!shouldShowWorldDemo(worldIndex)) {
+      return false;
+    }
+
+    renderWorldDemo(worldIndex);
+
+    $("worldDemoSkipCheckbox").checked = false;
+
+    $("worldDemoPanel")
+      .classList.remove("hidden");
+
+    return true;
+  }
+
+  function finishWorldDemo() {
+    const worldIndex =
+      MathQuest.Combat.state.worldIndex;
+
+    if (
+      !progress.worldDemosSeen.includes(worldIndex)
+    ) {
+      progress.worldDemosSeen.push(worldIndex);
+    }
+
+    if ($("worldDemoSkipCheckbox").checked) {
+      progress.skipLearningDemos = true;
+    }
+
+    $("worldDemoPanel")
+      .classList.add("hidden");
+
+    saveGame(
+      MathQuest.Combat.state.worldIndex,
+      MathQuest.Combat.state.battleIndex
+    );
+  }
+
   function showClassIntro() {
     renderClassIntro();
+
+    $("skipLearningDemosCheckbox").checked =
+      false;
 
     $("storyIntroPanel")
       .classList.add("hidden");
@@ -1118,6 +1409,10 @@ const skillInfo = {
   }
 
   function beginFirstBattleAfterIntro() {
+    if ($("skipLearningDemosCheckbox").checked) {
+      progress.skipLearningDemos = true;
+    }
+
     $("classIntroPanel")
       .classList.add("hidden");
 
@@ -1199,6 +1494,7 @@ const skillInfo = {
     updateBattleIdentity();
     updateHud();
     newProblem();
+
 
     window.scrollTo({
       top:0,
@@ -1303,7 +1599,23 @@ const skillInfo = {
         Boolean(raw.hasStarted),
 
       powerTutorialSeen:
-        Boolean(raw.powerTutorialSeen)
+        Boolean(raw.powerTutorialSeen),
+
+      skipLearningDemos:
+        Boolean(raw.skipLearningDemos),
+
+      worldDemosSeen:
+        Array.isArray(raw.worldDemosSeen)
+          ? [...new Set(
+              raw.worldDemosSeen
+                .map(Number)
+                .filter(value =>
+                  Number.isInteger(value) &&
+                  value >= 0 &&
+                  value < MathQuest.Combat.worlds.length
+                )
+            )]
+          : []
     };
   }
 
@@ -1660,6 +1972,12 @@ const skillInfo = {
     updateBattleIdentity();
     updateHud();
     newProblem();
+
+    if (
+      MathQuest.Combat.state.battleIndex === 0
+    ) {
+      showWorldDemo(safeWorld);
+    }
 
     window.scrollTo({
       top: 0,
@@ -2570,13 +2888,13 @@ const skillInfo = {
 
     const backgroundUrl =
       new URL(
-        `${visual.background}?v=56`,
+        `${visual.background}?v=57`,
         document.baseURI
       ).href;
 
     const foregroundUrl =
       new URL(
-        `${visual.foreground}?v=56`,
+        `${visual.foreground}?v=57`,
         document.baseURI
       ).href;
 
@@ -2623,7 +2941,7 @@ const skillInfo = {
 
     if (battle.enemyImage) {
       $("enemySprite").src =
-        `${battle.enemyImage}?v=56`;
+        `${battle.enemyImage}?v=57`;
       $("enemySprite").alt =
         battle.enemyName;
       $("enemySprite").classList.remove(
@@ -2791,7 +3109,7 @@ const skillInfo = {
     return `
       <img
         class="coin-image"
-        src="coinImages/${safeName}.png?v=24"
+        src="coinImages/${safeName}.png?v=57"
         alt=""
         draggable="false"
       >
@@ -4397,6 +4715,10 @@ const skillInfo = {
     updateHud();
     newProblem();
 
+    showWorldDemo(
+      MathQuest.Combat.state.worldIndex
+    );
+
     window.scrollTo({
       top: 0,
       behavior: "smooth"
@@ -4799,6 +5121,12 @@ $("answerForm")
       .addEventListener(
         "click",
         beginFirstBattleAfterIntro
+      );
+
+    $("worldDemoStartBtn")
+      .addEventListener(
+        "click",
+        finishWorldDemo
       );
 
     $("adventureMapBtn").addEventListener(

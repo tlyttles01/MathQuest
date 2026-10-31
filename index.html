@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=54">
-  <link rel="preload" as="image" href="assets/backgrounds/whispering-woods-battle.png?v=54">
+  <link rel="stylesheet" href="css/game.css?v=57">
+  <link rel="preload" as="image" href="assets/backgrounds/whispering-woods-battle.png?v=57">
 </head>
 <body>
 <main class="game-shell">
   <section class="battle-panel">
     <header class="topbar">
-      <div><div class="build-row"><span id="buildVersion" class="build-version">v56</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
+      <div><div class="build-row"><span id="buildVersion" class="build-version">v57</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
       <div class="stats">
         <button id="adventureMapBtn" class="secondary compact-control" type="button">🧭 Adventure Map</button>
         <button id="worldSelectBtn" class="secondary compact-control" type="button">🎯 Practice Mode</button>
@@ -21,7 +21,7 @@
       </div>
     </header>
 
-    <div id="battleStage" class="battle-stage" style="background-image:linear-gradient(180deg,rgba(3,7,13,.08),rgba(3,7,13,.18)),url('assets/backgrounds/whispering-woods-battle.png?v=54');background-size:cover;background-position:center;">
+    <div id="battleStage" class="battle-stage" style="background-image:linear-gradient(180deg,rgba(3,7,13,.08),rgba(3,7,13,.18)),url('assets/backgrounds/whispering-woods-battle.png?v=57');background-size:cover;background-position:center;">
       <div class="fighter">
         <div class="fighter-title">
           <b id="heroName">Knight</b>
@@ -61,7 +61,7 @@
         <div class="fighter-title enemy-title"><b id="enemyName">Tiny Slime</b></div><div id="enemyRole" class="enemy-role">Skirmisher · Low health</div>
         <div class="hp-line enemy-hp"><b><span id="enemyHp">1</span>/<span id="enemyMaxHp">1</span></b><span>❤️</span></div>
         <div class="hp-track enemy-track"><div id="enemyHpBar" class="hp-fill enemy-fill"></div></div>
-        <div class="sprite-wrap enemy-wrap"><img id="enemySprite" class="sprite character-sprite" src="assets/enemies/tiny-slime.png?v=54" alt="Tiny Slime"><div id="enemyDamagePop" class="damage-pop hidden"></div></div>
+        <div class="sprite-wrap enemy-wrap"><img id="enemySprite" class="sprite character-sprite" src="assets/enemies/tiny-slime.png?v=57" alt="Tiny Slime"><div id="enemyDamagePop" class="damage-pop hidden"></div></div>
       </div>
 
       <div id="slashEffect" class="impact hidden">⚔️</div>
@@ -274,22 +274,22 @@
 
       <button class="hero-pedestal knight-pedestal hero-choice selected" data-hero-id="knight" type="button">
         <span class="hero-slot-badge">SELECTED</span>
-        <img class="campfire-hero-art" src="assets/heroes/knight.png?v=54" alt="Knight">
+        <img class="campfire-hero-art" src="assets/heroes/knight.png?v=57" alt="Knight">
         <span class="scene-class-label knight-label">KNIGHT</span>
       </button>
 
       <button class="hero-pedestal slot-two hero-choice playable-class" data-hero-id="mage" type="button">
-        <img class="campfire-hero-art" src="assets/heroes/mage.png?v=54" alt="Mage">
+        <img class="campfire-hero-art" src="assets/heroes/mage.png?v=57" alt="Mage">
         <span class="scene-class-label">MAGE</span>
       </button>
 
       <button class="hero-pedestal slot-three hero-choice playable-class" data-hero-id="rogue" type="button">
-        <img class="campfire-hero-art" src="assets/heroes/rogue.png?v=54" alt="Rogue">
+        <img class="campfire-hero-art" src="assets/heroes/rogue.png?v=57" alt="Rogue">
         <span class="scene-class-label">ROGUE</span>
       </button>
 
       <button class="hero-pedestal slot-four hero-choice playable-class" data-hero-id="cleric" type="button">
-        <img class="campfire-hero-art" src="assets/heroes/cleric.png?v=54" alt="Cleric">
+        <img class="campfire-hero-art" src="assets/heroes/cleric.png?v=57" alt="Cleric">
         <span class="scene-class-label">CLERIC</span>
       </button>
     </div>
@@ -375,7 +375,7 @@
 <div id="classIntroPanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="classIntroTitle">
   <div class="modal-card class-intro-modal">
     <div class="class-intro-top">
-      <img id="classIntroHeroArt" class="class-intro-hero" src="assets/heroes/knight.png?v=54" alt="Knight">
+      <img id="classIntroHeroArt" class="class-intro-hero" src="assets/heroes/knight.png?v=57" alt="Knight">
       <div>
         <div class="eyebrow">MEET YOUR CLASS</div>
         <h2 id="classIntroTitle">KNIGHT</h2>
@@ -393,8 +393,42 @@
       <span>⚔️ MAKE YOUR MOVE</span>
     </div>
 
+    <label class="demo-skip-option">
+      <input id="skipLearningDemosCheckbox" type="checkbox">
+      <span>Skip class &amp; world demos for this adventure</span>
+    </label>
+
     <button id="classIntroStartBtn" class="primary modal-primary class-intro-start" type="button">
-      GOT IT — START BATTLE
+      NEXT — SEE WORLD TOOL
+    </button>
+  </div>
+</div>
+
+<div id="worldDemoPanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="worldDemoTitle">
+  <div class="modal-card world-demo-modal">
+    <div class="world-demo-head">
+      <div>
+        <div class="eyebrow">HOW THIS WORLD TEACHES MATH</div>
+        <span id="worldDemoName" class="world-demo-world-name">WHISPERING WOODS</span>
+        <h2 id="worldDemoTitle">BUILD IT. CROSS IT OUT.</h2>
+        <p id="worldDemoSubtitle">Blocks turn the numbers into something you can see.</p>
+      </div>
+      <div class="world-demo-brain" aria-hidden="true">🧠</div>
+    </div>
+
+    <div id="worldDemoVisual" class="world-demo-visual" aria-live="polite"></div>
+
+    <div class="world-demo-rule">
+      <span>👀 LOOK</span><b>→</b><span>🧩 BUILD</span><b>→</b><span>🧠 SOLVE</span>
+    </div>
+
+    <label class="demo-skip-option">
+      <input id="worldDemoSkipCheckbox" type="checkbox">
+      <span>Skip the rest of the learning demos for this adventure</span>
+    </label>
+
+    <button id="worldDemoStartBtn" class="primary modal-primary world-demo-start" type="button">
+      GOT IT — START THIS WORLD
     </button>
   </div>
 </div>
@@ -625,11 +659,11 @@
   </div>
 </div>
 
-<script src="js/heroes.js?v=54"></script>
-<script src="js/math.js?v=54"></script>
-<script src="js/blocks.js?v=54"></script>
-<script src="js/combat.js?v=54"></script>
-<script src="js/animations.js?v=54"></script>
-<script src="js/game.js?v=54"></script>
+<script src="js/heroes.js?v=57"></script>
+<script src="js/math.js?v=57"></script>
+<script src="js/blocks.js?v=57"></script>
+<script src="js/combat.js?v=57"></script>
+<script src="js/animations.js?v=57"></script>
+<script src="js/game.js?v=57"></script>
 </body>
 </html>
