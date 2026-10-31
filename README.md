@@ -695,3 +695,13 @@ The goal is for the dice UI itself to explain each class without requiring a lon
 - Enemy's next attack name and damage are shown between the two HP panels.
 - Dangerous attacks are highlighted red inside the dice modal.
 - The HUD reflows cleanly on smaller screens.
+
+
+## v56 Final approved e-paper enemy roster
+
+- Replaced all 35 battle enemy assets with the exact approved e-paper artwork.
+- Uses Batch 1, Batch 2, approved Batch 3 remaps, Batch 4, and the eight user-approved kid-friendly redesigns.
+- Coin Mimic, Golden Mimic, Possessed Book, Ink Blob, Moss Beetle, Pendulum Phantom, Hour Hound, and Library Guardian use the final softer redesigns.
+- User-provided redesign JPGs were cleaned to true transparent PNGs and normalized to 512x512 without stretching.
+- All 35 combat image URLs are cache-busted to `?v=56`.
+- The v55 enemy folder is preserved under `assets/enemies-v55-backup/`.

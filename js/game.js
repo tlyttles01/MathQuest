@@ -973,7 +973,7 @@ const skillInfo = {
     $("classIntroHeroArt").src =
       hero.image.includes("?")
         ? hero.image
-        : `${hero.image}?v=55`;
+        : `${hero.image}?v=56`;
 
     $("classIntroHeroArt").alt =
       hero.name;
@@ -2570,13 +2570,13 @@ const skillInfo = {
 
     const backgroundUrl =
       new URL(
-        `${visual.background}?v=55`,
+        `${visual.background}?v=56`,
         document.baseURI
       ).href;
 
     const foregroundUrl =
       new URL(
-        `${visual.foreground}?v=55`,
+        `${visual.foreground}?v=56`,
         document.baseURI
       ).href;
 
@@ -2623,7 +2623,7 @@ const skillInfo = {
 
     if (battle.enemyImage) {
       $("enemySprite").src =
-        `${battle.enemyImage}?v=55`;
+        `${battle.enemyImage}?v=56`;
       $("enemySprite").alt =
         battle.enemyName;
       $("enemySprite").classList.remove(
