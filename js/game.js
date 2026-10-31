@@ -246,6 +246,50 @@ const skillInfo = {
         selectedSkill
       );
 
+    const state =
+      MathQuest.Combat.state;
+
+    const battle =
+      MathQuest.Combat.currentBattle();
+
+    const intent =
+      MathQuest.Combat.currentIntent();
+
+    $("diceHeroName").textContent =
+      hero.name;
+
+    $("diceHeroHp").textContent =
+      state.heroHp;
+
+    $("diceHeroMaxHp").textContent =
+      state.heroMaxHp;
+
+    $("diceHeroHpBar").style.width =
+      `${Math.max(0, Math.min(100, (state.heroHp / state.heroMaxHp) * 100))}%`;
+
+    $("diceEnemyName").textContent =
+      battle.enemyName;
+
+    $("diceEnemyHp").textContent =
+      state.enemyHp;
+
+    $("diceEnemyMaxHp").textContent =
+      state.enemyMaxHp;
+
+    $("diceEnemyHpBar").style.width =
+      `${Math.max(0, Math.min(100, (state.enemyHp / state.enemyMaxHp) * 100))}%`;
+
+    $("diceIncomingDamage").textContent =
+      `${intent.damage} DAMAGE`;
+
+    $("diceIncomingName").textContent =
+      intent.name;
+
+    $("diceIncomingCard").classList.toggle(
+      "danger",
+      Boolean(intent.dangerous)
+    );
+
     const tray =
       $("diceTray");
 
@@ -884,6 +928,205 @@ const skillInfo = {
     }
 
     renderDicePanel();
+  }
+
+  function introDie(value, sides, extraClass = "") {
+    const pipMap = {
+      1:[5],
+      2:[1,9],
+      3:[1,5,9],
+      4:[1,3,7,9],
+      5:[1,3,5,7,9],
+      6:[1,3,4,6,7,9]
+    };
+
+    const active =
+      new Set(
+        pipMap[value] || [5]
+      );
+
+    return `
+      <span class="intro-die ${extraClass}" aria-label="d${sides} showing ${value}">
+        ${Array.from({length:9}, (_,i) =>
+          `<span class="intro-pip ${active.has(i+1) ? "on" : ""}"></span>`
+        ).join("")}
+        <small>d${sides}</small>
+      </span>
+    `;
+  }
+
+  function renderClassIntro() {
+    const hero = currentHero();
+
+    $("storyHeroName").textContent =
+      hero.name;
+
+    $("storyIntroTitle").textContent =
+      `${hero.name}'s Journey`;
+
+    $("classIntroTitle").textContent =
+      hero.name.toUpperCase();
+
+    $("classIntroTagline").textContent =
+      hero.identity;
+
+    $("classIntroHeroArt").src =
+      hero.image.includes("?")
+        ? hero.image
+        : `${hero.image}?v=55`;
+
+    $("classIntroHeroArt").alt =
+      hero.name;
+
+    const visual =
+      $("classIntroVisual");
+
+    if (hero.id === "knight") {
+      visual.innerHTML = `
+        <section class="class-intro-card intro-attack-card">
+          <div class="class-intro-card-title">⚔️ ATTACK DICE</div>
+          <div class="intro-dice-row">
+            ${introDie(2,6)}
+            ${introDie(4,6)}
+            ${introDie(6,6)}
+          </div>
+          <strong>PICK 1 d6</strong>
+          <span>That number = your damage.</span>
+        </section>
+
+        <section class="class-intro-card intro-shield-card featured">
+          <div class="class-intro-card-title">🛡️ SHIELD DIE</div>
+          <div class="intro-shield-demo">
+            ${introDie(2,3,"shield-intro-die")}
+            <b>=</b>
+            <div><strong>2 BLOCK</strong><span>Automatic on normal attacks!</span></div>
+          </div>
+          <span class="intro-kid-callout">Your shield helps EVERY normal attack.</span>
+        </section>
+
+        <section class="class-intro-card intro-power-card">
+          <div class="class-intro-card-title">💥 POWER STRIKE</div>
+          <div class="intro-dice-row compact">
+            ${introDie(5,6)}
+            <b>+</b>
+            ${introDie(6,6)}
+          </div>
+          <strong>BIG DAMAGE</strong>
+          <span class="intro-danger-note">🚫 No Shield Die this turn.</span>
+        </section>
+      `;
+    }
+    else if (hero.id === "mage") {
+      visual.innerHTML = `
+        <section class="class-intro-card intro-mage-card">
+          <div class="class-intro-card-title">🔮 ARCANE DICE</div>
+          <div class="intro-dice-row">
+            ${introDie(1,4)}
+            ${introDie(2,4)}
+            ${introDie(3,4)}
+            ${introDie(4,4)}
+          </div>
+          <strong>ROLL 4 d4</strong>
+          <span>Then pick 2 dice.</span>
+        </section>
+
+        <section class="class-intro-card featured intro-formula-card">
+          <div class="class-intro-card-title">✨ YOUR SPELL CHANGES THE RULE</div>
+          <div class="intro-formula-list">
+            <div><span>✨ Bolt</span><b>3 + 4 = 7</b></div>
+            <div><span>🔥 Fireball</span><b>3 × 4 = 12</b></div>
+            <div><span>❄️ Barrier</span><b>4 − 3 + 2 = 3</b></div>
+          </div>
+          <span class="intro-kid-callout">Same dice. Different magic!</span>
+        </section>
+      `;
+    }
+    else if (hero.id === "rogue") {
+      visual.innerHTML = `
+        <section class="class-intro-card intro-safe-card">
+          <div class="class-intro-card-title">🗡️ SAFE ROLL</div>
+          <div class="intro-dice-row">
+            ${introDie(4,6)}
+            ${introDie(5,6)}
+          </div>
+          <strong>START WITH 2 d6</strong>
+          <span>You can stop here and attack.</span>
+        </section>
+
+        <section class="class-intro-card featured intro-risk-card">
+          <div class="class-intro-card-title">🎲 PUSH YOUR LUCK</div>
+          <div class="intro-dice-row compact">
+            ${introDie(4,6)}
+            ${introDie(5,6)}
+            ${introDie(3,6,"risk-intro-die")}
+          </div>
+          <strong>ADD ANOTHER d6</strong>
+          <span>More dice = bigger move.</span>
+        </section>
+
+        <section class="class-intro-card intro-bust-card">
+          <div class="class-intro-card-title">💥 BUT WATCH OUT!</div>
+          <div class="intro-dice-row compact">
+            ${introDie(1,6,"bust-intro-die")}
+          </div>
+          <strong>ROLL A 1 WHILE PUSHING?</strong>
+          <span class="intro-danger-note">BUST! The enemy gets the turn.</span>
+        </section>
+      `;
+    }
+    else {
+      visual.innerHTML = `
+        <section class="class-intro-card intro-cleric-card">
+          <div class="class-intro-card-title">✨ BLESSING DICE</div>
+          <div class="intro-dice-row">
+            ${introDie(2,4)}
+            ${introDie(3,4)}
+            ${introDie(4,4)}
+          </div>
+          <strong>ROLL 3 d4</strong>
+          <span>Every die gets a job.</span>
+        </section>
+
+        <section class="class-intro-card featured intro-assign-card">
+          <div class="class-intro-card-title">👆 TAP EACH DIE</div>
+          <div class="intro-assignment-row">
+            <div>${introDie(2,4)}<b>⚔️ ATTACK</b></div>
+            <div>${introDie(3,4)}<b>❤️ HEAL</b></div>
+            <div>${introDie(4,4)}<b>🛡️ SHIELD</b></div>
+          </div>
+          <span class="intro-kid-callout">You choose where the power goes.</span>
+        </section>
+
+        <section class="class-intro-card intro-together-card">
+          <div class="class-intro-card-title">🌟 ALL AT ONCE</div>
+          <div class="intro-cleric-result">⚔️ 2 &nbsp; ❤️ 3 &nbsp; 🛡️ 4</div>
+          <strong>ATTACK + HEAL + BLOCK</strong>
+          <span>One turn can do all three.</span>
+        </section>
+      `;
+    }
+  }
+
+  function showClassIntro() {
+    renderClassIntro();
+
+    $("storyIntroPanel")
+      .classList.add("hidden");
+
+    $("classIntroPanel")
+      .classList.remove("hidden");
+  }
+
+  function beginFirstBattleAfterIntro() {
+    $("classIntroPanel")
+      .classList.add("hidden");
+
+    saveGame(0, 0);
+
+    startAdventureAt(
+      0,
+      0
+    );
   }
 
   function captureCombatSnapshot() {
@@ -1605,6 +1848,8 @@ const skillInfo = {
     $("adventureHomePanel")
       .classList.add("hidden");
 
+    renderClassIntro();
+
     $("storyIntroPanel")
       .classList.remove("hidden");
 
@@ -2325,13 +2570,13 @@ const skillInfo = {
 
     const backgroundUrl =
       new URL(
-        `${visual.background}?v=52`,
+        `${visual.background}?v=55`,
         document.baseURI
       ).href;
 
     const foregroundUrl =
       new URL(
-        `${visual.foreground}?v=52`,
+        `${visual.foreground}?v=55`,
         document.baseURI
       ).href;
 
@@ -2378,7 +2623,7 @@ const skillInfo = {
 
     if (battle.enemyImage) {
       $("enemySprite").src =
-        `${battle.enemyImage}?v=52`;
+        `${battle.enemyImage}?v=55`;
       $("enemySprite").alt =
         battle.enemyName;
       $("enemySprite").classList.remove(
@@ -4544,20 +4789,16 @@ $("answerForm")
         "click",
         closeGuardTutorial
       );
-$("beginJourneyBtn")
+    $("beginJourneyBtn")
       .addEventListener(
         "click",
-        () => {
-          $("storyIntroPanel")
-            .classList.add("hidden");
+        showClassIntro
+      );
 
-          saveGame(0, 0);
-
-          startAdventureAt(
-            0,
-            0
-          );
-        }
+    $("classIntroStartBtn")
+      .addEventListener(
+        "click",
+        beginFirstBattleAfterIntro
       );
 
     $("adventureMapBtn").addEventListener(

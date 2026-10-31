@@ -675,3 +675,23 @@ The goal is for the dice UI itself to explain each class without requiring a lon
 
 - Added an initial inline Whispering Woods background plus preload as a fail-safe before game initialization.
 - Replaced the legacy `characterImages/tiny-slime.png` too, so even stale/old Tiny Slime references display the new e-paper sprite.
+
+## v54 Visual class-introduction tutorials
+
+- After the opening story, a new `Meet Your Class` modal appears before Battle 1.
+- The modal changes automatically for Knight, Mage, Rogue, or Cleric.
+- The lesson is visual-first and designed for ages 7–10, with large dice examples and very short labels rather than paragraphs.
+- Knight: visually separates Attack Dice, the automatic d3 Shield Die, and Power Strike's no-shield tradeoff.
+- Mage: shows 4d4, choosing two dice, and how different spells change the formula.
+- Rogue: shows safe dice, optional push dice, and the pushed-1 bust consequence.
+- Cleric: shows assigning three dice to Attack, Heal, or Shield and resolving them together.
+- Opening story title/name now reflects the hero chosen at the Campfire.
+
+
+## v55 Dice decision HUD
+
+- Dice selection now keeps both combatants' HP visible.
+- Hero HP and enemy HP appear in compact bars at the top of the dice modal.
+- Enemy's next attack name and damage are shown between the two HP panels.
+- Dangerous attacks are highlighted red inside the dice modal.
+- The HUD reflows cleanly on smaller screens.

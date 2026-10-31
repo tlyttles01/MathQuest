@@ -4490,3 +4490,315 @@ body[data-hero="cleric"]{--class-accent:#b69a64}
   object-position:center bottom;
   image-rendering:pixelated;
 }
+
+/* ==========================================================
+   v54: VISUAL CLASS INTRO TUTORIALS
+   ========================================================== */
+.class-intro-modal{
+  width:min(850px,100%);
+  text-align:left;
+}
+
+.class-intro-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  margin-bottom:14px;
+  text-align:left;
+}
+
+.class-intro-hero{
+  width:100px;
+  height:112px;
+  object-fit:contain;
+  object-position:center bottom;
+  image-rendering:pixelated;
+  filter:
+    drop-shadow(1px 0 0 #f7f3e0)
+    drop-shadow(-1px 0 0 #f7f3e0)
+    drop-shadow(0 1px 0 #f7f3e0)
+    drop-shadow(0 -1px 0 #f7f3e0);
+}
+
+.class-intro-top h2{
+  margin:2px 0 3px;
+  font-size:clamp(1.8rem,5vw,2.8rem);
+}
+
+.class-intro-tagline{
+  margin:0!important;
+  color:#f2d28b!important;
+  font-size:1rem;
+  font-weight:1000;
+}
+
+.class-intro-visual{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+
+.class-intro-card{
+  min-width:0;
+  min-height:205px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:13px 10px;
+  border:2px solid #59667b;
+  background:#101725;
+  text-align:center;
+  box-shadow:3px 3px 0 #02040a;
+}
+
+.class-intro-card.featured{
+  border-color:#d4a94d;
+  background:#17180f;
+  box-shadow:
+    3px 3px 0 #02040a,
+    inset 0 0 0 1px rgba(245,208,111,.16);
+}
+
+.class-intro-card-title{
+  color:#f4ead0;
+  font-size:.74rem;
+  font-weight:1000;
+  letter-spacing:.08em;
+}
+
+.class-intro-card > strong{
+  color:#fff3d5;
+  font-size:.94rem;
+}
+
+.class-intro-card > span{
+  color:#aeb8c8;
+  font-size:.76rem;
+  line-height:1.25;
+}
+
+.intro-dice-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:78px;
+}
+
+.intro-dice-row.compact{
+  gap:6px;
+}
+
+.intro-die{
+  position:relative;
+  width:58px;
+  height:58px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr);
+  padding:6px;
+  border:3px solid #d6ceb4;
+  border-radius:10px;
+  background:#f4efde;
+  box-shadow:
+    inset -4px -4px 0 rgba(0,0,0,.08),
+    3px 3px 0 #02040a;
+}
+
+.intro-die small{
+  position:absolute;
+  right:3px;
+  bottom:-17px;
+  color:#aeb8c8;
+  font-size:.55rem;
+  font-weight:1000;
+}
+
+.intro-pip{
+  width:7px;
+  height:7px;
+  place-self:center;
+  border-radius:50%;
+  background:transparent;
+}
+
+.intro-pip.on{
+  background:#111827;
+}
+
+.shield-intro-die{
+  border-color:#83a5ff;
+  background:#dfe9ff;
+}
+
+.risk-intro-die{
+  border-color:#ca8c48;
+  background:#fff0d8;
+}
+
+.bust-intro-die{
+  border-color:#e27379;
+  background:#ffe0e0;
+}
+
+.intro-shield-demo{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+
+.intro-shield-demo > b{
+  color:#f6e4ae;
+  font-size:1.35rem;
+}
+
+.intro-shield-demo > div{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  text-align:left;
+}
+
+.intro-shield-demo > div strong{
+  color:#dce8ff;
+  font-size:1.08rem;
+}
+
+.intro-shield-demo > div span{
+  color:#aebbd5;
+  font-size:.68rem;
+  max-width:120px;
+}
+
+.intro-kid-callout{
+  margin-top:3px;
+  padding:5px 8px;
+  border:1px solid #6e7d95;
+  background:#0b1220;
+  color:#f5e6b5!important;
+  font-weight:900;
+}
+
+.intro-danger-note{
+  color:#ff9da1!important;
+  font-weight:900;
+}
+
+.intro-formula-list{
+  width:100%;
+  display:grid;
+  gap:6px;
+}
+
+.intro-formula-list > div{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:7px 8px;
+  border:1px solid #4e5c72;
+  background:#0b1220;
+}
+
+.intro-formula-list span{
+  color:#d4c9ef;
+  font-size:.72rem;
+  font-weight:900;
+}
+
+.intro-formula-list b{
+  color:#fff0c7;
+  font-size:.82rem;
+}
+
+.intro-assignment-row{
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+}
+
+.intro-assignment-row > div{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:18px;
+}
+
+.intro-assignment-row b{
+  font-size:.64rem;
+  color:#f6e5b8;
+}
+
+.intro-cleric-result{
+  padding:12px 14px;
+  border:2px solid #59667b;
+  background:#0b1220;
+  color:#fff0c7;
+  font-size:1.2rem;
+  font-weight:1000;
+}
+
+.class-intro-rule{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:13px 0;
+  color:#c8d0df;
+  font-size:.72rem;
+  font-weight:1000;
+  letter-spacing:.04em;
+  text-align:center;
+}
+
+.class-intro-rule b{
+  color:#d6a94e;
+  font-size:1.2rem;
+}
+
+.class-intro-start{
+  display:block;
+  min-width:240px;
+  margin:0 auto;
+}
+
+@media(max-width:720px){
+  .class-intro-visual{
+    grid-template-columns:1fr;
+  }
+
+  .class-intro-card{
+    min-height:170px;
+  }
+
+  .class-intro-top{
+    justify-content:flex-start;
+  }
+}
+
+@media(max-width:430px){
+  .class-intro-modal{
+    padding:14px!important;
+  }
+
+  .class-intro-hero{
+    width:76px;
+    height:88px;
+  }
+
+  .intro-die{
+    width:50px;
+    height:50px;
+  }
+
+  .intro-assignment-row{
+    grid-template-columns:1fr;
+  }
+}
+\n\n/* ==========================================================\n   v55: DICE DECISION HUD\n   Keep health and incoming damage visible during dice choices.\n   ========================================================== */\n.dice-combat-hud{\n  display:grid;\n  grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr);\n  gap:10px;\n  align-items:stretch;\n  margin:14px 0 16px;\n}\n\n.dice-hud-combatant,\n.dice-hud-threat{\n  min-width:0;\n  padding:9px 10px;\n  border:2px solid #526075;\n  background:#0b1220;\n  box-shadow:2px 2px 0 #02040a;\n}\n\n.dice-hud-heading{\n  display:flex;\n  align-items:center;\n  justify-content:space-between;\n  gap:8px;\n  margin-bottom:7px;\n  color:#f5efdc;\n  font-size:.76rem;\n  font-weight:900;\n}\n\n.dice-hud-heading > span{\n  min-width:0;\n  overflow:hidden;\n  text-overflow:ellipsis;\n  white-space:nowrap;\n}\n\n.dice-hud-heading strong{\n  flex:0 0 auto;\n  color:#fff4d0;\n}\n\n.dice-hud-hp-track{\n  height:12px;\n  overflow:hidden;\n  border:2px solid #667085;\n  background:#050914;\n}\n\n.dice-hud-hp-fill{\n  height:100%;\n  transition:width .16s ease;\n}\n\n.dice-hud-hp-fill.hero{\n  background:linear-gradient(90deg,#2c7248,#65b77e);\n}\n\n.dice-hud-hp-fill.enemy{\n  background:linear-gradient(90deg,#7d2f3a,#cf5963);\n}\n\n.dice-hud-threat{\n  display:flex;\n  flex-direction:column;\n  align-items:center;\n  justify-content:center;\n  gap:2px;\n  text-align:center;\n}\n\n.dice-hud-threat > span{\n  color:#98a4b8;\n  font-size:.62rem;\n  font-weight:1000;\n  letter-spacing:.09em;\n}\n\n.dice-hud-threat strong{\n  color:#f7df9c;\n  font-size:.9rem;\n}\n\n.dice-hud-threat small{\n  color:#c1c8d4;\n  font-size:.65rem;\n  line-height:1.2;\n}\n\n.dice-hud-threat.danger{\n  border-color:#b9434c;\n  background:#1d1016;\n}\n\n.dice-hud-threat.danger > span,\n.dice-hud-threat.danger strong{\n  color:#ff8e95;\n}\n\n@media(max-width:620px){\n  .dice-combat-hud{\n    grid-template-columns:1fr 1fr;\n  }\n\n  .dice-hud-threat{\n    grid-column:1 / -1;\n    grid-row:2;\n    min-height:56px;\n  }\n}\n\n@media(max-width:420px){\n  .dice-hud-heading{\n    align-items:flex-start;\n    flex-direction:column;\n    gap:2px;\n  }\n}\n

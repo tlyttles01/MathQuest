@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Math Quest</title>
-  <link rel="stylesheet" href="css/game.css?v=52">
-  <link rel="preload" as="image" href="assets/backgrounds/whispering-woods-battle.png?v=52">
+  <link rel="stylesheet" href="css/game.css?v=54">
+  <link rel="preload" as="image" href="assets/backgrounds/whispering-woods-battle.png?v=54">
 </head>
 <body>
 <main class="game-shell">
   <section class="battle-panel">
     <header class="topbar">
-      <div><div class="build-row"><span id="buildVersion" class="build-version">v52</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
+      <div><div class="build-row"><span id="buildVersion" class="build-version">v55</span></div><div id="worldName" class="eyebrow">WHISPERING WOODS</div><div id="battleSubtitle" class="muted">Battle 1 of 5</div></div>
       <div class="stats">
         <button id="adventureMapBtn" class="secondary compact-control" type="button">🧭 Adventure Map</button>
         <button id="worldSelectBtn" class="secondary compact-control" type="button">🎯 Practice Mode</button>
@@ -21,7 +21,7 @@
       </div>
     </header>
 
-    <div id="battleStage" class="battle-stage" style="background-image:linear-gradient(180deg,rgba(3,7,13,.08),rgba(3,7,13,.18)),url('assets/backgrounds/whispering-woods-battle.png?v=52');background-size:cover;background-position:center;">
+    <div id="battleStage" class="battle-stage" style="background-image:linear-gradient(180deg,rgba(3,7,13,.08),rgba(3,7,13,.18)),url('assets/backgrounds/whispering-woods-battle.png?v=54');background-size:cover;background-position:center;">
       <div class="fighter">
         <div class="fighter-title">
           <b id="heroName">Knight</b>
@@ -61,7 +61,7 @@
         <div class="fighter-title enemy-title"><b id="enemyName">Tiny Slime</b></div><div id="enemyRole" class="enemy-role">Skirmisher · Low health</div>
         <div class="hp-line enemy-hp"><b><span id="enemyHp">1</span>/<span id="enemyMaxHp">1</span></b><span>❤️</span></div>
         <div class="hp-track enemy-track"><div id="enemyHpBar" class="hp-fill enemy-fill"></div></div>
-        <div class="sprite-wrap enemy-wrap"><img id="enemySprite" class="sprite character-sprite" src="assets/enemies/tiny-slime.png?v=52" alt="Tiny Slime"><div id="enemyDamagePop" class="damage-pop hidden"></div></div>
+        <div class="sprite-wrap enemy-wrap"><img id="enemySprite" class="sprite character-sprite" src="assets/enemies/tiny-slime.png?v=54" alt="Tiny Slime"><div id="enemyDamagePop" class="damage-pop hidden"></div></div>
       </div>
 
       <div id="slashEffect" class="impact hidden">⚔️</div>
@@ -274,22 +274,22 @@
 
       <button class="hero-pedestal knight-pedestal hero-choice selected" data-hero-id="knight" type="button">
         <span class="hero-slot-badge">SELECTED</span>
-        <img class="campfire-hero-art" src="assets/heroes/knight.png?v=52" alt="Knight">
+        <img class="campfire-hero-art" src="assets/heroes/knight.png?v=54" alt="Knight">
         <span class="scene-class-label knight-label">KNIGHT</span>
       </button>
 
       <button class="hero-pedestal slot-two hero-choice playable-class" data-hero-id="mage" type="button">
-        <img class="campfire-hero-art" src="assets/heroes/mage.png?v=52" alt="Mage">
+        <img class="campfire-hero-art" src="assets/heroes/mage.png?v=54" alt="Mage">
         <span class="scene-class-label">MAGE</span>
       </button>
 
       <button class="hero-pedestal slot-three hero-choice playable-class" data-hero-id="rogue" type="button">
-        <img class="campfire-hero-art" src="assets/heroes/rogue.png?v=52" alt="Rogue">
+        <img class="campfire-hero-art" src="assets/heroes/rogue.png?v=54" alt="Rogue">
         <span class="scene-class-label">ROGUE</span>
       </button>
 
       <button class="hero-pedestal slot-four hero-choice playable-class" data-hero-id="cleric" type="button">
-        <img class="campfire-hero-art" src="assets/heroes/cleric.png?v=52" alt="Cleric">
+        <img class="campfire-hero-art" src="assets/heroes/cleric.png?v=54" alt="Cleric">
         <span class="scene-class-label">CLERIC</span>
       </button>
     </div>
@@ -347,7 +347,7 @@
   <div class="modal-card story-modal">
     <div class="result-icon">🏰</div>
     <div class="eyebrow">MATH QUEST</div>
-    <h2 id="storyIntroTitle">The Knight's Journey</h2>
+    <h2 id="storyIntroTitle">Your Journey Begins</h2>
 
     <div class="story-copy">
       <p>
@@ -361,13 +361,40 @@
       </p>
 
       <p>
-        Your adventure begins with the <strong>Knight</strong> in <strong>Whispering Woods</strong>,
+        Your adventure begins with the <strong id="storyHeroName">Knight</strong> in <strong>Whispering Woods</strong>,
         where the Goblin King is waiting.
       </p>
     </div>
 
     <button id="beginJourneyBtn" class="primary modal-primary" type="button">
       Begin the Journey
+    </button>
+  </div>
+</div>
+
+<div id="classIntroPanel" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="classIntroTitle">
+  <div class="modal-card class-intro-modal">
+    <div class="class-intro-top">
+      <img id="classIntroHeroArt" class="class-intro-hero" src="assets/heroes/knight.png?v=54" alt="Knight">
+      <div>
+        <div class="eyebrow">MEET YOUR CLASS</div>
+        <h2 id="classIntroTitle">KNIGHT</h2>
+        <p id="classIntroTagline" class="class-intro-tagline">Choose. Defend. Counter.</p>
+      </div>
+    </div>
+
+    <div id="classIntroVisual" class="class-intro-visual" aria-live="polite"></div>
+
+    <div class="class-intro-rule">
+      <span>🧠 SOLVE THE MATH</span>
+      <b>→</b>
+      <span>🎲 USE YOUR DICE</span>
+      <b>→</b>
+      <span>⚔️ MAKE YOUR MOVE</span>
+    </div>
+
+    <button id="classIntroStartBtn" class="primary modal-primary class-intro-start" type="button">
+      GOT IT — START BATTLE
     </button>
   </div>
 </div>
@@ -455,6 +482,30 @@
     <div class="eyebrow">RUNE POWERED — NOW ROLL</div>
     <h2 id="diceTitle">Knight Dice</h2>
     <p id="diceInstruction">Choose how to use your roll.</p>
+
+    <div class="dice-combat-hud" aria-label="Current battle status">
+      <div class="dice-hud-combatant dice-hud-hero">
+        <div class="dice-hud-heading">
+          <span id="diceHeroName">Knight</span>
+          <strong><span id="diceHeroHp">30</span>/<span id="diceHeroMaxHp">30</span> ❤️</strong>
+        </div>
+        <div class="dice-hud-hp-track"><div id="diceHeroHpBar" class="dice-hud-hp-fill hero"></div></div>
+      </div>
+
+      <div id="diceIncomingCard" class="dice-hud-threat">
+        <span>ENEMY NEXT</span>
+        <strong id="diceIncomingDamage">2 DAMAGE</strong>
+        <small id="diceIncomingName">Slime Bump</small>
+      </div>
+
+      <div class="dice-hud-combatant dice-hud-enemy">
+        <div class="dice-hud-heading">
+          <span id="diceEnemyName">Tiny Slime</span>
+          <strong><span id="diceEnemyHp">6</span>/<span id="diceEnemyMaxHp">6</span> ❤️</strong>
+        </div>
+        <div class="dice-hud-hp-track"><div id="diceEnemyHpBar" class="dice-hud-hp-fill enemy"></div></div>
+      </div>
+    </div>
 
     <div id="diceTray" class="dice-tray"></div>
     <div id="diceMath" class="dice-math"></div>
@@ -574,11 +625,11 @@
   </div>
 </div>
 
-<script src="js/heroes.js?v=52"></script>
-<script src="js/math.js?v=52"></script>
-<script src="js/blocks.js?v=52"></script>
-<script src="js/combat.js?v=52"></script>
-<script src="js/animations.js?v=52"></script>
-<script src="js/game.js?v=52"></script>
+<script src="js/heroes.js?v=54"></script>
+<script src="js/math.js?v=54"></script>
+<script src="js/blocks.js?v=54"></script>
+<script src="js/combat.js?v=54"></script>
+<script src="js/animations.js?v=54"></script>
+<script src="js/game.js?v=54"></script>
 </body>
 </html>
